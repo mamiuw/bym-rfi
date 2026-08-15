@@ -101,6 +101,14 @@ button { cursor: pointer; border: none; background: none; }
   font-weight: 800;
   font-size: 20px;
   box-shadow: 0 0 15px var(--gold-glow);
+  cursor: pointer;
+  user-select: none;
+  transition: var(--transition);
+}
+
+.logo:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px var(--gold-primary);
 }
 
 .brand h1 { font-size: 16px; font-weight: 700; letter-spacing: 0.15em; line-height: 1.2; }
@@ -300,7 +308,7 @@ input:focus, select:focus {
 .service strong { display: block; font-size: 12px; font-weight: 600; }
 .service span { display: block; color: var(--text-muted); font-size: 11px; margin-top: 2px; }
 
-/* 40-Min Time Slots Selector */
+/* Time Slots */
 .time-slots {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
@@ -432,9 +440,7 @@ input:focus, select:focus {
 .note { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 14px; line-height: 1.4; }
 
 /* Waiting List Section */
-.queue-section {
-  margin-top: 32px;
-}
+.queue-section { margin-top: 32px; }
 
 .queue-grid {
   display: grid;
@@ -452,6 +458,7 @@ input:focus, select:focus {
   flex-direction: column;
   gap: 8px;
   transition: var(--transition);
+  position: relative;
 }
 
 .queue-item:hover {
@@ -491,8 +498,23 @@ input:focus, select:focus {
   gap: 3px;
 }
 
-.queue-details strong {
-  color: var(--text-main);
+.queue-details strong { color: var(--text-main); }
+
+.cancel-btn {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  border-radius: var(--radius-md);
+  font-size: 11px;
+  font-weight: 700;
+  transition: var(--transition);
+}
+
+.cancel-btn:hover {
+  background: var(--danger);
+  color: #fff;
 }
 
 .empty-queue {
@@ -505,6 +527,96 @@ input:focus, select:focus {
   border-radius: var(--radius-md);
 }
 
+/* Modal Popup & Blur Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(12px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: var(--transition);
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--panel-bg);
+  border: 1px solid var(--gold-primary);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  box-shadow: 0 0 30px var(--gold-glow);
+  transform: translateY(20px);
+  transition: var(--transition);
+  position: relative;
+}
+
+.modal-overlay.active .modal-card {
+  transform: translateY(0);
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-size: 18px;
+  color: var(--text-muted);
+}
+
+.modal-close:hover { color: var(--danger); }
+
+.admin-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.admin-btn {
+  padding: 12px;
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid var(--danger);
+  color: #fca5a5;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 700;
+  transition: var(--transition);
+}
+
+.admin-btn:hover { background: var(--danger); color: #fff; }
+
+.admin-btn.unlock {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: var(--success);
+  color: #6ee7b7;
+}
+
+.admin-btn.unlock:hover { background: var(--success); color: #fff; }
+
+.day-closed-msg {
+  grid-column: 1 / -1;
+  padding: 20px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  border-radius: var(--radius-md);
+  text-align: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
 .invalid { border-color: var(--danger) !important; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important; }
 .valid { border-color: var(--success) !important; }
 
@@ -512,7 +624,7 @@ input:focus, select:focus {
   position: fixed;
   bottom: 24px;
   right: 24px;
-  z-index: 100;
+  z-index: 2000;
   background: var(--panel-bg);
   border: 1px solid var(--panel-border);
   padding: 14px 20px;
@@ -546,7 +658,7 @@ input:focus, select:focus {
 <div class="app">
   <nav class="nav">
     <div class="brand">
-      <div class="logo">M</div>
+      <div class="logo" id="adminLogoBtn" title="Yönetici Girişi">M</div>
       <div>
         <h1>BY MORFİ</h1>
         <span>OTO YIKAMA</span>
@@ -577,12 +689,12 @@ input:focus, select:focus {
       <div class="grid">
         <div class="field">
           <label>Ad Soyad <em>zorunlu</em></label>
-          <input id="name" type="text" placeholder="Ahmet Yılmaz" autocomplete="name">
+          <input id="name" type="text" placeholder="Ahmet Yılmaz" autocomplete="name" maxlength="50">
         </div>
 
         <div class="field">
           <label>Telefon <em>zorunlu</em></label>
-          <input id="phone" type="tel" placeholder="05XX XXX XX XX" autocomplete="tel">
+          <input id="phone" type="tel" placeholder="05XX XXX XX XX" autocomplete="tel" maxlength="15">
         </div>
 
         <div class="field full">
@@ -659,7 +771,7 @@ input:focus, select:focus {
     </aside>
   </main>
 
-  <!-- Live Waiting List / Queue Section -->
+  <!-- Live Waiting List Section -->
   <section class="card queue-section">
     <div class="card-head">
       <div>
@@ -674,10 +786,42 @@ input:focus, select:focus {
   </section>
 </div>
 
+<!-- Hidden Admin Modal Overlay -->
+<div class="modal-overlay" id="adminModal">
+  <div class="modal-card">
+    <button class="modal-close" id="closeModalBtn">✕</button>
+
+    <div id="adminLoginBox">
+      <h3 style="font-size: 18px; margin-bottom: 6px;">Yönetici Girişi</h3>
+      <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 18px;">Sistem yönetimine erişmek için şifrenizi girin.</p>
+      <div class="field" style="margin-bottom: 16px;">
+        <label>Admin Şifresi</label>
+        <input type="password" id="adminPassInput" placeholder="••••••••">
+      </div>
+      <button class="cta" id="adminLoginBtn">Giriş Yap</button>
+    </div>
+
+    <div id="adminControlsBox" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 style="font-size: 16px; color: var(--gold-light);">Yönetim Paneli</h3>
+        <span class="badge" style="border-color: var(--success); color: var(--success);">AKTİF</span>
+      </div>
+      <p style="font-size: 12px; color: var(--text-muted);">
+        Seçili Tarih: <b style="color:var(--text-main);" id="adminSelectedDateText">--</b>
+      </p>
+      <div class="admin-controls">
+        <button class="admin-btn" id="toggleDayLockBtn">🚫 Seçili Güne Randevuları Kapat</button>
+        <button class="secondary" id="adminLogoutBtn">Çıkış Yap</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-const WHATSAPP_PHONE = "05385475603";
+const WHATSAPP_PHONE = "905385475603"; // International format for flawless API routing
+const ADMIN_PASS = "muho6060.";
 
 const VEHICLES = [
   {name:"Sedan / Hatchback", price:600, icon:"◈"},
@@ -689,7 +833,12 @@ const VEHICLES = [
   {name:"Lastik Tamiri", price:350, fixed:true, icon:"◎"}
 ];
 
-// Generate 40-minute interval time slots between 08:00 and 20:00
+function escapeHTML(str) {
+  return String(str).replace(/[&<>"']/g, match => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[match]);
+}
+
 function generate40MinSlots() {
   const slots = [];
   let currentMinutes = 8 * 60; // 08:00
@@ -706,9 +855,10 @@ function generate40MinSlots() {
 
 const TIME_SLOTS = generate40MinSlots();
 
-// Local Storage for Appointments
 function getStoredAppointments() {
-  return JSON.parse(localStorage.getItem("bymorfi_appointments") || "[]");
+  try {
+    return JSON.parse(localStorage.getItem("bymorfi_appointments") || "[]");
+  } catch (e) { return []; }
 }
 
 function saveAppointment(appt) {
@@ -716,6 +866,30 @@ function saveAppointment(appt) {
   list.push(appt);
   localStorage.setItem("bymorfi_appointments", JSON.stringify(list));
 }
+
+function removeAppointment(id) {
+  let list = getStoredAppointments();
+  list = list.filter(a => a.id !== id);
+  localStorage.setItem("bymorfi_appointments", JSON.stringify(list));
+}
+
+function getClosedDays() {
+  try {
+    return JSON.parse(localStorage.getItem("bymorfi_closed_days") || "[]");
+  } catch (e) { return []; }
+}
+
+function toggleDayLock(date) {
+  let days = getClosedDays();
+  if (days.includes(date)) {
+    days = days.filter(d => d !== date);
+  } else {
+    days.push(date);
+  }
+  localStorage.setItem("bymorfi_closed_days", JSON.stringify(days));
+}
+
+let isAdminLoggedIn = false;
 
 const $ = id => document.getElementById(id);
 const vehicleCards = $("vehicleCards");
@@ -799,7 +973,7 @@ $("themeBtn").addEventListener("click", () => {
 });
 
 function toast(title, text=""){
-  const el=$("toast"); el.innerHTML=`<b>${title}</b>${text}`; el.classList.add("show");
+  const el=$("toast"); el.innerHTML=`<b>${escapeHTML(title)}</b>${escapeHTML(text)}`; el.classList.add("show");
   clearTimeout(window.__toast); window.__toast=setTimeout(()=>el.classList.remove("show"),3200);
 }
 
@@ -809,7 +983,7 @@ function buildVehicles(){
     const b=document.createElement("button");
     b.type="button"; b.className="service"+(i===0?" active":"");
     b.dataset.name=v.name;
-    b.innerHTML=`<strong>${v.icon} ${v.name}</strong><span>${v.fixed?"Sabit fiyat":"İç + dış"} · ${v.price} TL</span>`;
+    b.innerHTML=`<strong>${v.icon} ${escapeHTML(v.name)}</strong><span>${v.fixed?"Sabit fiyat":"İç + dış"} · ${v.price} TL</span>`;
     b.onclick=()=>{
       document.querySelectorAll(".service").forEach(x=>x.classList.remove("active"));
       b.classList.add("active");
@@ -825,11 +999,11 @@ function buildVehicles(){
 
 function selectedVehicle(){return VEHICLES.find(v=>v.name===$("vehicleType").value)||VEHICLES[0]}
 
-/* Render 40-Min Slots Based on Selected Date */
 function renderTimeSlots() {
   const grid = $("timeSlotsGrid");
   const selectedDate = $("date").value;
   const isFixedVehicle = selectedVehicle().fixed;
+  const closedDays = getClosedDays();
   grid.innerHTML = "";
 
   if (!selectedDate) {
@@ -837,7 +1011,12 @@ function renderTimeSlots() {
     return;
   }
 
-  // If fixed service (Lastik Otel / Tamir), 40 min slots don't strictly apply, but render standard choices
+  if (closedDays.includes(selectedDate)) {
+    $("slotStatusNote").textContent = "Bu tarih randevulara kapalıdır!";
+    grid.innerHTML = `<div class="day-closed-msg">🚫 İşletmemiz seçilen tarihte randevulu hizmete kapalıdır. Lütfen başka bir gün seçin.</div>`;
+    return;
+  }
+
   if (isFixedVehicle) {
     $("slotStatusNote").textContent = "Lastik hizmetleri için uygun bir saat seçin";
   } else {
@@ -870,7 +1049,6 @@ function renderTimeSlots() {
   });
 }
 
-/* Render Waiting Queue */
 function renderQueue() {
   const queueGrid = $("queueGrid");
   const selectedDate = $("date").value;
@@ -889,16 +1067,26 @@ function renderQueue() {
   queueGrid.innerHTML = filtered.map(a => `
     <div class="queue-item">
       <div class="queue-header">
-        <span class="queue-plate">${a.plate}</span>
-        <span class="queue-time">⏰ ${a.time}</span>
+        <span class="queue-plate">${escapeHTML(a.plate)}</span>
+        <span class="queue-time">⏰ ${escapeHTML(a.time)}</span>
       </div>
       <div class="queue-details">
-        <div><strong>Müşteri:</strong> ${a.name}</div>
-        <div><strong>Araç / Paket:</strong> ${a.vehicle} (${a.wash})</div>
-        <div><strong>Tarih:</strong> ${a.date}</div>
+        <div><strong>Müşteri:</strong> ${escapeHTML(a.name)}</div>
+        <div><strong>Araç / Paket:</strong> ${escapeHTML(a.vehicle)} (${escapeHTML(a.wash)})</div>
+        <div><strong>Tarih:</strong> ${escapeHTML(a.date)}</div>
       </div>
+      ${isAdminLoggedIn ? `<button class="cancel-btn" onclick="cancelAppt('${escapeHTML(a.id)}')">❌ Randevuyu İptal Et</button>` : ''}
     </div>
   `).join("");
+}
+
+function cancelAppt(id) {
+  if (confirm("Bu randevuyu iptal etmek istediğinize emin misiniz?")) {
+    removeAppointment(id);
+    renderTimeSlots();
+    renderQueue();
+    toast("Randevu İptal Edildi", "Seçilen saat yeniden kullanılabilir hale geldi.");
+  }
 }
 
 function isTRPlateValid(plate){
@@ -932,6 +1120,14 @@ function update(){
   const extras=[];
   if($("extraSponge").checked) extras.push("Süngerli");
   $("sumExtras").textContent=extras.join(", ")||"Yok";
+
+  if($("date").value) {
+    $("adminSelectedDateText").textContent = $("date").value;
+    const isClosed = getClosedDays().includes($("date").value);
+    const btn = $("toggleDayLockBtn");
+    btn.textContent = isClosed ? "🔓 Seçili Günün Kilidini Aç" : "🚫 Seçili Güne Randevuları Kapat";
+    btn.className = isClosed ? "admin-btn unlock" : "admin-btn";
+  }
 }
 
 function validate(){
@@ -940,6 +1136,12 @@ function validate(){
     const el=$(id); el.classList.remove("invalid","valid");
     if(!el.value.trim()){el.classList.add("invalid");ok=false}
   });
+
+  const closedDays = getClosedDays();
+  if (closedDays.includes($("date").value)) {
+    toast("Gün Kapalı", "Seçilen tarihe randevu alınamaz.");
+    return false;
+  }
 
   if(!$("selectedTime").value){
     ok=false;
@@ -968,6 +1170,7 @@ function sendWhatsApp(){
   const wash=v.fixed?"Sabit fiyatlı hizmet":$("washType").selectedOptions[0].text.split("—")[0].trim();
   
   const apptData = {
+    id: "apt_" + Date.now(),
     name: $("name").value.trim(),
     phone: $("phone").value.trim(),
     plate: $("plate").value.trim().toUpperCase(),
@@ -978,7 +1181,6 @@ function sendWhatsApp(){
     isFixed: !!v.fixed
   };
 
-  // Local Storage Save -> Marks as booked
   saveAppointment(apptData);
 
   const msg=[
@@ -995,11 +1197,11 @@ function sendWhatsApp(){
     `⏰ Saat: ${apptData.time}`
   ].filter(Boolean).join("\n");
 
-  // Refresh Slots and Queue Display
   renderTimeSlots();
   renderQueue();
 
-  const url=`https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(msg)}`;
+  // Universal WhatsApp API link without phone rejection issues
+  const url=`https://api.whatsapp.com/send?phone=${WHATSAPP_PHONE}&text=${encodeURIComponent(msg)}`;
   window.open(url,"_blank","noopener,noreferrer");
 }
 
@@ -1016,6 +1218,53 @@ function resetForm(){
   update();
   toast("Form temizlendi","Yeni bir randevu seçebilirsiniz.");
 }
+
+/* Modal Admin Logic */
+$("adminLogoBtn").addEventListener("click", () => {
+  $("adminModal").classList.add("active");
+});
+
+$("closeModalBtn").addEventListener("click", () => {
+  $("adminModal").classList.remove("active");
+});
+
+$("adminModal").addEventListener("click", (e) => {
+  if (e.target === $("adminModal")) $("adminModal").classList.remove("active");
+});
+
+$("adminLoginBtn").addEventListener("click", () => {
+  if ($("adminPassInput").value === ADMIN_PASS) {
+    isAdminLoggedIn = true;
+    $("adminLoginBox").style.display = "none";
+    $("adminControlsBox").style.display = "block";
+    $("adminPassInput").value = "";
+    renderQueue();
+    toast("Başarılı Giriş", "Yönetici paneli açıldı.");
+  } else {
+    toast("Hatalı Şifre", "Lütfen şifrenizi kontrol edin.");
+  }
+});
+
+$("adminLogoutBtn").addEventListener("click", () => {
+  isAdminLoggedIn = false;
+  $("adminLoginBox").style.display = "block";
+  $("adminControlsBox").style.display = "none";
+  $("adminModal").classList.remove("active");
+  renderQueue();
+  toast("Çıkış Yapıldı", "Yönetici oturumu kapatıldı.");
+});
+
+$("toggleDayLockBtn").addEventListener("click", () => {
+  const selectedDate = $("date").value;
+  if (!selectedDate) {
+    toast("Tarih Seçilmedi", "Lütfen önce bir tarih seçin.");
+    return;
+  }
+  toggleDayLock(selectedDate);
+  renderTimeSlots();
+  update();
+  toast("Güncellendi", "Seçili günün durumu değiştirildi.");
+});
 
 ["name","phone","plate"].forEach(id=>$(id).addEventListener("input",update));
 $("date").addEventListener("change", () => {
