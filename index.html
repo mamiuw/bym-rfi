@@ -15,12 +15,29 @@
   --gold-primary: #d7b46a;
   --gold-light: #f3d89d;
   --gold-glow: rgba(215, 180, 106, 0.25);
+  --input-bg: rgba(0, 0, 0, 0.3);
+  --input-border: rgba(255, 255, 255, 0.1);
   --danger: #ef4444;
   --success: #10b981;
   --radius-lg: 20px;
   --radius-md: 12px;
   --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Light Theme Variables */
+body.light-theme {
+  --bg-gradient: radial-gradient(circle at 50% 0%, #f1f5f9 0%, #e2e8f0 100%);
+  --panel-bg: rgba(255, 255, 255, 0.85);
+  --panel-border: rgba(0, 0, 0, 0.08);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --gold-primary: #b48835;
+  --gold-light: #d7b46a;
+  --gold-glow: rgba(180, 136, 53, 0.2);
+  --input-bg: rgba(255, 255, 255, 0.8);
+  --input-border: rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 20px 40px -10px rgba(0, 0, 0, 0.08);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -34,6 +51,7 @@ body {
   background-attachment: fixed;
   line-height: 1.5;
   padding: 24px 16px;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 button, input, select { font: inherit; color: inherit; }
@@ -75,6 +93,28 @@ button { cursor: pointer; border: none; background: none; }
 
 .brand h1 { font-size: 16px; font-weight: 700; letter-spacing: 0.15em; line-height: 1.2; }
 .brand span { font-size: 10px; color: var(--gold-primary); letter-spacing: 0.2em; display: block; font-weight: 600; }
+
+.nav-actions { display: flex; align-items: center; gap: 12px; }
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--panel-border);
+  padding: 8px 14px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-main);
+  transition: var(--transition);
+}
+
+.theme-toggle:hover {
+  background: rgba(215, 180, 106, 0.15);
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 15px var(--gold-glow);
+}
 
 .status {
   display: flex;
@@ -189,7 +229,7 @@ button { cursor: pointer; border: none; background: none; }
 label {
   display: flex;
   justify-content: space-between;
-  color: #cbd5e1;
+  color: var(--text-main);
   font-size: 12px;
   font-weight: 600;
   margin-bottom: 6px;
@@ -201,12 +241,17 @@ input, select {
   width: 100%;
   height: 48px;
   padding: 0 16px;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
   border-radius: var(--radius-md);
   outline: none;
   transition: var(--transition);
   font-size: 13px;
+}
+
+input:hover, select:hover {
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 12px var(--gold-glow);
 }
 
 input:focus, select:focus {
@@ -225,6 +270,29 @@ input:focus, select:focus {
   pointer-events: none;
 }
 
+/* Hover & Glow Interactive Animation */
+.glow-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.glow-effect::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(215, 180, 106, 0.2) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.glow-effect:hover::before {
+  opacity: 1;
+}
+
 /* Vehicle Selection Cards */
 .service-grid {
   display: grid;
@@ -236,21 +304,24 @@ input:focus, select:focus {
 .service {
   text-align: left;
   padding: 12px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
   border-radius: var(--radius-md);
   transition: var(--transition);
+  position: relative;
+  overflow: hidden;
 }
 
 .service:hover {
-  border-color: rgba(215, 180, 106, 0.4);
-  transform: translateY(-1px);
+  border-color: var(--gold-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px var(--gold-glow);
 }
 
 .service.active {
   border-color: var(--gold-primary);
-  background: linear-gradient(135deg, rgba(215, 180, 106, 0.15), rgba(215, 180, 106, 0.03));
-  box-shadow: 0 0 15px rgba(215, 180, 106, 0.1);
+  background: linear-gradient(135deg, rgba(215, 180, 106, 0.2), rgba(215, 180, 106, 0.05));
+  box-shadow: 0 0 15px var(--gold-glow);
 }
 
 .service strong { display: block; font-size: 12px; font-weight: 600; }
@@ -263,9 +334,15 @@ input:focus, select:focus {
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--input-border);
   border-radius: var(--radius-md);
-  background: rgba(0, 0, 0, 0.25);
+  background: var(--input-bg);
+  transition: var(--transition);
+}
+
+.extra:hover {
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 15px var(--gold-glow);
 }
 
 .extra input[type="checkbox"] {
@@ -297,8 +374,8 @@ input:focus, select:focus {
 .summary-top {
   padding: 20px;
   border-radius: var(--radius-md);
-  background: linear-gradient(135deg, rgba(215, 180, 106, 0.1), rgba(0, 0, 0, 0.3));
-  border: 1px solid rgba(215, 180, 106, 0.2);
+  background: linear-gradient(135deg, rgba(215, 180, 106, 0.15), rgba(0, 0, 0, 0.1));
+  border: 1px solid rgba(215, 180, 106, 0.25);
   margin-bottom: 20px;
 }
 
@@ -311,7 +388,9 @@ input:focus, select:focus {
 .line span { color: var(--text-muted); }
 .line strong { color: var(--text-main); font-weight: 600; }
 
+/* Buttons with Glow & Hover Shimmer */
 .cta {
+  position: relative;
   width: 100%;
   height: 52px;
   border-radius: var(--radius-md);
@@ -321,9 +400,26 @@ input:focus, select:focus {
   font-size: 14px;
   box-shadow: 0 10px 20px var(--gold-glow);
   transition: var(--transition);
+  overflow: hidden;
 }
 
-.cta:hover { transform: translateY(-2px); filter: brightness(1.1); }
+.cta::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(60deg, transparent, rgba(255,255,255,0.4), transparent);
+  transform: rotate(30deg) translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.cta:hover::after {
+  transform: rotate(30deg) translateX(100%);
+}
+
+.cta:hover { transform: translateY(-2px); box-shadow: 0 12px 25px var(--gold-glow); filter: brightness(1.08); }
 .cta:active { transform: translateY(0); }
 
 .secondary {
@@ -338,7 +434,7 @@ input:focus, select:focus {
   transition: var(--transition);
 }
 
-.secondary:hover { background: rgba(255, 255, 255, 0.05); color: var(--text-main); }
+.secondary:hover { background: rgba(215, 180, 106, 0.1); border-color: var(--gold-primary); color: var(--text-main); box-shadow: 0 0 12px var(--gold-glow); }
 
 .note { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 14px; line-height: 1.4; }
 
@@ -351,7 +447,7 @@ input:focus, select:focus {
   bottom: 24px;
   right: 24px;
   z-index: 100;
-  background: #1e293b;
+  background: var(--panel-bg);
   border: 1px solid var(--panel-border);
   padding: 14px 20px;
   border-radius: var(--radius-md);
@@ -389,7 +485,10 @@ input:focus, select:focus {
         <span>OTO YIKAMA</span>
       </div>
     </div>
-    <div class="status"><i class="dot"></i> Randevu sistemi aktif</div>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeBtn">🌙 Koyu Tema</button>
+      <div class="status"><i class="dot"></i> Randevu sistemi aktif</div>
+    </div>
   </nav>
 
   <section class="hero">
@@ -449,7 +548,7 @@ input:focus, select:focus {
         <div class="field">
           <label>Ek hizmetler</label>
           <div class="extras">
-            <div class="extra">
+            <div class="extra glow-effect">
               <input type="checkbox" id="extraSponge">
               <label for="extraSponge">Süngerli yıkama <span>Premium köpük +150 TL</span></label>
             </div>
@@ -492,7 +591,7 @@ input:focus, select:focus {
       </div>
 
       <button class="cta" id="bookBtn">Randevuyu Gönder →</button>
-      <button class="secondary" id="resetBtn">Formu temizle</button>
+      <button class="secondary glow-effect" id="resetBtn">Formu temizle</button>
       <div class="note">BY MORFİ OTO YIKAMA randevunuz gönderilmeden önce bilgilerinizi son kez kontrol edin. WhatsApp mesajı doğrudan açılır.</div>
     </aside>
   </main>
@@ -517,6 +616,25 @@ const VEHICLES = [
 const $ = id => document.getElementById(id);
 const vehicleCards = $("vehicleCards");
 
+/* Tema Kontrolü */
+function initTheme(){
+  const savedTheme = localStorage.getItem("theme");
+  if(savedTheme === "light"){
+    document.body.classList.add("light-theme");
+    $("themeBtn").innerHTML = "☀️ Açık Tema";
+  } else {
+    document.body.classList.remove("light-theme");
+    $("themeBtn").innerHTML = "🌙 Koyu Tema";
+  }
+}
+
+$("themeBtn").addEventListener("click", () => {
+  document.body.classList.toggle("light-theme");
+  const isLight = document.body.classList.contains("light-theme");
+  localStorage.setItem("theme", isLight ? "light" : "dark");
+  $("themeBtn").innerHTML = isLight ? "☀️ Açık Tema" : "🌙 Koyu Tema";
+});
+
 function toast(title, text=""){
   const el=$("toast");
   el.innerHTML=`<b>${title}</b>${text}`;
@@ -529,7 +647,7 @@ function buildVehicles(){
   vehicleCards.innerHTML="";
   VEHICLES.forEach((v,i)=>{
     const b=document.createElement("button");
-    b.type="button"; b.className="service"+(i===0?" active":"");
+    b.type="button"; b.className="service glow-effect"+(i===0?" active":"");
     b.dataset.name=v.name;
     b.innerHTML=`<strong>${v.icon} ${v.name}</strong><span>${v.fixed?"Sabit fiyat":"İç + dış"} · ${v.price} TL</span>`;
     b.onclick=()=>{
@@ -656,6 +774,7 @@ $("resetBtn").addEventListener("click",resetForm);
 
 const today=new Date();
 $("date").min=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
+initTheme();
 buildVehicles();update();
 </script>
 </body>
