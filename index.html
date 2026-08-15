@@ -351,6 +351,21 @@ input:focus, select:focus {
   text-decoration: line-through;
 }
 
+.slot-warning-note {
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px dashed var(--danger);
+  border-radius: var(--radius-md);
+  color: #fca5a5;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .extras { margin-top: 4px; }
 .extra {
   display: flex;
@@ -445,8 +460,8 @@ input:focus, select:focus {
 
 .queue-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
   margin-top: 16px;
 }
 
@@ -454,12 +469,12 @@ input:focus, select:focus {
   background: var(--input-bg);
   border: 1px solid var(--input-border);
   border-radius: var(--radius-md);
-  padding: 16px;
+  padding: 12px 16px;
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
   transition: var(--transition);
-  position: relative;
 }
 
 .queue-item:hover {
@@ -467,47 +482,28 @@ input:focus, select:focus {
   box-shadow: 0 0 15px var(--gold-glow);
 }
 
-.queue-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid var(--panel-border);
-  padding-bottom: 8px;
-}
-
 .queue-time {
   background: var(--gold-primary);
   color: #080a0e;
   font-weight: 800;
-  padding: 2px 8px;
+  padding: 4px 8px;
   border-radius: 6px;
   font-size: 12px;
 }
 
 .queue-plate {
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 0.05em;
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: 0.08em;
   color: var(--gold-light);
 }
 
-.queue-details {
-  font-size: 12px;
-  color: var(--text-muted);
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.queue-details strong { color: var(--text-main); }
-
 .cancel-btn {
-  margin-top: 8px;
-  padding: 6px 12px;
+  padding: 4px 8px;
   background: rgba(239, 68, 68, 0.15);
   border: 1px solid var(--danger);
   color: var(--danger);
-  border-radius: var(--radius-md);
+  border-radius: 6px;
   font-size: 11px;
   font-weight: 700;
   transition: var(--transition);
@@ -660,6 +656,7 @@ input:focus, select:focus {
   .status { display: none; }
   .hero { padding: 24px; }
   .admin-range-grid { grid-template-columns: 1fr; }
+  .queue-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -749,6 +746,12 @@ input:focus, select:focus {
         <div class="field full" id="timeSlotContainer">
           <label>Randevu Saati (40 Dakika Periyotlar) <em id="slotStatusNote">Lütfen önce tarih seçin</em></label>
           <div class="time-slots" id="timeSlotsGrid"></div>
+          
+          <!-- Randevu Saati İptal Uyarısı -->
+          <div class="slot-warning-note">
+            <span>⚠️ <b>Önemli Bilgilendirme:</b> Lütfen randevu saatinizde tesisimizde olunuz. Randevu saatinde gelinmediği takdirde randevunuz otomatik olarak iptal edilecektir.</span>
+          </div>
+
           <input type="hidden" id="selectedTime" value="">
         </div>
       </div>
@@ -787,7 +790,7 @@ input:focus, select:focus {
     <div class="card-head">
       <div>
         <h3>Sırada Bekleyen Araçlar</h3>
-        <p>Seçilen tarihe ait onaylı randevu listesi ve dolu zaman dilimleri.</p>
+        <p>Seçilen tarihe ait dolu zaman dilimleri ve araç plakaları.</p>
       </div>
       <div class="badge" id="queueCountBadge">0 ARAÇ SIRADA</div>
     </div>
@@ -921,6 +924,27 @@ function generate40MinSlots() {
 
 const TIME_SLOTS = generate40MinSlots();
 
+/* Müşteri Cihaz İptal Yetkisi Yönetimi */
+function getMyBookedIDs() {
+  try {
+    return JSON.parse(localStorage.getItem("bymorfi_my_appointments") || "[]");
+  } catch (e) { return []; }
+}
+
+function addMyBookedID(id) {
+  const ids = getMyBookedIDs();
+  if (!ids.includes(id)) {
+    ids.push(id);
+    localStorage.setItem("bymorfi_my_appointments", JSON.stringify(ids));
+  }
+}
+
+function removeMyBookedID(id) {
+  let ids = getMyBookedIDs();
+  ids = ids.filter(x => x !== id);
+  localStorage.setItem("bymorfi_my_appointments", JSON.stringify(ids));
+}
+
 function getStoredAppointments() {
   try {
     return JSON.parse(localStorage.getItem("bymorfi_appointments") || "[]");
@@ -931,6 +955,9 @@ function saveAppointment(appt) {
   const list = getStoredAppointments();
   list.push(appt);
   localStorage.setItem("bymorfi_appointments", JSON.stringify(list));
+  
+  // Bu cihazda oluşturulduğunu kaydet
+  addMyBookedID(appt.id);
 
   if (window.firebaseDb && window.dbRef && window.dbSet) {
     window.dbSet(window.dbRef(window.firebaseDb, 'appointments/' + appt.id), appt);
@@ -941,6 +968,7 @@ function removeAppointment(id) {
   let list = getStoredAppointments();
   list = list.filter(a => a.id !== id);
   localStorage.setItem("bymorfi_appointments", JSON.stringify(list));
+  removeMyBookedID(id);
 
   if (window.firebaseDb && window.dbRef && window.dbRemove) {
     window.dbRemove(window.dbRef(window.firebaseDb, 'appointments/' + id));
@@ -1144,6 +1172,7 @@ function renderQueue() {
   const queueGrid = $("queueGrid");
   const selectedDate = $("date").value;
   const allAppts = getStoredAppointments();
+  const myBookedIDs = getMyBookedIDs();
   
   const filtered = selectedDate ? allAppts.filter(a => a.date === selectedDate) : allAppts;
   filtered.sort((a,b) => a.time.localeCompare(b.time));
@@ -1155,20 +1184,16 @@ function renderQueue() {
     return;
   }
 
-  queueGrid.innerHTML = filtered.map(a => `
-    <div class="queue-item">
-      <div class="queue-header">
+  queueGrid.innerHTML = filtered.map(a => {
+    const canCancel = isAdminLoggedIn || myBookedIDs.includes(a.id);
+    return `
+      <div class="queue-item">
+        <span class="queue-time">${escapeHTML(a.time)}</span>
         <span class="queue-plate">${escapeHTML(a.plate)}</span>
-        <span class="queue-time">⏰ ${escapeHTML(a.time)}</span>
+        ${canCancel ? `<button class="cancel-btn" onclick="cancelAppt('${escapeHTML(a.id)}')">İptal Et ✕</button>` : ''}
       </div>
-      <div class="queue-details">
-        <div><strong>Müşteri:</strong> ${escapeHTML(a.name)}</div>
-        <div><strong>Araç / Paket:</strong> ${escapeHTML(a.vehicle)} (${escapeHTML(a.wash)})</div>
-        <div><strong>Tarih:</strong> ${escapeHTML(a.date)}</div>
-      </div>
-      ${isAdminLoggedIn ? `<button class="cancel-btn" onclick="cancelAppt('${escapeHTML(a.id)}')">❌ Randevuyu İptal Et</button>` : ''}
-    </div>
-  `).join("");
+    `;
+  }).join("");
 }
 window.renderQueue = renderQueue;
 
