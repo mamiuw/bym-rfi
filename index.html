@@ -528,7 +528,7 @@ input:focus, select:focus {
   border-radius: var(--radius-md);
 }
 
-/* Modal Popup & Blur Overlay Fix */
+/* Modal Popup & Blur Overlay */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -555,8 +555,8 @@ input:focus, select:focus {
 }
 
 .modal-card {
-  width: 90%;
-  max-width: 420px;
+  width: 92%;
+  max-width: 480px;
   background: var(--panel-bg);
   border: 1px solid var(--gold-primary);
   border-radius: var(--radius-lg);
@@ -581,11 +581,18 @@ input:focus, select:focus {
 
 .modal-close:hover { color: var(--danger); }
 
+.admin-range-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 16px 0;
+}
+
 .admin-controls {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 16px;
+  gap: 10px;
+  margin-top: 14px;
 }
 
 .admin-btn {
@@ -652,6 +659,7 @@ input:focus, select:focus {
   .service-grid { grid-template-columns: 1fr; }
   .status { display: none; }
   .hero { padding: 24px; }
+  .admin-range-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -805,15 +813,28 @@ input:focus, select:focus {
     </div>
 
     <div id="adminControlsBox" style="display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
         <h3 style="font-size: 16px; color: var(--gold-light);">Yönetim Paneli</h3>
-        <span class="badge" style="border-color: var(--success); color: var(--success);">AKTİF</span>
+        <span class="badge" style="border-color: var(--success); color: var(--success);">ONLINE</span>
       </div>
       <p style="font-size: 12px; color: var(--text-muted);">
-        Seçili Tarih: <b style="color:var(--text-main);" id="adminSelectedDateText">--</b>
+        Kapatılacak veya açılacak tarih aralığını belirleyin.
       </p>
+
+      <div class="admin-range-grid">
+        <div class="field">
+          <label>Başlangıç Tarihi</label>
+          <input type="date" id="adminStartDate">
+        </div>
+        <div class="field">
+          <label>Bitiş Tarihi</label>
+          <input type="date" id="adminEndDate">
+        </div>
+      </div>
+
       <div class="admin-controls">
-        <button class="admin-btn" id="toggleDayLockBtn">🚫 Seçili Güne Randevuları Kapat</button>
+        <button class="admin-btn" id="lockRangeBtn">🚫 Seçili Aralığı Randevulara KAPAT</button>
+        <button class="admin-btn unlock" id="unlockRangeBtn">🔓 Seçili Aralığın Kilidini AÇ</button>
         <button class="secondary" id="adminLogoutBtn">Çıkış Yap</button>
       </div>
     </div>
@@ -882,14 +903,26 @@ function getClosedDays() {
   } catch (e) { return []; }
 }
 
-function toggleDayLock(date) {
+function setClosedDaysRange(startStr, endStr, lock = true) {
   let days = getClosedDays();
-  if (days.includes(date)) {
-    days = days.filter(d => d !== date);
-  } else {
-    days.push(date);
+  const start = new Date(startStr);
+  const end = new Date(endStr);
+  
+  if (start > end) return false;
+
+  let curr = new Date(start);
+  while (curr <= end) {
+    const isoDate = curr.toISOString().split('T')[0];
+    if (lock) {
+      if (!days.includes(isoDate)) days.push(isoDate);
+    } else {
+      days = days.filter(d => d !== isoDate);
+    }
+    curr.setDate(curr.getDate() + 1);
   }
+
   localStorage.setItem("bymorfi_closed_days", JSON.stringify(days));
+  return true;
 }
 
 let isAdminLoggedIn = false;
@@ -1123,14 +1156,6 @@ function update(){
   const extras=[];
   if($("extraSponge").checked) extras.push("Süngerli");
   $("sumExtras").textContent=extras.join(", ")||"Yok";
-
-  if($("date").value) {
-    $("adminSelectedDateText").textContent = $("date").value;
-    const isClosed = getClosedDays().includes($("date").value);
-    const btn = $("toggleDayLockBtn");
-    btn.textContent = isClosed ? "🔓 Seçili Günün Kilidini Aç" : "🚫 Seçili Güne Randevuları Kapat";
-    btn.className = isClosed ? "admin-btn unlock" : "admin-btn";
-  }
 }
 
 function validate(){
@@ -1221,7 +1246,6 @@ function resetForm(){
   toast("Form temizlendi","Yeni bir randevu seçebilirsiniz.");
 }
 
-/* Explicit Modal Handler */
 function openAdminModal() {
   const modal = $("adminModal");
   if (modal) modal.classList.add("active");
@@ -1245,6 +1269,11 @@ $("adminLoginBtn").onclick = () => {
     $("adminLoginBox").style.display = "none";
     $("adminControlsBox").style.display = "block";
     $("adminPassInput").value = "";
+    
+    const currDate = $("date").value || new Date().toISOString().split('T')[0];
+    $("adminStartDate").value = currDate;
+    $("adminEndDate").value = currDate;
+
     renderQueue();
     toast("Başarılı Giriş", "Yönetici paneli açıldı.");
   } else {
@@ -1261,16 +1290,38 @@ $("adminLogoutBtn").onclick = () => {
   toast("Çıkış Yapıldı", "Yönetici oturumu kapatıldı.");
 };
 
-$("toggleDayLockBtn").onclick = () => {
-  const selectedDate = $("date").value;
-  if (!selectedDate) {
-    toast("Tarih Seçilmedi", "Lütfen önce bir tarih seçin.");
+$("lockRangeBtn").onclick = () => {
+  const start = $("adminStartDate").value;
+  const end = $("adminEndDate").value;
+
+  if (!start || !end) {
+    toast("Eksik Tarih", "Lütfen hem başlangıç hem bitiş tarihini seçin.");
     return;
   }
-  toggleDayLock(selectedDate);
-  renderTimeSlots();
-  update();
-  toast("Güncellendi", "Seçili günün durumu değiştirildi.");
+
+  if (setClosedDaysRange(start, end, true)) {
+    renderTimeSlots();
+    toast("Tarihler Kapatıldı", `${start} - ${end} arası randevulara kapatıldı.`);
+  } else {
+    toast("Tarih Hatası", "Başlangıç tarihi bitiş tarihinden büyük olamaz.");
+  }
+};
+
+$("unlockRangeBtn").onclick = () => {
+  const start = $("adminStartDate").value;
+  const end = $("adminEndDate").value;
+
+  if (!start || !end) {
+    toast("Eksik Tarih", "Lütfen hem başlangıç hem bitiş tarihini seçin.");
+    return;
+  }
+
+  if (setClosedDaysRange(start, end, false)) {
+    renderTimeSlots();
+    toast("Kilitleme Kaldırıldı", `${start} - ${end} arası randevulara açıldı.`);
+  } else {
+    toast("Tarih Hatası", "Başlangıç tarihi bitiş tarihinden büyük olamaz.");
+  }
 };
 
 ["name","phone","plate"].forEach(id=>$(id).oninput = update);
