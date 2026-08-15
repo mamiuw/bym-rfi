@@ -364,68 +364,6 @@ input:focus, select:focus {
 .toast.show { transform: translateY(0); }
 .toast b { display: block; color: var(--gold-light); margin-bottom: 2px; }
 
-/* Modal System */
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(6px);
-  display: none;
-  place-items: center;
-  padding: 16px;
-  z-index: 1000;
-}
-
-.modal-backdrop.show { display: grid; }
-.modal {
-  width: min(440px, 100%);
-  background: #0f131a;
-  border: 1px solid var(--panel-border);
-  border-radius: var(--radius-lg);
-  padding: 24px;
-  box-shadow: var(--shadow-lg);
-}
-
-.modal h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
-.modal p { color: var(--text-muted); font-size: 13px; line-height: 1.5; margin-bottom: 16px; }
-
-/* SMS OTP Inputs */
-.otp-container {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.otp-input {
-  letter-spacing: 0.4em;
-  font-size: 20px;
-  font-weight: 700;
-  text-align: center;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid var(--gold-primary);
-  color: var(--gold-light);
-}
-
-.resend-btn {
-  font-size: 11px;
-  color: var(--gold-primary);
-  text-decoration: underline;
-  text-align: right;
-  cursor: pointer;
-}
-
-.resend-btn:disabled {
-  color: var(--text-muted);
-  text-decoration: none;
-  cursor: not-allowed;
-}
-
-.modal-actions { display: flex; gap: 10px; }
-.modal-actions button { flex: 1; height: 44px; border-radius: var(--radius-md); font-size: 13px; font-weight: 700; }
-.modal-actions #cancelBtn { border: 1px solid var(--panel-border); color: var(--text-muted); }
-.modal-actions .confirm { background: linear-gradient(135deg, var(--gold-light), var(--gold-primary)); color: #080a0e; }
-
 /* Media Queries */
 @media (max-width: 850px) {
   .layout { grid-template-columns: 1fr; }
@@ -482,7 +420,7 @@ input:focus, select:focus {
         </div>
 
         <div class="field">
-          <label>Telefon <em>zorunlu (SMS için)</em></label>
+          <label>Telefon <em>zorunlu</em></label>
           <input id="phone" type="tel" placeholder="05XX XXX XX XX" autocomplete="tel">
         </div>
 
@@ -553,35 +491,18 @@ input:focus, select:focus {
         <div class="line"><span>Ek hizmetler</span><strong id="sumExtras">Yok</strong></div>
       </div>
 
-      <button class="cta" id="bookBtn">SMS ile Doğrula ve Gönder →</button>
+      <button class="cta" id="bookBtn">Randevuyu Gönder →</button>
       <button class="secondary" id="resetBtn">Formu temizle</button>
-      <div class="note">BY MORFİ OTO YIKAMA randevunuz gönderilmeden önce bilgilerinizi son kez kontrol edin. WhatsApp mesajı doğrulama sonrası açılır.</div>
+      <div class="note">BY MORFİ OTO YIKAMA randevunuz gönderilmeden önce bilgilerinizi son kez kontrol edin. WhatsApp mesajı doğrudan açılır.</div>
     </aside>
   </main>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<!-- SMS Verification Modal -->
-<div class="modal-backdrop" id="modal">
-  <div class="modal">
-    <h3>SMS Onay Kodu</h3>
-    <p id="modalText"></p>
-
-    <div class="otp-container">
-      <input type="text" id="otpCode" class="otp-input" placeholder="••••••" maxlength="6" autocomplete="one-time-code">
-      <button type="button" id="resendBtn" class="resend-btn" disabled>Tekrar Kod Gönder (60s)</button>
-    </div>
-
-    <div class="modal-actions">
-      <button id="cancelBtn">Vazgeç</button>
-      <button class="confirm" id="confirmBtn">Doğrula ve Gönder</button>
-    </div>
-  </div>
-</div>
-
 <script>
-const WHATSAPP_PHONE = "905XXXXXXXXX";
+// KENDİ WHATSAPP TELEFON NUMARANI BURAYA YAZ (Başında 90 olacak şekilde)
+const WHATSAPP_PHONE = "905385475603X";
 
 const VEHICLES = [
   {name:"Sedan / Hatchback", price:600, icon:"◈"},
@@ -592,9 +513,6 @@ const VEHICLES = [
   {name:"Lastik Otel", price:750, fixed:true, icon:"◉"},
   {name:"Lastik Tamiri", price:350, fixed:true, icon:"◎"}
 ];
-
-let generatedOTP = null;
-let timerInterval = null;
 
 const $ = id => document.getElementById(id);
 const vehicleCards = $("vehicleCards");
@@ -689,55 +607,14 @@ function validate(){
     toast("Plaka kontrolü","Örnek format: 06 MAM 34");
   }else if($("plate").value)$("plate").classList.add("valid");
 
-  if($("time").value && ($("time").value<"08:00"||$("time").value>"22:00")){
+  if($("time").value && ($("time").value<"08:00"||$("time").value>"20:00")){
     $("time").classList.add("invalid");ok=false;toast("Saat uygun değil","Randevu saatleri 08:00–22:00 arasındadır.");
   }
   return ok;
 }
 
-function sendSMSAPI(phoneNumber, code) {
-  console.log(`[SMS KODU GÖNDERİLDİ] Tel: ${phoneNumber} | Kod: ${code}`);
-  toast("SMS Gönderildi (Demo)", `Telefonunuza doğrulama kodu yollandı: ${code}`);
-}
-
-function startTimer() {
-  let seconds = 60;
-  const resendBtn = $("resendBtn");
-  resendBtn.disabled = true;
-  clearInterval(timerInterval);
-
-  timerInterval = setInterval(() => {
-    seconds--;
-    resendBtn.textContent = `Tekrar Kod Gönder (${seconds}s)`;
-    if (seconds <= 0) {
-      clearInterval(timerInterval);
-      resendBtn.disabled = false;
-      resendBtn.textContent = "Tekrar Kod Gönder";
-    }
-  }, 1000);
-}
-
-function triggerSMS() {
-  generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-  sendSMSAPI($("phone").value.trim(), generatedOTP);
-  startTimer();
-}
-
-function openConfirm(){
-  if(!validate())return;
-  $("otpCode").value = "";
-  $("modalText").textContent = `${$("phone").value.trim()} numaralı telefonunuza gönderilen 6 haneli doğrulama kodunu girin.`;
-  triggerSMS();
-  $("modal").classList.add("show");
-}
-
 function sendWhatsApp(){
-  const userOTP = $("otpCode").value.trim();
-  if (userOTP !== generatedOTP) {
-    toast("Hatalı Kod", "Girdiğiniz SMS doğrulama kodu geçersiz.");
-    $("otpCode").classList.add("invalid");
-    return;
-  }
+  if(!validate()) return;
 
   const v=selectedVehicle();
   const extras=[];
@@ -745,7 +622,6 @@ function sendWhatsApp(){
   const wash=v.fixed?"Sabit fiyatlı hizmet":$("washType").selectedOptions[0].text.split("—")[0].trim();
   const msg=[
     "Merhaba, BY MORFİ üzerinden randevu oluşturmak istiyorum.",
-    "✅ (SMS İle Doğrulandı)",
     "",
     `👤 Müşteri: ${$("name").value.trim()}`,
     `📱 Telefon: ${$("phone").value.trim()}`,
@@ -759,7 +635,6 @@ function sendWhatsApp(){
   ].filter(Boolean).join("\n");
   const url=`https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(msg)}`;
   window.open(url,"_blank","noopener,noreferrer");
-  $("modal").classList.remove("show");
 }
 
 function resetForm(){
@@ -776,11 +651,7 @@ function resetForm(){
 
 ["name","phone","plate","date","time"].forEach(id=>$(id).addEventListener("input",update));
 ["washType","extraSponge"].forEach(id=>$(id).addEventListener("change",update));
-$("bookBtn").addEventListener("click",openConfirm);
-$("confirmBtn").addEventListener("click",sendWhatsApp);
-$("resendBtn").addEventListener("click",triggerSMS);
-$("cancelBtn").addEventListener("click",()=>{$("modal").classList.remove("show"); clearInterval(timerInterval);});
-$("modal").addEventListener("click",e=>{if(e.target===$("modal")) {$("modal").classList.remove("show"); clearInterval(timerInterval);}});
+$("bookBtn").addEventListener("click",sendWhatsApp);
 $("resetBtn").addEventListener("click",resetForm);
 
 const today=new Date();
