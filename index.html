@@ -23,6 +23,7 @@
   --radius-md: 12px;
   --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --cursor-glow-color: rgba(215, 180, 106, 0.18);
 }
 
 /* Light Theme Variables */
@@ -38,6 +39,7 @@ body.light-theme {
   --input-bg: rgba(255, 255, 255, 0.8);
   --input-border: rgba(0, 0, 0, 0.15);
   --shadow-lg: 0 20px 40px -10px rgba(0, 0, 0, 0.08);
+  --cursor-glow-color: rgba(180, 136, 53, 0.15);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -52,6 +54,25 @@ body {
   line-height: 1.5;
   padding: 24px 16px;
   transition: background 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Dynamic Cursor Glow Background Effect */
+.bg-cursor-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 450px;
+  height: 450px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--cursor-glow-color) 0%, transparent 70%);
+  filter: blur(50px);
+  pointer-events: none;
+  z-index: 0;
+  transform: translate(-50%, -50%);
+  transition: transform 0.08s ease-out, background 0.3s ease;
+  will-change: transform;
 }
 
 button, input, select { font: inherit; color: inherit; }
@@ -60,6 +81,8 @@ button { cursor: pointer; border: none; background: none; }
 .app {
   max-width: 1140px;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
 }
 
 /* Navbar Header */
@@ -476,6 +499,9 @@ input:focus, select:focus {
 </head>
 <body>
 
+<!-- Dynamic Background Glow Element -->
+<div class="bg-cursor-glow" id="cursorGlow"></div>
+
 <div class="app">
   <nav class="nav">
     <div class="brand">
@@ -600,7 +626,7 @@ input:focus, select:focus {
 <div class="toast" id="toast"></div>
 
 <script>
-// KENDİ WHATSAPP TELEFON NUMARANI BURAYA YAZ (Başında 90 olacak şekilde)
+// KENDİ WHATSAPP TELEFON NUMARANI BURAYA YAZ
 const WHATSAPP_PHONE = "05385475603";
 
 const VEHICLES = [
@@ -615,6 +641,12 @@ const VEHICLES = [
 
 const $ = id => document.getElementById(id);
 const vehicleCards = $("vehicleCards");
+
+/* Mouse Tracker Background Glow Animation */
+const cursorGlow = $("cursorGlow");
+window.addEventListener("mousemove", (e) => {
+  cursorGlow.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+});
 
 /* Tema Kontrolü */
 function initTheme(){
