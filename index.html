@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BY MORFİ OTO YIKAMA — Premium Randevu Sistemi</title>
-<meta name="description" content="BY MORFİ OTO YIKAMA premium randevu sistemi">
+<title>BY MORFİ OTO YIKAMA — Premium Randevu & Canlı Takip</title>
+<meta name="description" content="BY MORFİ OTO YIKAMA premium randevu ve canlı araç takip sistemi">
 <style>
 :root {
   --bg-gradient: radial-gradient(circle at 50% 0%, #151a24 0%, #080a0e 100%);
@@ -25,7 +25,6 @@
   --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Light Theme Variables */
 body.light-theme {
   --bg-gradient: radial-gradient(circle at 50% 0%, #f1f5f9 0%, #e2e8f0 100%);
   --panel-bg: rgba(255, 255, 255, 0.85);
@@ -56,7 +55,6 @@ body {
   position: relative;
 }
 
-/* Background Animated Particle Canvas */
 #particleCanvas {
   position: fixed;
   top: 0;
@@ -77,7 +75,6 @@ button { cursor: pointer; border: none; background: none; }
   z-index: 1;
 }
 
-/* Navbar Header */
 .nav {
   display: flex;
   justify-content: space-between;
@@ -151,7 +148,6 @@ button { cursor: pointer; border: none; background: none; }
   box-shadow: 0 0 10px var(--success);
 }
 
-/* Hero Header */
 .hero {
   position: relative;
   overflow: hidden;
@@ -186,22 +182,11 @@ button { cursor: pointer; border: none; background: none; }
   margin-top: 10px;
 }
 
-.stats {
-  display: flex;
-  gap: 32px;
-  margin-top: 24px;
-  padding-top: 20px;
-  border-top: 1px solid var(--panel-border);
-}
-
-.stat b { font-size: 18px; color: var(--gold-light); display: block; }
-.stat small { color: var(--text-muted); font-size: 12px; }
-
-/* Grid Layout */
 .layout {
   display: grid;
   grid-template-columns: 1fr 340px;
   gap: 24px;
+  margin-bottom: 24px;
 }
 
 .card {
@@ -236,7 +221,6 @@ button { cursor: pointer; border: none; background: none; }
   letter-spacing: 0.05em;
 }
 
-/* Form Controls */
 .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
 .field { display: flex; flex-direction: column; }
 .field.full { grid-column: 1 / -1; }
@@ -285,30 +269,6 @@ input:focus, select:focus {
   pointer-events: none;
 }
 
-/* Hover & Glow Interactive Animation */
-.glow-effect {
-  position: relative;
-  overflow: hidden;
-}
-
-.glow-effect::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(215, 180, 106, 0.2) 0%, transparent 70%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-}
-
-.glow-effect:hover::before {
-  opacity: 1;
-}
-
-/* Vehicle Selection Cards */
 .service-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -323,8 +283,6 @@ input:focus, select:focus {
   background: var(--input-bg);
   border-radius: var(--radius-md);
   transition: var(--transition);
-  position: relative;
-  overflow: hidden;
 }
 
 .service:hover {
@@ -342,7 +300,47 @@ input:focus, select:focus {
 .service strong { display: block; font-size: 12px; font-weight: 600; }
 .service span { display: block; color: var(--text-muted); font-size: 11px; margin-top: 2px; }
 
-/* Extras Checkbox */
+/* 40-Min Time Slots Selector */
+.time-slots {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.slot-btn {
+  padding: 10px 4px;
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  transition: var(--transition);
+}
+
+.slot-btn:hover:not(:disabled) {
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 10px var(--gold-glow);
+}
+
+.slot-btn.selected {
+  border-color: var(--gold-primary);
+  background: var(--gold-primary);
+  color: #080a0e;
+  font-weight: 800;
+  box-shadow: 0 0 12px var(--gold-glow);
+}
+
+.slot-btn:disabled {
+  opacity: 0.4;
+  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.08);
+  color: var(--danger);
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
 .extras { margin-top: 4px; }
 .extra {
   display: flex;
@@ -370,7 +368,6 @@ input:focus, select:focus {
 .extra label { margin: 0; cursor: pointer; flex: 1; flex-direction: column; align-items: flex-start; }
 .extra label span { color: var(--text-muted); font-weight: 400; font-size: 11px; }
 
-/* Price Row */
 .price-row {
   display: flex;
   align-items: center;
@@ -384,7 +381,6 @@ input:focus, select:focus {
 .total { font-size: 32px; font-weight: 800; color: var(--gold-light); }
 .total small { font-size: 14px; font-weight: 600; }
 
-/* Summary Sidebar */
 .summary { position: sticky; top: 24px; height: fit-content; }
 .summary-top {
   padding: 20px;
@@ -403,7 +399,6 @@ input:focus, select:focus {
 .line span { color: var(--text-muted); }
 .line strong { color: var(--text-main); font-weight: 600; }
 
-/* Buttons with Glow & Hover Shimmer */
 .cta {
   position: relative;
   width: 100%;
@@ -418,24 +413,7 @@ input:focus, select:focus {
   overflow: hidden;
 }
 
-.cta::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(60deg, transparent, rgba(255,255,255,0.4), transparent);
-  transform: rotate(30deg) translateX(-100%);
-  transition: transform 0.6s ease;
-}
-
-.cta:hover::after {
-  transform: rotate(30deg) translateX(100%);
-}
-
 .cta:hover { transform: translateY(-2px); box-shadow: 0 12px 25px var(--gold-glow); filter: brightness(1.08); }
-.cta:active { transform: translateY(0); }
 
 .secondary {
   width: 100%;
@@ -449,11 +427,84 @@ input:focus, select:focus {
   transition: var(--transition);
 }
 
-.secondary:hover { background: rgba(215, 180, 106, 0.1); border-color: var(--gold-primary); color: var(--text-main); box-shadow: 0 0 12px var(--gold-glow); }
+.secondary:hover { background: rgba(215, 180, 106, 0.1); border-color: var(--gold-primary); color: var(--text-main); }
 
 .note { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 14px; line-height: 1.4; }
 
-/* Dynamic Validation & UI Feedback */
+/* Waiting List Section */
+.queue-section {
+  margin-top: 32px;
+}
+
+.queue-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.queue-item {
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: var(--transition);
+}
+
+.queue-item:hover {
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 15px var(--gold-glow);
+}
+
+.queue-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--panel-border);
+  padding-bottom: 8px;
+}
+
+.queue-time {
+  background: var(--gold-primary);
+  color: #080a0e;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.queue-plate {
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  color: var(--gold-light);
+}
+
+.queue-details {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.queue-details strong {
+  color: var(--text-main);
+}
+
+.empty-queue {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 32px;
+  color: var(--text-muted);
+  font-size: 13px;
+  border: 1px dashed var(--panel-border);
+  border-radius: var(--radius-md);
+}
+
 .invalid { border-color: var(--danger) !important; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important; }
 .valid { border-color: var(--success) !important; }
 
@@ -475,7 +526,6 @@ input:focus, select:focus {
 .toast.show { transform: translateY(0); }
 .toast b { display: block; color: var(--gold-light); margin-bottom: 2px; }
 
-/* Media Queries */
 @media (max-width: 850px) {
   .layout { grid-template-columns: 1fr; }
   .summary { position: static; }
@@ -491,7 +541,6 @@ input:focus, select:focus {
 </head>
 <body>
 
-<!-- Dynamic Particle Canvas -->
 <canvas id="particleCanvas"></canvas>
 
 <div class="app">
@@ -512,12 +561,7 @@ input:focus, select:focus {
   <section class="hero">
     <div class="eyebrow">BY MORFİ OTO YIKAMA</div>
     <h2>Aracınız için premium bakım deneyimini şimdi rezerve edin.</h2>
-    <p>İç-dış temizlikten lastik hizmetlerine kadar tüm işlemlerinizi tek ekrandan seçin. Fiyat anlık hesaplanır, bilgileriniz kontrol edilir ve randevu WhatsApp üzerinden hazır şekilde gönderilir.</p>
-    <div class="stats">
-      <div class="stat"><b>7/24</b><small>Online randevu</small></div>
-      <div class="stat"><b>01–81</b><small>TR plaka doğrulama</small></div>
-      <div class="stat"><b>⚡</b><small>Anlık fiyat</small></div>
-    </div>
+    <p>Yıkama randevuları 40 dakikalık periyotlarla oluşturulur. Seçtiğiniz saatte aracınız hemen işleme alınır ve bekleme süreniz minimuma indirilir.</p>
   </section>
 
   <main class="layout">
@@ -525,9 +569,9 @@ input:focus, select:focus {
       <div class="card-head">
         <div>
           <h3>Randevu detayları</h3>
-          <p>Bilgileri doldurun, sistem toplamı otomatik hesaplasın.</p>
+          <p>Tarih seçin, müsait 40 dakikalık slotlardan saatinizi belirleyin.</p>
         </div>
-        <div class="badge">GÜVENLİ RANDEVU</div>
+        <div class="badge">CANLI TAKVİM</div>
       </div>
 
       <div class="grid">
@@ -566,21 +610,22 @@ input:focus, select:focus {
         <div class="field">
           <label>Ek hizmetler</label>
           <div class="extras">
-            <div class="extra glow-effect">
+            <div class="extra">
               <input type="checkbox" id="extraSponge">
               <label for="extraSponge">Süngerli yıkama <span>Premium köpük +150 TL</span></label>
             </div>
           </div>
         </div>
 
-        <div class="field">
-          <label>Tarih</label>
+        <div class="field full">
+          <label>Randevu Tarihi <em>zorunlu</em></label>
           <input id="date" type="date">
         </div>
 
-        <div class="field">
-          <label>Saat</label>
-          <input id="time" type="time" min="08:00" max="22:00" step="900">
+        <div class="field full" id="timeSlotContainer">
+          <label>Randevu Saati (40 Dakika Periyotlar) <em id="slotStatusNote">Lütfen önce tarih seçin</em></label>
+          <div class="time-slots" id="timeSlotsGrid"></div>
+          <input type="hidden" id="selectedTime" value="">
         </div>
       </div>
 
@@ -609,10 +654,24 @@ input:focus, select:focus {
       </div>
 
       <button class="cta" id="bookBtn">Randevuyu Gönder →</button>
-      <button class="secondary glow-effect" id="resetBtn">Formu temizle</button>
-      <div class="note">BY MORFİ OTO YIKAMA randevunuz gönderilmeden önce bilgilerinizi son kez kontrol edin. WhatsApp mesajı doğrudan açılır.</div>
+      <button class="secondary" id="resetBtn">Formu temizle</button>
+      <div class="note">BY MORFİ OTO YIKAMA randevunuz gönderildiğinde saatiniz otomatik rezerve edilir.</div>
     </aside>
   </main>
+
+  <!-- Live Waiting List / Queue Section -->
+  <section class="card queue-section">
+    <div class="card-head">
+      <div>
+        <h3>Sırada Bekleyen Araçlar</h3>
+        <p>Seçilen tarihe ait onaylı randevu listesi ve dolu zaman dilimleri.</p>
+      </div>
+      <div class="badge" id="queueCountBadge">0 ARAÇ SIRADA</div>
+    </div>
+    <div class="queue-grid" id="queueGrid">
+      <div class="empty-queue">Bu tarih için henüz bir randevu oluşturulmadı.</div>
+    </div>
+  </section>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -630,15 +689,40 @@ const VEHICLES = [
   {name:"Lastik Tamiri", price:350, fixed:true, icon:"◎"}
 ];
 
+// Generate 40-minute interval time slots between 08:00 and 20:00
+function generate40MinSlots() {
+  const slots = [];
+  let currentMinutes = 8 * 60; // 08:00
+  const endMinutes = 20 * 60;  // 20:00
+
+  while (currentMinutes <= endMinutes) {
+    const h = Math.floor(currentMinutes / 60).toString().padStart(2, '0');
+    const m = (currentMinutes % 60).toString().padStart(2, '0');
+    slots.push(`${h}:${m}`);
+    currentMinutes += 40;
+  }
+  return slots;
+}
+
+const TIME_SLOTS = generate40MinSlots();
+
+// Local Storage for Appointments
+function getStoredAppointments() {
+  return JSON.parse(localStorage.getItem("bymorfi_appointments") || "[]");
+}
+
+function saveAppointment(appt) {
+  const list = getStoredAppointments();
+  list.push(appt);
+  localStorage.setItem("bymorfi_appointments", JSON.stringify(list));
+}
+
 const $ = id => document.getElementById(id);
 const vehicleCards = $("vehicleCards");
 
-/* -------------------------------------------------------------
- * Dynamic Particles Background System (Canvas)
- * ------------------------------------------------------------- */
+/* Particle Background */
 const canvas = $("particleCanvas");
 const ctx = canvas.getContext("2d");
-
 let particles = [];
 let mouse = { x: null, y: null, radius: 150 };
 
@@ -649,21 +733,11 @@ function resizeCanvas() {
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
-window.addEventListener("mousemove", (e) => {
-  mouse.x = e.clientX;
-  mouse.y = e.clientY;
-});
-
-window.addEventListener("mouseleave", () => {
-  mouse.x = null;
-  mouse.y = null;
-});
+window.addEventListener("mousemove", (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+window.addEventListener("mouseleave", () => { mouse.x = null; mouse.y = null; });
 
 class Particle {
-  constructor() {
-    this.reset();
-  }
-
+  constructor() { this.reset(); }
   reset() {
     this.x = Math.random() * canvas.width;
     this.y = Math.random() * canvas.height;
@@ -672,80 +746,51 @@ class Particle {
     this.speedY = (Math.random() - 0.5) * 0.4;
     this.opacity = Math.random() * 0.5 + 0.2;
   }
-
   update() {
-    this.x += this.speedX;
-    this.y += this.speedY;
-
-    // Boundary wrap
+    this.x += this.speedX; this.y += this.speedY;
     if (this.x < 0) this.x = canvas.width;
     if (this.x > canvas.width) this.x = 0;
     if (this.y < 0) this.y = canvas.height;
     if (this.y > canvas.height) this.y = 0;
 
-    // Mouse Interaction
     if (mouse.x !== null && mouse.y !== null) {
-      let dx = mouse.x - this.x;
-      let dy = mouse.y - this.y;
-      let distance = Math.sqrt(dx * dx + dy * dy);
-      if (distance < mouse.radius) {
-        let force = (mouse.radius - distance) / mouse.radius;
-        let directionX = dx / distance;
-        let directionY = dy / distance;
-        this.x -= directionX * force * 1.5;
-        this.y -= directionY * force * 1.5;
+      let dx = mouse.x - this.x, dy = mouse.y - this.y;
+      let dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < mouse.radius) {
+        let force = (mouse.radius - dist) / mouse.radius;
+        this.x -= (dx / dist) * force * 1.5;
+        this.y -= (dy / dist) * force * 1.5;
       }
     }
   }
-
   draw() {
     const isLight = document.body.classList.contains("light-theme");
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fillStyle = isLight 
-      ? `rgba(180, 136, 53, ${this.opacity})` 
-      : `rgba(215, 180, 106, ${this.opacity})`;
-    ctx.shadowBlur = 8;
-    ctx.shadowColor = isLight ? "#b48835" : "#d7b46a";
+    ctx.fillStyle = isLight ? `rgba(180, 136, 53, ${this.opacity})` : `rgba(215, 180, 106, ${this.opacity})`;
     ctx.fill();
-    ctx.shadowBlur = 0;
   }
 }
 
 function initParticles() {
   particles = [];
-  const particleCount = Math.floor((window.innerWidth * window.innerHeight) / 12000);
-  for (let i = 0; i < particleCount; i++) {
-    particles.push(new Particle());
-  }
+  const count = Math.floor((window.innerWidth * window.innerHeight) / 12000);
+  for (let i = 0; i < count; i++) particles.push(new Particle());
 }
-
 function animateParticles() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  particles.forEach(p => {
-    p.update();
-    p.draw();
-  });
+  particles.forEach(p => { p.update(); p.draw(); });
   requestAnimationFrame(animateParticles);
 }
+initParticles(); animateParticles();
 
-initParticles();
-animateParticles();
-
-/* -------------------------------------------------------------
- * Theme & App Functionality
- * ------------------------------------------------------------- */
+/* Theme Management */
 function initTheme(){
-  const savedTheme = localStorage.getItem("theme");
-  if(savedTheme === "light"){
+  if(localStorage.getItem("theme") === "light"){
     document.body.classList.add("light-theme");
     $("themeBtn").innerHTML = "☀️ Açık Tema";
-  } else {
-    document.body.classList.remove("light-theme");
-    $("themeBtn").innerHTML = "🌙 Koyu Tema";
   }
 }
-
 $("themeBtn").addEventListener("click", () => {
   document.body.classList.toggle("light-theme");
   const isLight = document.body.classList.contains("light-theme");
@@ -754,18 +799,15 @@ $("themeBtn").addEventListener("click", () => {
 });
 
 function toast(title, text=""){
-  const el=$("toast");
-  el.innerHTML=`<b>${title}</b>${text}`;
-  el.classList.add("show");
-  clearTimeout(window.__toast);
-  window.__toast=setTimeout(()=>el.classList.remove("show"),3200);
+  const el=$("toast"); el.innerHTML=`<b>${title}</b>${text}`; el.classList.add("show");
+  clearTimeout(window.__toast); window.__toast=setTimeout(()=>el.classList.remove("show"),3200);
 }
 
 function buildVehicles(){
   vehicleCards.innerHTML="";
   VEHICLES.forEach((v,i)=>{
     const b=document.createElement("button");
-    b.type="button"; b.className="service glow-effect"+(i===0?" active":"");
+    b.type="button"; b.className="service"+(i===0?" active":"");
     b.dataset.name=v.name;
     b.innerHTML=`<strong>${v.icon} ${v.name}</strong><span>${v.fixed?"Sabit fiyat":"İç + dış"} · ${v.price} TL</span>`;
     b.onclick=()=>{
@@ -773,9 +815,8 @@ function buildVehicles(){
       b.classList.add("active");
       $("vehicleType").value=v.name;
       $("washTypeGroup").style.display=v.fixed?"none":"block";
-      if(v.fixed){
-        $("extraSponge").checked=false;
-      }
+      if(v.fixed) $("extraSponge").checked=false;
+      renderTimeSlots();
       update();
     };
     vehicleCards.appendChild(b);
@@ -784,16 +825,85 @@ function buildVehicles(){
 
 function selectedVehicle(){return VEHICLES.find(v=>v.name===$("vehicleType").value)||VEHICLES[0]}
 
+/* Render 40-Min Slots Based on Selected Date */
+function renderTimeSlots() {
+  const grid = $("timeSlotsGrid");
+  const selectedDate = $("date").value;
+  const isFixedVehicle = selectedVehicle().fixed;
+  grid.innerHTML = "";
+
+  if (!selectedDate) {
+    $("slotStatusNote").textContent = "Lütfen önce tarih seçin";
+    return;
+  }
+
+  // If fixed service (Lastik Otel / Tamir), 40 min slots don't strictly apply, but render standard choices
+  if (isFixedVehicle) {
+    $("slotStatusNote").textContent = "Lastik hizmetleri için uygun bir saat seçin";
+  } else {
+    $("slotStatusNote").textContent = "Yeşil: Müsait | Kırmızı: Dolu";
+  }
+
+  const appointments = getStoredAppointments().filter(a => a.date === selectedDate && !a.isFixed);
+  const bookedTimes = appointments.map(a => a.time);
+
+  TIME_SLOTS.forEach(time => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "slot-btn";
+    const isBooked = !isFixedVehicle && bookedTimes.includes(time);
+
+    if (isBooked) {
+      btn.disabled = true;
+      btn.innerHTML = `${time}<br><small>Dolu ⛔</small>`;
+    } else {
+      btn.textContent = time;
+      if ($("selectedTime").value === time) btn.classList.add("selected");
+      btn.onclick = () => {
+        document.querySelectorAll(".slot-btn").forEach(s => s.classList.remove("selected"));
+        btn.classList.add("selected");
+        $("selectedTime").value = time;
+        update();
+      };
+    }
+    grid.appendChild(btn);
+  });
+}
+
+/* Render Waiting Queue */
+function renderQueue() {
+  const queueGrid = $("queueGrid");
+  const selectedDate = $("date").value;
+  const allAppts = getStoredAppointments();
+  
+  const filtered = selectedDate ? allAppts.filter(a => a.date === selectedDate) : allAppts;
+  filtered.sort((a,b) => a.time.localeCompare(b.time));
+
+  $("queueCountBadge").textContent = `${filtered.length} ARAÇ SIRADA`;
+
+  if (filtered.length === 0) {
+    queueGrid.innerHTML = `<div class="empty-queue">${selectedDate ? 'Bu tarihte henüz sıra yok.' : 'Henüz randevu bulunmuyor.'}</div>`;
+    return;
+  }
+
+  queueGrid.innerHTML = filtered.map(a => `
+    <div class="queue-item">
+      <div class="queue-header">
+        <span class="queue-plate">${a.plate}</span>
+        <span class="queue-time">⏰ ${a.time}</span>
+      </div>
+      <div class="queue-details">
+        <div><strong>Müşteri:</strong> ${a.name}</div>
+        <div><strong>Araç / Paket:</strong> ${a.vehicle} (${a.wash})</div>
+        <div><strong>Tarih:</strong> ${a.date}</div>
+      </div>
+    </div>
+  `).join("");
+}
+
 function isTRPlateValid(plate){
   const clean=plate.replace(/\s+/g,"").toUpperCase();
-  const regex=/^(0[1-9]|[1-7][0-9]|8[0-1])([A-PR-VY-Z]{1,3})([0-9]{2,4})$/;
-  if(!regex.test(clean)) return false;
-  const m=clean.match(/^(\d{2})([A-Z]+)(\d+)$/); if(!m)return false;
-  const letters=m[2], numbers=m[3];
-  if(letters.length===1 && numbers.length!==4)return false;
-  if(letters.length===2 && (numbers.length<3||numbers.length>4))return false;
-  if(letters.length===3 && (numbers.length<2||numbers.length>3))return false;
-  return true;
+  return /^(0[1-9]|[1-7][0-9]|8[0-1])([A-PR-VY-Z]{1,3})([0-9]{2,4})$/.test(clean);
 }
 
 function isPhoneValid(phone){
@@ -801,51 +911,51 @@ function isPhoneValid(phone){
   return clean.length >= 10 && clean.length <= 11;
 }
 
-function money(n){return Math.round(n).toLocaleString("tr-TR")}
-
 function calculate(){
   const v=selectedVehicle();
   let total=v.price;
-  const wash=$("washType").value;
-  if(!v.fixed && wash!=="ic_dis") total=v.price/2;
+  if(!v.fixed && $("washType").value!=="ic_dis") total=v.price/2;
   if(!v.fixed && $("extraSponge").checked) total+=150;
   return total;
 }
 
 function update(){
   const v=selectedVehicle(), fixed=v.fixed;
-  $("totalPrice").textContent=money(calculate());
+  $("totalPrice").textContent=calculate().toLocaleString("tr-TR");
   $("summaryVehicle").textContent=v.name;
   $("summaryPackage").textContent=fixed?"Sabit fiyatlı hizmet":$("washType").selectedOptions[0].text.split("—")[0].trim();
   $("sumName").textContent=$("name").value.trim()||"—";
   $("sumPlate").textContent=$("plate").value.trim().toUpperCase()||"—";
   $("sumDate").textContent=$("date").value?new Date($("date").value+"T00:00:00").toLocaleDateString("tr-TR",{day:"2-digit",month:"2-digit",year:"numeric"}):"—";
-  $("sumTime").textContent=$("time").value||"—";
+  $("sumTime").textContent=$("selectedTime").value||"—";
+  
   const extras=[];
-  if($("extraSponge").checked)extras.push("Süngerli");
+  if($("extraSponge").checked) extras.push("Süngerli");
   $("sumExtras").textContent=extras.join(", ")||"Yok";
 }
 
 function validate(){
   let ok=true;
-  ["name","phone","plate","date","time"].forEach(id=>{
+  ["name","phone","plate","date"].forEach(id=>{
     const el=$(id); el.classList.remove("invalid","valid");
     if(!el.value.trim()){el.classList.add("invalid");ok=false}
   });
 
+  if(!$("selectedTime").value){
+    ok=false;
+    toast("Saat seçilmedi","Lütfen listeden 40 dakikalık bir randevu saati seçin.");
+  }
+
   if($("phone").value && !isPhoneValid($("phone").value)){
     $("phone").classList.add("invalid"); ok=false;
     toast("Telefon geçersiz","Lütfen 10-11 haneli geçerli cep telefonu girin.");
-  } else if($("phone").value) $("phone").classList.add("valid");
+  }
 
   if($("plate").value && !isTRPlateValid($("plate").value)){
     $("plate").classList.add("invalid"); ok=false;
     toast("Plaka kontrolü","Örnek format: 06 MAM 34");
-  }else if($("plate").value)$("plate").classList.add("valid");
-
-  if($("time").value && ($("time").value<"08:00"||$("time").value>"20:00")){
-    $("time").classList.add("invalid");ok=false;toast("Saat uygun değil","Randevu saatleri 08:00–22:00 arasındadır.");
   }
+
   return ok;
 }
 
@@ -854,46 +964,79 @@ function sendWhatsApp(){
 
   const v=selectedVehicle();
   const extras=[];
-  if($("extraSponge").checked)extras.push("Süngerli yıkama (+150 TL)");
+  if($("extraSponge").checked) extras.push("Süngerli yıkama (+150 TL)");
   const wash=v.fixed?"Sabit fiyatlı hizmet":$("washType").selectedOptions[0].text.split("—")[0].trim();
+  
+  const apptData = {
+    name: $("name").value.trim(),
+    phone: $("phone").value.trim(),
+    plate: $("plate").value.trim().toUpperCase(),
+    vehicle: v.name,
+    wash: wash,
+    date: $("date").value,
+    time: $("selectedTime").value,
+    isFixed: !!v.fixed
+  };
+
+  // Local Storage Save -> Marks as booked
+  saveAppointment(apptData);
+
   const msg=[
     "Merhaba, BY MORFİ üzerinden randevu oluşturmak istiyorum.",
     "",
-    `👤 Müşteri: ${$("name").value.trim()}`,
-    `📱 Telefon: ${$("phone").value.trim()}`,
-    `🚗 Plaka: ${$("plate").value.trim().toUpperCase()}`,
-    `🧼 Araç: ${v.name}`,
-    `✨ Paket: ${wash}`,
+    `👤 Müşteri: ${apptData.name}`,
+    `📱 Telefon: ${apptData.phone}`,
+    `🚗 Plaka: ${apptData.plate}`,
+    `🧼 Araç: ${apptData.vehicle}`,
+    `✨ Paket: ${apptData.wash}`,
     `➕ Ekstra: ${extras.join(", ")||"Yok"}`,
-    `💰 Toplam: ${money(calculate())} TL`,
-    `📅 Tarih: ${$("date").value}`,
-    `⏰ Saat: ${$("time").value}`
+    `💰 Toplam: ${calculate()} TL`,
+    `📅 Tarih: ${apptData.date}`,
+    `⏰ Saat: ${apptData.time}`
   ].filter(Boolean).join("\n");
+
+  // Refresh Slots and Queue Display
+  renderTimeSlots();
+  renderQueue();
+
   const url=`https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(msg)}`;
   window.open(url,"_blank","noopener,noreferrer");
 }
 
 function resetForm(){
   $("name").value="";$("phone").value="";$("plate").value="";
-  $("date").value="";$("time").value="";
+  $("selectedTime").value="";
   $("washType").value="ic_dis";
   $("extraSponge").checked=false;
   $("vehicleType").value="Sedan / Hatchback";
   document.querySelectorAll(".service").forEach((x,i)=>x.classList.toggle("active",i===0));
   $("washTypeGroup").style.display="block";
   document.querySelectorAll("input").forEach(x=>x.classList.remove("invalid","valid"));
-  update();toast("Form temizlendi","Yeni bir randevu oluşturabilirsiniz.");
+  renderTimeSlots();
+  update();
+  toast("Form temizlendi","Yeni bir randevu seçebilirsiniz.");
 }
 
-["name","phone","plate","date","time"].forEach(id=>$(id).addEventListener("input",update));
+["name","phone","plate"].forEach(id=>$(id).addEventListener("input",update));
+$("date").addEventListener("change", () => {
+  renderTimeSlots();
+  renderQueue();
+  update();
+});
 ["washType","extraSponge"].forEach(id=>$(id).addEventListener("change",update));
+
 $("bookBtn").addEventListener("click",sendWhatsApp);
 $("resetBtn").addEventListener("click",resetForm);
 
 const today=new Date();
 $("date").min=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
+$("date").value=$("date").min;
+
 initTheme();
-buildVehicles();update();
+buildVehicles();
+renderTimeSlots();
+renderQueue();
+update();
 </script>
 </body>
 </html>
