@@ -3,135 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BY MORFİ — Oto Detaylandırma & Yıkama</title>
+    <title>BY MORFİ OTO YIKAMA — Premium Auto Detailing</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #111827;
+            --input-bg: #1f293d;
+            --accent-green: #10b981;
+            --accent-green-hover: #059669;
+            --border-color: #374151;
+            --text-muted: #9ca3af;
+        }
+
         body {
-            background-color: #0f172a;
-            color: #f8fafc;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: #f3f4f6;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px 0;
+            padding: 20px 10px;
         }
-        .card-custom {
-            background-color: #1e293b;
-            border: 1px solid #334155;
+
+        .booking-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            padding: 30px;
-            max-width: 500px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            padding: 32px;
+            max-width: 480px;
             width: 100%;
         }
-        .brand-header {
+
+        .brand-logo-area {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 24px;
         }
-        .brand-header h2 {
-            color: #22c55e;
-            font-weight: 700;
-            letter-spacing: 1px;
-            margin-top: 10px;
+
+        .brand-icon-circle {
+            width: 70px;
+            height: 70px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid var(--accent-green);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
         }
-        .form-control, .form-select {
-            background-color: #0f172a;
-            border: 1px solid #334155;
-            color: #f8fafc;
-            border-radius: 8px;
-            padding: 12px;
-        }
-        .form-control:focus, .form-select:focus {
-            background-color: #0f172a;
-            color: #f8fafc;
-            border-color: #22c55e;
-            box-shadow: 0 0 0 0.25rem rgba(34, 197, 94, 0.25);
-        }
-        .btn-whatsapp {
-            background-color: #22c55e;
+
+        .brand-title {
             color: #ffffff;
+            font-weight: 800;
+            font-size: 22px;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        .brand-subtitle {
+            color: var(--accent-green);
+            font-size: 11px;
             font-weight: 600;
-            padding: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .form-control, .form-select {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: #ffffff;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 14px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: var(--input-bg);
+            color: #ffffff;
+            border-color: var(--accent-green);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+        }
+
+        .btn-whatsapp-submit {
+            background-color: var(--accent-green);
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 15px;
+            padding: 12px;
             border-radius: 8px;
             border: none;
             width: 100%;
-            transition: all 0.3s ease;
-            font-size: 16px;
+            transition: background-color 0.2s ease;
+            margin-top: 8px;
         }
-        .btn-whatsapp:hover {
-            background-color: #16a34a;
-            color: #ffffff;
-        }
-        label {
-            font-size: 14px;
-            margin-bottom: 6px;
-            color: #94a3b8;
+
+        .btn-whatsapp-submit:hover {
+            background-color: var(--accent-green-hover);
         }
     </style>
 </head>
 <body>
 
-<div class="container d-flex justify-content-center">
-    <div class="card-custom">
-        <div class="brand-header">
-            <i class="fa-solid fa-car-wash fa-3x" style="color: #22c55e;"></i>
-            <h2>BY MORFİ</h2>
-            <p class="text-secondary mb-0">Oto Detaylandırma & Yıkama Randevu Sistemi</p>
+<div class="booking-card">
+    <div class="brand-logo-area">
+        <div class="brand-icon-circle">
+            <i class="fa-solid fa-car-wash fa-2x" style="color: var(--accent-green);"></i>
+        </div>
+        <div class="brand-title">BY MORFİ</div>
+        <div class="brand-subtitle">AUTO DETAILING & YIKAMA</div>
+    </div>
+
+    <form id="randevuFormu">
+        <div class="mb-3">
+            <label class="form-label">Ad Soyad</label>
+            <input type="text" class="form-control" id="adSoyad" placeholder="Ad Soyad" required>
         </div>
 
-        <form id="randevuFormu">
-            <div class="mb-3">
-                <label for="adSoyad"><i class="fa-solid fa-user me-1"></i> Ad Soyad</label>
-                <input type="text" class="form-control" id="adSoyad" placeholder="Adınız ve Soyadınız" required>
-            </div>
+        <div class="mb-3">
+            <label class="form-label">Cep Telefonu (WhatsApp)</label>
+            <input type="tel" class="form-control" id="telefon" placeholder="05XX XXX XX XX" required>
+        </div>
 
-            <div class="mb-3">
-                <label for="telefon"><i class="fa-solid fa-phone me-1"></i> Telefon Numarası</label>
-                <input type="tel" class="form-control" id="telefon" placeholder="05XX XXX XX XX" required>
-            </div>
+        <div class="mb-3">
+            <label class="form-label">Araç Marka / Model</label>
+            <input type="text" class="form-control" id="aracModeli" placeholder="Örn: Honda Civic 1.6 i-VTEC" required>
+        </div>
 
-            <div class="mb-3">
-                <label for="aracModeli"><i class="fa-solid fa-car me-1"></i> Araç Marka / Model</label>
-                <input type="text" class="form-control" id="aracModeli" placeholder="Örn: Honda Civic, BMW 320" required>
-            </div>
+        <div class="mb-3">
+            <label class="form-label">Yıkama Türü</label>
+            <select class="form-select" id="hizmet" required>
+                <option value="" selected disabled>Hizmet Seçiniz...</option>
+                <option value="İç-Dış Detaylı Yıkama">İç-Dış Detaylı Yıkama</option>
+                <option value="Süngerli Yıkama (+150 TL Dışa)">Süngerli Yıkama (+150 TL Dışa)</option>
+                <option value="Cilalı Köpüklü Yıkama">Cilalı Köpüklü Yıkama</option>
+                <option value="Detaylı İç Temizlik & Sterilizasyon">Detaylı İç Temizlik & Sterilizasyon</option>
+                <option value="Pasta Cila & Seramik Kaplama">Pasta Cila & Seramik Kaplama</option>
+                <option value="Motor Yıkama & Koruma">Motor Yıkama & Koruma</option>
+            </select>
+        </div>
 
-            <div class="mb-3">
-                <label for="hizmet"><i class="fa-solid fa-list-check me-1"></i> Yıkama / Bakım Türü</label>
-                <select class="form-select" id="hizmet" required>
-                    <option value="" selected disabled>Hizmet Seçiniz...</option>
-                    <option value="İç-Dış Yıkama">İç-Dış Yıkama</option>
-                    <option value="Detaylı İç Temizlik">Detaylı İç Temizlik</option>
-                    <option value="Pasta Cila & Seramik Kaplama">Pasta Cila & Seramik Kaplama</option>
-                    <option value="Motor Temizliği">Motor Temizliği</option>
-                </select>
+        <div class="row mb-3">
+            <div class="col-6">
+                <label class="form-label">Tarih</label>
+                <input type="date" class="form-control" id="tarih" required>
             </div>
-
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="tarih"><i class="fa-solid fa-calendar-days me-1"></i> Tarih</label>
-                    <input type="date" class="form-control" id="tarih" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="saat"><i class="fa-solid fa-clock me-1"></i> Saat</label>
-                    <input type="time" class="form-control" id="saat" required>
-                </div>
+            <div class="col-6">
+                <label class="form-label">Saat</label>
+                <input type="time" class="form-control" id="saat" required>
             </div>
+        </div>
 
-            <button type="submit" class="btn-whatsapp mt-2">
-                <i class="fa-brands fa-whatsapp fa-lg me-2"></i> WhatsApp ile Randevu Oluştur
-            </button>
-        </form>
-    </div>
+        <button type="submit" class="btn-whatsapp-submit">
+            <i class="fa-brands fa-whatsapp fa-lg me-2"></i> WhatsApp ile Randevu Al
+        </button>
+    </form>
 </div>
 
 <script>
+    // KENDİ WHATSAPP NUMARANI YAZ (Başında 90 olacak şekilde)
+    const isletmeTelefonu = "905000000000";
+
     document.getElementById('randevuFormu').addEventListener('submit', function(e) {
         e.preventDefault();
-
-        // TELEFON NUMARANI BURAYA YAZ (Ülke kodu ile, başında + olmadan)
-        const isletmeTelefonu = "905000000000"; 
 
         const adSoyad = document.getElementById('adSoyad').value;
         const telefon = document.getElementById('telefon').value;
@@ -140,8 +183,7 @@
         const tarih = document.getElementById('tarih').value;
         const saat = document.getElementById('saat').value;
 
-        // WhatsApp Mesaj Metni
-        const mesaj = `Merhaba *BY MORFİ*, yeni bir randevu talebim var:%0A%0A` +
+        const mesaj = `Merhaba *BY MORFİ*, web sitenizden yeni bir randevu talebim var:%0A%0A` +
                       `👤 *Müşteri:* ${adSoyad}%0A` +
                       `📞 *Telefon:* ${telefon}%0A` +
                       `🚗 *Araç:* ${aracModeli}%0A` +
@@ -149,9 +191,8 @@
                       `📅 *Tarih:* ${tarih}%0A` +
                       `⏰ *Saat:* ${saat}`;
 
-        // WhatsApp Linki Oluştur ve Yönlendir
-        const whatsappURL = `https://wa.me/${isletmeTelefonu}?text=${mesaj}`;
-        window.open(whatsappURL, '_blank');
+        const waURL = `https://wa.me/${isletmeTelefonu}?text=${mesaj}`;
+        window.open(waURL, '_blank');
     });
 </script>
 
