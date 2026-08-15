@@ -843,6 +843,48 @@ input:focus, select:focus {
 
 <div class="toast" id="toast"></div>
 
+<!-- Firebase SDK Module -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getDatabase, ref, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBy1ICxlUyynBdu2_UjZvwURHFfSelF_5A",
+    authDomain: "bym-oto-yikama.firebaseapp.com",
+    databaseURL: "https://bym-oto-yikama-default-rtdb.firebaseio.com",
+    projectId: "bym-oto-yikama",
+    storageBucket: "bym-oto-yikama.firebasestorage.app",
+    messagingSenderId: "409475419804",
+    appId: "1:409475419804:web:b00588b14ba94990eda759",
+    measurementId: "G-GJVZCC0J74"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  window.firebaseDb = db;
+  window.dbRef = ref;
+  window.dbSet = set;
+  window.dbRemove = remove;
+  window.dbOnValue = onValue;
+
+  // Realtime Listeners for Syncing Firebase Data
+  onValue(ref(db, 'appointments'), (snapshot) => {
+    const data = snapshot.val();
+    const list = data ? Object.values(data) : [];
+    localStorage.setItem("bymorfi_appointments", JSON.stringify(list));
+    if (typeof window.renderTimeSlots === "function") window.renderTimeSlots();
+    if (typeof window.renderQueue === "function") window.renderQueue();
+  });
+
+  onValue(ref(db, 'closed_days'), (snapshot) => {
+    const data = snapshot.val();
+    const days = data ? Object.values(data) : [];
+    localStorage.setItem("bymorfi_closed_days", JSON.stringify(days));
+    if (typeof window.renderTimeSlots === "function") window.renderTimeSlots();
+  });
+</script>
+
 <script>
 const WHATSAPP_PHONE = "905385475603";
 const ADMIN_PASS = "muho6060.";
@@ -889,12 +931,20 @@ function saveAppointment(appt) {
   const list = getStoredAppointments();
   list.push(appt);
   localStorage.setItem("bymorfi_appointments", JSON.stringify(list));
+
+  if (window.firebaseDb && window.dbRef && window.dbSet) {
+    window.dbSet(window.dbRef(window.firebaseDb, 'appointments/' + appt.id), appt);
+  }
 }
 
 function removeAppointment(id) {
   let list = getStoredAppointments();
   list = list.filter(a => a.id !== id);
   localStorage.setItem("bymorfi_appointments", JSON.stringify(list));
+
+  if (window.firebaseDb && window.dbRef && window.dbRemove) {
+    window.dbRemove(window.dbRef(window.firebaseDb, 'appointments/' + id));
+  }
 }
 
 function getClosedDays() {
@@ -922,6 +972,10 @@ function setClosedDaysRange(startStr, endStr, lock = true) {
   }
 
   localStorage.setItem("bymorfi_closed_days", JSON.stringify(days));
+
+  if (window.firebaseDb && window.dbRef && window.dbSet) {
+    window.dbSet(window.dbRef(window.firebaseDb, 'closed_days'), days);
+  }
   return true;
 }
 
@@ -1084,6 +1138,7 @@ function renderTimeSlots() {
     grid.appendChild(btn);
   });
 }
+window.renderTimeSlots = renderTimeSlots;
 
 function renderQueue() {
   const queueGrid = $("queueGrid");
@@ -1115,6 +1170,7 @@ function renderQueue() {
     </div>
   `).join("");
 }
+window.renderQueue = renderQueue;
 
 function cancelAppt(id) {
   if (confirm("Bu randevuyu iptal etmek istediğinize emin misiniz?")) {
@@ -1344,33 +1400,6 @@ buildVehicles();
 renderTimeSlots();
 renderQueue();
 update();
-</script>
-<!-- Firebase SDK'ları -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-  // Firebase Yapılandırman
-  const firebaseConfig = {
-    apiKey: "AIzaSyBy1ICxlUyynBdu2_UjZvwURHFfSelF_5A",
-    authDomain: "bym-oto-yikama.firebaseapp.com",
-    databaseURL: "https://bym-oto-yikama-default-rtdb.firebaseio.com",
-    projectId: "bym-oto-yikama",
-    storageBucket: "bym-oto-yikama.firebasestorage.app",
-    messagingSenderId: "409475419804",
-    appId: "1:409475419804:web:b00588b14ba94990eda759",
-    measurementId: "G-GJVZCC0J74"
-  };
-
-  // Firebase'i Başlat
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-
-  // Global erişim için window objesine aktar
-  window.firebaseDb = db;
-  window.dbRef = ref;
-  window.dbPush = push;
-  window.dbSet = set;
 </script>
 </body>
 </html>
