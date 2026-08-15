@@ -1345,5 +1345,32 @@ renderTimeSlots();
 renderQueue();
 update();
 </script>
+<!-- Firebase SDK'ları -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+  // Firebase Yapılandırman
+  const firebaseConfig = {
+    apiKey: "AIzaSyBy1ICxlUyynBdu2_UjZvwURHFfSelF_5A",
+    authDomain: "bym-oto-yikama.firebaseapp.com",
+    databaseURL: "https://bym-oto-yikama-default-rtdb.firebaseio.com",
+    projectId: "bym-oto-yikama",
+    storageBucket: "bym-oto-yikama.firebasestorage.app",
+    messagingSenderId: "409475419804",
+    appId: "1:409475419804:web:b00588b14ba94990eda759",
+    measurementId: "G-GJVZCC0J74"
+  };
+
+  // Firebase'i Başlat
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // Global erişim için window objesine aktar
+  window.firebaseDb = db;
+  window.dbRef = ref;
+  window.dbPush = push;
+  window.dbSet = set;
+</script>
 </body>
 </html>
