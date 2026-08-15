@@ -1,1349 +1,268 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BY MORFİ OTO YIKAMA — Premium Randevu & Canlı Takip</title>
-<meta name="description" content="BY MORFİ OTO YIKAMA premium randevu ve canlı araç takip sistemi">
-<style>
-:root {
-  --bg-gradient: radial-gradient(circle at 50% 0%, #151a24 0%, #080a0e 100%);
-  --panel-bg: rgba(18, 22, 31, 0.75);
-  --panel-border: rgba(255, 255, 255, 0.08);
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --gold-primary: #d7b46a;
-  --gold-light: #f3d89d;
-  --gold-glow: rgba(215, 180, 106, 0.25);
-  --input-bg: rgba(0, 0, 0, 0.3);
-  --input-border: rgba(255, 255, 255, 0.1);
-  --danger: #ef4444;
-  --success: #10b981;
-  --radius-lg: 20px;
-  --radius-md: 12px;
-  --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-body.light-theme {
-  --bg-gradient: radial-gradient(circle at 50% 0%, #f1f5f9 0%, #e2e8f0 100%);
-  --panel-bg: rgba(255, 255, 255, 0.85);
-  --panel-border: rgba(0, 0, 0, 0.08);
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --gold-primary: #b48835;
-  --gold-light: #d7b46a;
-  --gold-glow: rgba(180, 136, 53, 0.2);
-  --input-bg: rgba(255, 255, 255, 0.8);
-  --input-border: rgba(0, 0, 0, 0.15);
-  --shadow-lg: 0 20px 40px -10px rgba(0, 0, 0, 0.08);
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-
-body {
-  min-height: 100vh;
-  color: var(--text-main);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
-  background: var(--bg-gradient);
-  background-attachment: fixed;
-  line-height: 1.5;
-  padding: 24px 16px;
-  transition: background 0.3s ease, color 0.3s ease;
-  overflow-x: hidden;
-  position: relative;
-}
-
-#particleCanvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: 0;
-}
-
-button, input, select { font: inherit; color: inherit; }
-button { cursor: pointer; border: none; background: none; }
-
-.app {
-  max-width: 1140px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 10;
-}
-
-.nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 20px;
-  background: var(--panel-bg);
-  border: 1px solid var(--panel-border);
-  backdrop-filter: blur(16px);
-  border-radius: var(--radius-lg);
-  margin-bottom: 24px;
-}
-
-.brand { display: flex; align-items: center; gap: 14px; }
-.logo {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-md);
-  background: linear-gradient(135deg, #2a2215, #141009);
-  border: 1px solid var(--gold-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--gold-light);
-  font-weight: 800;
-  font-size: 20px;
-  box-shadow: 0 0 15px var(--gold-glow);
-  cursor: pointer;
-  user-select: none;
-  transition: var(--transition);
-  position: relative;
-  z-index: 20;
-  pointer-events: auto;
-}
-
-.logo:hover {
-  transform: scale(1.08);
-  box-shadow: 0 0 25px var(--gold-primary);
-}
-
-.brand h1 { font-size: 16px; font-weight: 700; letter-spacing: 0.15em; line-height: 1.2; }
-.brand span { font-size: 10px; color: var(--gold-primary); letter-spacing: 0.2em; display: block; font-weight: 600; }
-
-.nav-actions { display: flex; align-items: center; gap: 12px; }
-
-.theme-toggle {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--panel-border);
-  padding: 8px 14px;
-  border-radius: 99px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-main);
-  transition: var(--transition);
-}
-
-.theme-toggle:hover {
-  background: rgba(215, 180, 106, 0.15);
-  border-color: var(--gold-primary);
-  box-shadow: 0 0 15px var(--gold-glow);
-}
-
-.status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  color: var(--text-muted);
-  background: rgba(255, 255, 255, 0.03);
-  padding: 6px 14px;
-  border-radius: 99px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--success);
-  box-shadow: 0 0 10px var(--success);
-}
-
-.hero {
-  position: relative;
-  overflow: hidden;
-  border: 1px solid var(--panel-border);
-  border-radius: var(--radius-lg);
-  padding: 36px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
-  backdrop-filter: blur(12px);
-  margin-bottom: 24px;
-}
-
-.eyebrow {
-  color: var(--gold-primary);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-
-.hero h2 {
-  font-size: clamp(24px, 4vw, 38px);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-}
-
-.hero p {
-  color: var(--text-muted);
-  font-size: 14px;
-  max-width: 680px;
-  margin-top: 10px;
-}
-
-.layout {
-  display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: 24px;
-  margin-bottom: 24px;
-}
-
-.card {
-  background: var(--panel-bg);
-  border: 1px solid var(--panel-border);
-  backdrop-filter: blur(16px);
-  border-radius: var(--radius-lg);
-  padding: 28px;
-  box-shadow: var(--shadow-lg);
-}
-
-.card-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--panel-border);
-}
-
-.card-head h3 { font-size: 18px; font-weight: 700; }
-.card-head p { color: var(--text-muted); font-size: 12px; margin-top: 2px; }
-
-.badge {
-  padding: 4px 10px;
-  border: 1px solid var(--gold-primary);
-  background: rgba(215, 180, 106, 0.1);
-  border-radius: 99px;
-  color: var(--gold-light);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-}
-
-.grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
-.field { display: flex; flex-direction: column; }
-.field.full { grid-column: 1 / -1; }
-
-label {
-  display: flex;
-  justify-content: space-between;
-  color: var(--text-main);
-  font-size: 12px;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-label em { font-style: normal; color: var(--text-muted); font-weight: 400; font-size: 11px; }
-
-input, select {
-  width: 100%;
-  height: 48px;
-  padding: 0 16px;
-  background: var(--input-bg);
-  border: 1px solid var(--input-border);
-  border-radius: var(--radius-md);
-  outline: none;
-  transition: var(--transition);
-  font-size: 13px;
-}
-
-input:hover, select:hover {
-  border-color: var(--gold-primary);
-  box-shadow: 0 0 12px var(--gold-glow);
-}
-
-input:focus, select:focus {
-  border-color: var(--gold-primary);
-  box-shadow: 0 0 0 3px var(--gold-glow);
-}
-
-.select-wrap { position: relative; }
-.select-wrap:after {
-  content: "▾";
-  position: absolute;
-  right: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--gold-primary);
-  pointer-events: none;
-}
-
-.service-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 10px;
-  margin-top: 4px;
-}
-
-.service {
-  text-align: left;
-  padding: 12px 14px;
-  border: 1px solid var(--input-border);
-  background: var(--input-bg);
-  border-radius: var(--radius-md);
-  transition: var(--transition);
-}
-
-.service:hover {
-  border-color: var(--gold-primary);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px var(--gold-glow);
-}
-
-.service.active {
-  border-color: var(--gold-primary);
-  background: linear-gradient(135deg, rgba(215, 180, 106, 0.2), rgba(215, 180, 106, 0.05));
-  box-shadow: 0 0 15px var(--gold-glow);
-}
-
-.service strong { display: block; font-size: 12px; font-weight: 600; }
-.service span { display: block; color: var(--text-muted); font-size: 11px; margin-top: 2px; }
-
-.time-slots {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
-  gap: 8px;
-  margin-top: 6px;
-}
-
-.slot-btn {
-  padding: 10px 4px;
-  border: 1px solid var(--input-border);
-  background: var(--input-bg);
-  border-radius: var(--radius-md);
-  font-size: 12px;
-  font-weight: 600;
-  text-align: center;
-  transition: var(--transition);
-}
-
-.slot-btn:hover:not(:disabled) {
-  border-color: var(--gold-primary);
-  box-shadow: 0 0 10px var(--gold-glow);
-}
-
-.slot-btn.selected {
-  border-color: var(--gold-primary);
-  background: var(--gold-primary);
-  color: #080a0e;
-  font-weight: 800;
-  box-shadow: 0 0 12px var(--gold-glow);
-}
-
-.slot-btn:disabled {
-  opacity: 0.4;
-  border-color: rgba(239, 68, 68, 0.3);
-  background: rgba(239, 68, 68, 0.08);
-  color: var(--danger);
-  cursor: not-allowed;
-  text-decoration: line-through;
-}
-
-.extras { margin-top: 4px; }
-.extra {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  border: 1px solid var(--input-border);
-  border-radius: var(--radius-md);
-  background: var(--input-bg);
-  transition: var(--transition);
-}
-
-.extra:hover {
-  border-color: var(--gold-primary);
-  box-shadow: 0 0 15px var(--gold-glow);
-}
-
-.extra input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  accent-color: var(--gold-primary);
-  cursor: pointer;
-}
-
-.extra label { margin: 0; cursor: pointer; flex: 1; flex-direction: column; align-items: flex-start; }
-.extra label span { color: var(--text-muted); font-weight: 400; font-size: 11px; }
-
-.price-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 24px;
-  padding-top: 20px;
-  border-top: 1px solid var(--panel-border);
-}
-
-.total-label { font-size: 13px; font-weight: 600; color: var(--text-main); }
-.total { font-size: 32px; font-weight: 800; color: var(--gold-light); }
-.total small { font-size: 14px; font-weight: 600; }
-
-.summary { position: sticky; top: 24px; height: fit-content; }
-.summary-top {
-  padding: 20px;
-  border-radius: var(--radius-md);
-  background: linear-gradient(135deg, rgba(215, 180, 106, 0.15), rgba(0, 0, 0, 0.1));
-  border: 1px solid rgba(215, 180, 106, 0.25);
-  margin-bottom: 20px;
-}
-
-.summary-top small { color: var(--gold-primary); text-transform: uppercase; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; }
-.summary-top h4 { font-size: 20px; font-weight: 700; margin-top: 4px; }
-.summary-top p { color: var(--text-muted); font-size: 12px; margin-top: 2px; }
-
-.receipt { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-.line { display: flex; justify-content: space-between; font-size: 13px; padding-bottom: 8px; border-bottom: 1px dashed var(--panel-border); }
-.line span { color: var(--text-muted); }
-.line strong { color: var(--text-main); font-weight: 600; }
-
-.cta {
-  position: relative;
-  width: 100%;
-  height: 52px;
-  border-radius: var(--radius-md);
-  background: linear-gradient(135deg, var(--gold-light), var(--gold-primary));
-  color: #080a0e;
-  font-weight: 800;
-  font-size: 14px;
-  box-shadow: 0 10px 20px var(--gold-glow);
-  transition: var(--transition);
-  overflow: hidden;
-}
-
-.cta:hover { transform: translateY(-2px); box-shadow: 0 12px 25px var(--gold-glow); filter: brightness(1.08); }
-
-.secondary {
-  width: 100%;
-  height: 42px;
-  margin-top: 10px;
-  border: 1px solid var(--panel-border);
-  border-radius: var(--radius-md);
-  color: var(--text-muted);
-  font-size: 12px;
-  font-weight: 600;
-  transition: var(--transition);
-}
-
-.secondary:hover { background: rgba(215, 180, 106, 0.1); border-color: var(--gold-primary); color: var(--text-main); }
-
-.note { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 14px; line-height: 1.4; }
-
-.queue-section { margin-top: 32px; }
-
-.queue-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
-  margin-top: 16px;
-}
-
-.queue-item {
-  background: var(--input-bg);
-  border: 1px solid var(--input-border);
-  border-radius: var(--radius-md);
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  transition: var(--transition);
-  position: relative;
-}
-
-.queue-item:hover {
-  border-color: var(--gold-primary);
-  box-shadow: 0 0 15px var(--gold-glow);
-}
-
-.queue-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid var(--panel-border);
-  padding-bottom: 8px;
-}
-
-.queue-time {
-  background: var(--gold-primary);
-  color: #080a0e;
-  font-weight: 800;
-  padding: 2px 8px;
-  border-radius: 6px;
-  font-size: 12px;
-}
-
-.queue-plate {
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 0.05em;
-  color: var(--gold-light);
-}
-
-.queue-details {
-  font-size: 12px;
-  color: var(--text-muted);
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.queue-details strong { color: var(--text-main); }
-
-.cancel-btn {
-  margin-top: 8px;
-  padding: 6px 12px;
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid var(--danger);
-  color: var(--danger);
-  border-radius: var(--radius-md);
-  font-size: 11px;
-  font-weight: 700;
-  transition: var(--transition);
-}
-
-.cancel-btn:hover {
-  background: var(--danger);
-  color: #fff;
-}
-
-.empty-queue {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: 32px;
-  color: var(--text-muted);
-  font-size: 13px;
-  border: 1px dashed var(--panel-border);
-  border-radius: var(--radius-md);
-}
-
-/* Modal Popup & Blur Overlay */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: all 0.3s ease;
-}
-
-.modal-overlay.active {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-}
-
-.modal-card {
-  width: 92%;
-  max-width: 480px;
-  background: var(--panel-bg);
-  border: 1px solid var(--gold-primary);
-  border-radius: var(--radius-lg);
-  padding: 28px;
-  box-shadow: 0 0 35px var(--gold-glow);
-  transform: scale(0.95);
-  transition: all 0.3s ease;
-  position: relative;
-}
-
-.modal-overlay.active .modal-card {
-  transform: scale(1);
-}
-
-.modal-close {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  font-size: 18px;
-  color: var(--text-muted);
-}
-
-.modal-close:hover { color: var(--danger); }
-
-.admin-range-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin: 16px 0;
-}
-
-.admin-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 14px;
-}
-
-.admin-btn {
-  padding: 12px;
-  background: rgba(239, 68, 68, 0.2);
-  border: 1px solid var(--danger);
-  color: #fca5a5;
-  border-radius: var(--radius-md);
-  font-size: 13px;
-  font-weight: 700;
-  transition: var(--transition);
-}
-
-.admin-btn:hover { background: var(--danger); color: #fff; }
-
-.admin-btn.unlock {
-  background: rgba(16, 185, 129, 0.2);
-  border-color: var(--success);
-  color: #6ee7b7;
-}
-
-.admin-btn.unlock:hover { background: var(--success); color: #fff; }
-
-.day-closed-msg {
-  grid-column: 1 / -1;
-  padding: 20px;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid var(--danger);
-  color: var(--danger);
-  border-radius: var(--radius-md);
-  text-align: center;
-  font-weight: 700;
-  font-size: 14px;
-}
-
-.invalid { border-color: var(--danger) !important; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important; }
-.valid { border-color: var(--success) !important; }
-
-.toast {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 10000;
-  background: var(--panel-bg);
-  border: 1px solid var(--panel-border);
-  padding: 14px 20px;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
-  transform: translateY(150%);
-  transition: var(--transition);
-  font-size: 13px;
-}
-
-.toast.show { transform: translateY(0); }
-.toast b { display: block; color: var(--gold-light); margin-bottom: 2px; }
-
-@media (max-width: 850px) {
-  .layout { grid-template-columns: 1fr; }
-  .summary { position: static; }
-}
-
-@media (max-width: 560px) {
-  .grid { grid-template-columns: 1fr; }
-  .service-grid { grid-template-columns: 1fr; }
-  .status { display: none; }
-  .hero { padding: 24px; }
-  .admin-range-grid { grid-template-columns: 1fr; }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>By Morfi Oto Yıkama & Detailing</title>
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --accent-color: #38bdf8;
+            --accent-hover: #0284c7;
+            --border-color: #334155;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #0f172a;
+            --accent-color: #0284c7;
+            --accent-hover: #0369a1;
+            --border-color: #e2e8f0;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; transition: background 0.3s, color 0.3s; }
+        body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 80px; }
+
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1.5rem 2rem; background: var(--card-bg); border-bottom: 1px solid var(--border-color);
+            position: sticky; top: 0; z-index: 100; boxShadow: var(--shadow);
+        }
+
+        .logo { font-size: 1.5rem; font-weight: 700; color: var(--accent-color); display: flex; align-items: center; gap: 10px; }
+        .theme-toggle { cursor: pointer; font-size: 1.2rem; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: transparent; color: var(--text-color); }
+
+        .container { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+
+        .card { background: var(--card-bg); padding: 1.8rem; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: var(--shadow); }
+        .card h2 { margin-bottom: 1.2rem; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; color: var(--accent-color); }
+
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; margin-bottom: 0.4rem; font-size: 0.9rem; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-color);
+            background: var(--bg-color); color: var(--text-color); outline: none;
+        }
+
+        .btn {
+            width: 100%; padding: 0.9rem; border: none; border-radius: 8px;
+            background: var(--accent-color); color: #fff; font-weight: 600; cursor: pointer;
+            display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 1rem;
+        }
+        .btn:hover { background: var(--accent-hover); }
+
+        /* SSS Akordiyon */
+        .faq-item { border-bottom: 1px solid var(--border-color); padding: 0.8rem 0; cursor: pointer; }
+        .faq-question { font-weight: 600; display: flex; justify-content: space-between; }
+        .faq-answer { display: none; margin-top: 0.5rem; font-size: 0.88rem; opacity: 0.8; }
+
+        /* Değerlendirmeler */
+        .review-card { padding: 0.8rem 0; border-bottom: 1px solid var(--border-color); }
+        .stars { color: #f59e0b; font-size: 0.9rem; }
+
+        /* AI Chatbot Floating Window */
+        #chat-widget { position: fixed; bottom: 20px; right: 20px; z-index: 1000; }
+        #chat-btn { width: 60px; height: 60px; border-radius: 50%; background: var(--accent-color); color: white; border: none; font-size: 1.5rem; cursor: pointer; box-shadow: var(--shadow); }
+        #chat-box {
+            display: none; width: 330px; height: 430px; background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 16px; position: absolute; bottom: 70px; right: 0; flex-direction: column; overflow: hidden; box-shadow: var(--shadow);
+        }
+        .chat-header { background: var(--accent-color); color: white; padding: 1rem; font-weight: 600; display: flex; justify-content: space-between; }
+        .chat-messages { flex: 1; padding: 1rem; overflow-y: auto; font-size: 0.85rem; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 8px 12px; border-radius: 12px; max-width: 80%; }
+        .msg.bot { background: var(--border-color); align-self: flex-start; }
+        .msg.user { background: var(--accent-color); color: white; align-self: flex-end; }
+        .chat-input { display: flex; border-top: 1px solid var(--border-color); }
+        .chat-input input { flex: 1; border: none; padding: 10px; background: transparent; color: var(--text-color); outline: none; }
+        .chat-input button { border: none; background: var(--accent-color); color: white; padding: 0 15px; cursor: pointer; }
+    </style>
 </head>
 <body>
 
-<canvas id="particleCanvas"></canvas>
+    <header>
+        <div class="logo"><i class="fa-solid fa-car-wash"></i> By Morfi Oto Yıkama</div>
+        <button class="theme-toggle" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i></button>
+    </header>
 
-<div class="app">
-  <nav class="nav">
-    <div class="brand">
-      <div class="logo" id="adminLogoBtn" title="Yönetici Girişi">M</div>
-      <div>
-        <h1>BY MORFİ</h1>
-        <span>OTO YIKAMA</span>
-      </div>
-    </div>
-    <div class="nav-actions">
-      <button class="theme-toggle" id="themeBtn">🌙 Koyu Tema</button>
-      <div class="status"><i class="dot"></i> Randevu sistemi aktif</div>
-    </div>
-  </nav>
+    <div class="container grid">
+        <!-- HIZLI RANDEVU AL -->
+        <div class="card">
+            <h2><i class="fa-regular fa-calendar-check"></i> Randevu Al</h2>
+            <form id="appointmentForm" onsubmit="handleBooking(event)">
+                <div class="form-group">
+                    <label>Ad Soyad</label>
+                    <input type="text" id="custName" required placeholder="Ahmet Yılmaz">
+                </div>
+                <div class="form-group">
+                    <label>Telefon (WhatsApp)</label>
+                    <input type="tel" id="custPhone" required placeholder="05XXXXXXXXX">
+                </div>
+                <div class="form-group">
+                    <label>Araç Plakası</label>
+                    <input type="text" id="custPlate" required placeholder="06 ABC 123">
+                </div>
+                <div class="form-group">
+                    <label>Hizmet Paket Seçimi</label>
+                    <select id="serviceType">
+                        <option value="İç-Dış Yıkama - 300 TL">İç-Dış Detaylı Yıkama (300 TL)</option>
+                        <option value="Cilalı Köpüklü Yıkama - 450 TL">Cilalı Köpüklü Yıkama (450 TL)</option>
+                        <option value="Detaylı İç Temizlik & Sterilizasyon - 1200 TL">Detaylı İç Temizlik & Koltuk Yıkama (1200 TL)</option>
+                        <option value="Pasta Cila & Seramik Kaplama - 3500 TL">Pasta Cila & Seramik Kaplama (3500 TL)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tarih ve Saat</label>
+                    <input type="datetime-local" id="custDate" required>
+                </div>
+                <button type="submit" class="btn"><i class="fa-brands fa-whatsapp"></i> WhatsApp ile Onayla</button>
+            </form>
+        </div>
 
-  <section class="hero">
-    <div class="eyebrow">BY MORFİ OTO YIKAMA</div>
-    <h2>Aracınız için premium bakım deneyimini şimdi rezerve edin.</h2>
-    <p>Yıkama randevuları 40 dakikalık periyotlarla oluşturulur. Seçtiğiniz saatte aracınız hemen işleme alınır ve bekleme süreniz minimuma indirilir.</p>
-  </section>
-
-  <main class="layout">
-    <section class="card">
-      <div class="card-head">
+        <!-- SSS & DEĞERLENDİRMELER -->
         <div>
-          <h3>Randevu detayları</h3>
-          <p>Tarih seçin, müsait 40 dakikalık slotlardan saatinizi belirleyin.</p>
-        </div>
-        <div class="badge">CANLI TAKVİM</div>
-      </div>
-
-      <div class="grid">
-        <div class="field">
-          <label>Ad Soyad <em>zorunlu</em></label>
-          <input id="name" type="text" placeholder="Ahmet Yılmaz" autocomplete="name" maxlength="50">
-        </div>
-
-        <div class="field">
-          <label>Telefon <em>zorunlu</em></label>
-          <input id="phone" type="tel" placeholder="05XX XXX XX XX" autocomplete="tel" maxlength="15">
-        </div>
-
-        <div class="field full">
-          <label>Araç plakası <em>TR formatı</em></label>
-          <input id="plate" type="text" placeholder="06 MAM 34" maxlength="10" autocomplete="off">
-        </div>
-
-        <div class="field full">
-          <label>Araç tipi</label>
-          <div class="service-grid" id="vehicleCards"></div>
-          <input type="hidden" id="vehicleType" value="Sedan / Hatchback">
-        </div>
-
-        <div class="field" id="washTypeGroup">
-          <label>Yıkama paketi</label>
-          <div class="select-wrap">
-            <select id="washType">
-              <option value="ic_dis">İç + Dış — tam paket</option>
-              <option value="sadece_dis">Sadece Dış — %50</option>
-              <option value="sadece_ic">Sadece İç — %50</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="field">
-          <label>Ek hizmetler</label>
-          <div class="extras">
-            <div class="extra">
-              <input type="checkbox" id="extraSponge">
-              <label for="extraSponge">Süngerli yıkama <span>Premium köpük +150 TL</span></label>
+            <div class="card" style="margin-bottom: 2rem;">
+                <h2><i class="fa-solid fa-circle-question"></i> Sıkça Sorulan Sorular</h2>
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">İç-Dış yıkama ne kadar sürer? <i class="fa-solid fa-chevron-down"></i></div>
+                    <div class="faq-answer">Standart yıkama işlemlerimiz ortalama 40 dakika sürmektedir.</div>
+                </div>
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">Randevuya geç kalırsam ne olur? <i class="fa-solid fa-chevron-down"></i></div>
+                    <div class="faq-answer">15 dakikayı geçen gecikmelerde sıradaki aracın işlemine başlanabilir.</div>
+                </div>
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">Kredi kartı geçerli mi? <i class="fa-solid fa-chevron-down"></i></div>
+                    <div class="faq-answer">Evet, tüm kredi ve banka kartları geçerlidir.</div>
+                </div>
             </div>
-          </div>
+
+            <div class="card">
+                <h2><i class="fa-solid fa-star"></i> Müşteri Yorumları</h2>
+                <div class="review-card">
+                    <strong>Mehmet K.</strong>
+                    <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                    <p style="font-size: 0.85rem; opacity:0.8;">Aracım sıfır gibi teslim edildi, randevu saatinde hiç beklemedim.</p>
+                </div>
+                <div class="review-card">
+                    <strong>Merve A.</strong>
+                    <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                    <p style="font-size: 0.85rem; opacity:0.8;">Koltuk temizleme işlemi mükemmel oldu. Teşekkürler By Morfi!</p>
+                </div>
+            </div>
         </div>
-
-        <div class="field full">
-          <label>Randevu Tarihi <em>zorunlu</em></label>
-          <input id="date" type="date">
-        </div>
-
-        <div class="field full" id="timeSlotContainer">
-          <label>Randevu Saati (40 Dakika Periyotlar) <em id="slotStatusNote">Lütfen önce tarih seçin</em></label>
-          <div class="time-slots" id="timeSlotsGrid"></div>
-          <input type="hidden" id="selectedTime" value="">
-        </div>
-      </div>
-
-      <div class="price-row">
-        <div>
-          <div class="total-label">Ödenecek Toplam</div>
-          <div style="color:var(--text-muted);font-size:11px;margin-top:2px">Vergiler dahil tahmini fiyat</div>
-        </div>
-        <div class="total"><span id="totalPrice">600</span> <small>TL</small></div>
-      </div>
-    </section>
-
-    <aside class="card summary">
-      <div class="summary-top">
-        <small>RANDEVU ÖZETİ</small>
-        <h4 id="summaryVehicle">Sedan / Hatchback</h4>
-        <p id="summaryPackage">İç + Dış Yıkama</p>
-      </div>
-
-      <div class="receipt">
-        <div class="line"><span>Müşteri</span><strong id="sumName">—</strong></div>
-        <div class="line"><span>Plaka</span><strong id="sumPlate">—</strong></div>
-        <div class="line"><span>Tarih</span><strong id="sumDate">—</strong></div>
-        <div class="line"><span>Saat</span><strong id="sumTime">—</strong></div>
-        <div class="line"><span>Ek hizmetler</span><strong id="sumExtras">Yok</strong></div>
-      </div>
-
-      <button class="cta" id="bookBtn">Randevuyu Gönder →</button>
-      <button class="secondary" id="resetBtn">Formu temizle</button>
-      <div class="note">BY MORFİ OTO YIKAMA randevunuz gönderildiğinde saatiniz otomatik rezerve edilir.</div>
-    </aside>
-  </main>
-
-  <section class="card queue-section">
-    <div class="card-head">
-      <div>
-        <h3>Sırada Bekleyen Araçlar</h3>
-        <p>Seçilen tarihe ait onaylı randevu listesi ve dolu zaman dilimleri.</p>
-      </div>
-      <div class="badge" id="queueCountBadge">0 ARAÇ SIRADA</div>
-    </div>
-    <div class="queue-grid" id="queueGrid">
-      <div class="empty-queue">Bu tarih için henüz bir randevu oluşturulmadı.</div>
-    </div>
-  </section>
-</div>
-
-<!-- Admin Modal Overlay -->
-<div class="modal-overlay" id="adminModal">
-  <div class="modal-card">
-    <button class="modal-close" id="closeModalBtn">✕</button>
-
-    <div id="adminLoginBox">
-      <h3 style="font-size: 18px; margin-bottom: 6px;">Yönetici Girişi</h3>
-      <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 18px;">Sistem yönetimine erişmek için şifrenizi girin.</p>
-      <div class="field" style="margin-bottom: 16px;">
-        <label>Admin Şifresi</label>
-        <input type="password" id="adminPassInput" placeholder="••••••••">
-      </div>
-      <button class="cta" id="adminLoginBtn">Giriş Yap</button>
     </div>
 
-    <div id="adminControlsBox" style="display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-        <h3 style="font-size: 16px; color: var(--gold-light);">Yönetim Paneli</h3>
-        <span class="badge" style="border-color: var(--success); color: var(--success);">ONLINE</span>
-      </div>
-      <p style="font-size: 12px; color: var(--text-muted);">
-        Kapatılacak veya açılacak tarih aralığını belirleyin.
-      </p>
-
-      <div class="admin-range-grid">
-        <div class="field">
-          <label>Başlangıç Tarihi</label>
-          <input type="date" id="adminStartDate">
+    <!-- YAPAY ZEKALI CANLI DESTEK CHATBOT -->
+    <div id="chat-widget">
+        <div id="chat-box">
+            <div class="chat-header">
+                <span><i class="fa-solid fa-robot"></i> Morfi AI Asistan</span>
+                <span style="cursor:pointer;" onclick="toggleChat()"><i class="fa-solid fa-xmark"></i></span>
+            </div>
+            <div class="chat-messages" id="chatMsgs">
+                <div class="msg bot">Merhaba! Ben By Morfi Asistanı. Hizmetlerimiz veya fiyatlarımız hakkında ne öğrenmek istersiniz?</div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chatInput" placeholder="Mesajınızı yazın..." onkeypress="if(event.key==='Enter') sendAiMessage()">
+                <button onclick="sendAiMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
         </div>
-        <div class="field">
-          <label>Bitiş Tarihi</label>
-          <input type="date" id="adminEndDate">
-        </div>
-      </div>
-
-      <div class="admin-controls">
-        <button class="admin-btn" id="lockRangeBtn">🚫 Seçili Aralığı Randevulara KAPAT</button>
-        <button class="admin-btn unlock" id="unlockRangeBtn">🔓 Seçili Aralığın Kilidini AÇ</button>
-        <button class="secondary" id="adminLogoutBtn">Çıkış Yap</button>
-      </div>
+        <button id="chat-btn" onclick="toggleChat()"><i class="fa-solid fa-comments"></i></button>
     </div>
-  </div>
-</div>
 
-<div class="toast" id="toast"></div>
-
-<script>
-const WHATSAPP_PHONE = "905385475603";
-const ADMIN_PASS = "muho6060.";
-
-const VEHICLES = [
-  {name:"Sedan / Hatchback", price:600, icon:"◈"},
-  {name:"SUV", price:800, icon:"◆"},
-  {name:"Ticari", price:700, icon:"▣"},
-  {name:"Jip", price:800, icon:"◇"},
-  {name:"Minibüs / Panelvan", price:1000, icon:"▤"},
-  {name:"Lastik Otel", price:750, fixed:true, icon:"◉"},
-  {name:"Lastik Tamiri", price:350, fixed:true, icon:"◎"}
-];
-
-function escapeHTML(str) {
-  return String(str).replace(/[&<>"']/g, match => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-  })[match]);
-}
-
-function generate40MinSlots() {
-  const slots = [];
-  let currentMinutes = 8 * 60;
-  const endMinutes = 20 * 60;
-
-  while (currentMinutes <= endMinutes) {
-    const h = Math.floor(currentMinutes / 60).toString().padStart(2, '0');
-    const m = (currentMinutes % 60).toString().padStart(2, '0');
-    slots.push(`${h}:${m}`);
-    currentMinutes += 40;
-  }
-  return slots;
-}
-
-const TIME_SLOTS = generate40MinSlots();
-
-function getStoredAppointments() {
-  try {
-    return JSON.parse(localStorage.getItem("bymorfi_appointments") || "[]");
-  } catch (e) { return []; }
-}
-
-function saveAppointment(appt) {
-  const list = getStoredAppointments();
-  list.push(appt);
-  localStorage.setItem("bymorfi_appointments", JSON.stringify(list));
-}
-
-function removeAppointment(id) {
-  let list = getStoredAppointments();
-  list = list.filter(a => a.id !== id);
-  localStorage.setItem("bymorfi_appointments", JSON.stringify(list));
-}
-
-function getClosedDays() {
-  try {
-    return JSON.parse(localStorage.getItem("bymorfi_closed_days") || "[]");
-  } catch (e) { return []; }
-}
-
-function setClosedDaysRange(startStr, endStr, lock = true) {
-  let days = getClosedDays();
-  const start = new Date(startStr);
-  const end = new Date(endStr);
-  
-  if (start > end) return false;
-
-  let curr = new Date(start);
-  while (curr <= end) {
-    const isoDate = curr.toISOString().split('T')[0];
-    if (lock) {
-      if (!days.includes(isoDate)) days.push(isoDate);
-    } else {
-      days = days.filter(d => d !== isoDate);
-    }
-    curr.setDate(curr.getDate() + 1);
-  }
-
-  localStorage.setItem("bymorfi_closed_days", JSON.stringify(days));
-  return true;
-}
-
-let isAdminLoggedIn = false;
-
-const $ = id => document.getElementById(id);
-const vehicleCards = $("vehicleCards");
-
-/* Particle Background */
-const canvas = $("particleCanvas");
-const ctx = canvas.getContext("2d");
-let particles = [];
-let mouse = { x: null, y: null, radius: 150 };
-
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-window.addEventListener("resize", resizeCanvas);
-resizeCanvas();
-
-window.addEventListener("mousemove", (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
-window.addEventListener("mouseleave", () => { mouse.x = null; mouse.y = null; });
-
-class Particle {
-  constructor() { this.reset(); }
-  reset() {
-    this.x = Math.random() * canvas.width;
-    this.y = Math.random() * canvas.height;
-    this.size = Math.random() * 2.5 + 0.5;
-    this.speedX = (Math.random() - 0.5) * 0.4;
-    this.speedY = (Math.random() - 0.5) * 0.4;
-    this.opacity = Math.random() * 0.5 + 0.2;
-  }
-  update() {
-    this.x += this.speedX; this.y += this.speedY;
-    if (this.x < 0) this.x = canvas.width;
-    if (this.x > canvas.width) this.x = 0;
-    if (this.y < 0) this.y = canvas.height;
-    if (this.y > canvas.height) this.y = 0;
-
-    if (mouse.x !== null && mouse.y !== null) {
-      let dx = mouse.x - this.x, dy = mouse.y - this.y;
-      let dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < mouse.radius) {
-        let force = (mouse.radius - dist) / mouse.radius;
-        this.x -= (dx / dist) * force * 1.5;
-        this.y -= (dy / dist) * force * 1.5;
-      }
-    }
-  }
-  draw() {
-    const isLight = document.body.classList.contains("light-theme");
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fillStyle = isLight ? `rgba(180, 136, 53, ${this.opacity})` : `rgba(215, 180, 106, ${this.opacity})`;
-    ctx.fill();
-  }
-}
-
-function initParticles() {
-  particles = [];
-  const count = Math.floor((window.innerWidth * window.innerHeight) / 12000);
-  for (let i = 0; i < count; i++) particles.push(new Particle());
-}
-function animateParticles() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  particles.forEach(p => { p.update(); p.draw(); });
-  requestAnimationFrame(animateParticles);
-}
-initParticles(); animateParticles();
-
-/* Theme Management */
-function initTheme(){
-  if(localStorage.getItem("theme") === "light"){
-    document.body.classList.add("light-theme");
-    $("themeBtn").innerHTML = "☀️ Açık Tema";
-  }
-}
-$("themeBtn").onclick = () => {
-  document.body.classList.toggle("light-theme");
-  const isLight = document.body.classList.contains("light-theme");
-  localStorage.setItem("theme", isLight ? "light" : "dark");
-  $("themeBtn").innerHTML = isLight ? "☀️ Açık Tema" : "🌙 Koyu Tema";
-};
-
-function toast(title, text=""){
-  const el=$("toast"); el.innerHTML=`<b>${escapeHTML(title)}</b>${escapeHTML(text)}`; el.classList.add("show");
-  clearTimeout(window.__toast); window.__toast=setTimeout(()=>el.classList.remove("show"),3200);
-}
-
-function buildVehicles(){
-  vehicleCards.innerHTML="";
-  VEHICLES.forEach((v,i)=>{
-    const b=document.createElement("button");
-    b.type="button"; b.className="service"+(i===0?" active":"");
-    b.dataset.name=v.name;
-    b.innerHTML=`<strong>${v.icon} ${escapeHTML(v.name)}</strong><span>${v.fixed?"Sabit fiyat":"İç + dış"} · ${v.price} TL</span>`;
-    b.onclick=()=>{
-      document.querySelectorAll(".service").forEach(x=>x.classList.remove("active"));
-      b.classList.add("active");
-      $("vehicleType").value=v.name;
-      $("washTypeGroup").style.display=v.fixed?"none":"block";
-      if(v.fixed) $("extraSponge").checked=false;
-      renderTimeSlots();
-      update();
-    };
-    vehicleCards.appendChild(b);
-  });
-}
-
-function selectedVehicle(){return VEHICLES.find(v=>v.name===$("vehicleType").value)||VEHICLES[0]}
-
-function renderTimeSlots() {
-  const grid = $("timeSlotsGrid");
-  const selectedDate = $("date").value;
-  const isFixedVehicle = selectedVehicle().fixed;
-  const closedDays = getClosedDays();
-  grid.innerHTML = "";
-
-  if (!selectedDate) {
-    $("slotStatusNote").textContent = "Lütfen önce tarih seçin";
-    return;
-  }
-
-  if (closedDays.includes(selectedDate)) {
-    $("slotStatusNote").textContent = "Bu tarih randevulara kapalıdır!";
-    grid.innerHTML = `<div class="day-closed-msg">🚫 İşletmemiz seçilen tarihte randevulu hizmete kapalıdır. Lütfen başka bir gün seçin.</div>`;
-    return;
-  }
-
-  if (isFixedVehicle) {
-    $("slotStatusNote").textContent = "Lastik hizmetleri için uygun bir saat seçin";
-  } else {
-    $("slotStatusNote").textContent = "Yeşil: Müsait | Kırmızı: Dolu";
-  }
-
-  const appointments = getStoredAppointments().filter(a => a.date === selectedDate && !a.isFixed);
-  const bookedTimes = appointments.map(a => a.time);
-
-  TIME_SLOTS.forEach(time => {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "slot-btn";
-    const isBooked = !isFixedVehicle && bookedTimes.includes(time);
-
-    if (isBooked) {
-      btn.disabled = true;
-      btn.innerHTML = `${time}<br><small>Dolu ⛔</small>`;
-    } else {
-      btn.textContent = time;
-      if ($("selectedTime").value === time) btn.classList.add("selected");
-      btn.onclick = () => {
-        document.querySelectorAll(".slot-btn").forEach(s => s.classList.remove("selected"));
-        btn.classList.add("selected");
-        $("selectedTime").value = time;
-        update();
-      };
-    }
-    grid.appendChild(btn);
-  });
-}
-
-function renderQueue() {
-  const queueGrid = $("queueGrid");
-  const selectedDate = $("date").value;
-  const allAppts = getStoredAppointments();
-  
-  const filtered = selectedDate ? allAppts.filter(a => a.date === selectedDate) : allAppts;
-  filtered.sort((a,b) => a.time.localeCompare(b.time));
-
-  $("queueCountBadge").textContent = `${filtered.length} ARAÇ SIRADA`;
-
-  if (filtered.length === 0) {
-    queueGrid.innerHTML = `<div class="empty-queue">${selectedDate ? 'Bu tarihte henüz sıra yok.' : 'Henüz randevu bulunmuyor.'}</div>`;
-    return;
-  }
-
-  queueGrid.innerHTML = filtered.map(a => `
-    <div class="queue-item">
-      <div class="queue-header">
-        <span class="queue-plate">${escapeHTML(a.plate)}</span>
-        <span class="queue-time">⏰ ${escapeHTML(a.time)}</span>
-      </div>
-      <div class="queue-details">
-        <div><strong>Müşteri:</strong> ${escapeHTML(a.name)}</div>
-        <div><strong>Araç / Paket:</strong> ${escapeHTML(a.vehicle)} (${escapeHTML(a.wash)})</div>
-        <div><strong>Tarih:</strong> ${escapeHTML(a.date)}</div>
-      </div>
-      ${isAdminLoggedIn ? `<button class="cancel-btn" onclick="cancelAppt('${escapeHTML(a.id)}')">❌ Randevuyu İptal Et</button>` : ''}
-    </div>
-  `).join("");
-}
-
-function cancelAppt(id) {
-  if (confirm("Bu randevuyu iptal etmek istediğinize emin misiniz?")) {
-    removeAppointment(id);
-    renderTimeSlots();
-    renderQueue();
-    toast("Randevu İptal Edildi", "Seçilen saat yeniden kullanılabilir hale geldi.");
-  }
-}
-
-function isTRPlateValid(plate){
-  const clean=plate.replace(/\s+/g,"").toUpperCase();
-  return /^(0[1-9]|[1-7][0-9]|8[0-1])([A-PR-VY-Z]{1,3})([0-9]{2,4})$/.test(clean);
-}
-
-function isPhoneValid(phone){
-  const clean = phone.replace(/\D/g, "");
-  return clean.length >= 10 && clean.length <= 11;
-}
-
-function calculate(){
-  const v=selectedVehicle();
-  let total=v.price;
-  if(!v.fixed && $("washType").value!=="ic_dis") total=v.price/2;
-  if(!v.fixed && $("extraSponge").checked) total+=150;
-  return total;
-}
-
-function update(){
-  const v=selectedVehicle(), fixed=v.fixed;
-  $("totalPrice").textContent=calculate().toLocaleString("tr-TR");
-  $("summaryVehicle").textContent=v.name;
-  $("summaryPackage").textContent=fixed?"Sabit fiyatlı hizmet":$("washType").selectedOptions[0].text.split("—")[0].trim();
-  $("sumName").textContent=$("name").value.trim()||"—";
-  $("sumPlate").textContent=$("plate").value.trim().toUpperCase()||"—";
-  $("sumDate").textContent=$("date").value?new Date($("date").value+"T00:00:00").toLocaleDateString("tr-TR",{day:"2-digit",month:"2-digit",year:"numeric"}):"—";
-  $("sumTime").textContent=$("selectedTime").value||"—";
-  
-  const extras=[];
-  if($("extraSponge").checked) extras.push("Süngerli");
-  $("sumExtras").textContent=extras.join(", ")||"Yok";
-}
-
-function validate(){
-  let ok=true;
-  ["name","phone","plate","date"].forEach(id=>{
-    const el=$(id); el.classList.remove("invalid","valid");
-    if(!el.value.trim()){el.classList.add("invalid");ok=false}
-  });
-
-  const closedDays = getClosedDays();
-  if (closedDays.includes($("date").value)) {
-    toast("Gün Kapalı", "Seçilen tarihe randevu alınamaz.");
-    return false;
-  }
-
-  if(!$("selectedTime").value){
-    ok=false;
-    toast("Saat seçilmedi","Lütfen listeden 40 dakikalık bir randevu saati seçin.");
-  }
-
-  if($("phone").value && !isPhoneValid($("phone").value)){
-    $("phone").classList.add("invalid"); ok=false;
-    toast("Telefon geçersiz","Lütfen 10-11 haneli geçerli cep telefonu girin.");
-  }
-
-  if($("plate").value && !isTRPlateValid($("plate").value)){
-    $("plate").classList.add("invalid"); ok=false;
-    toast("Plaka kontrolü","Örnek format: 06 MAM 34");
-  }
-
-  return ok;
-}
-
-function sendWhatsApp(){
-  if(!validate()) return;
-
-  const v=selectedVehicle();
-  const extras=[];
-  if($("extraSponge").checked) extras.push("Süngerli yıkama (+150 TL)");
-  const wash=v.fixed?"Sabit fiyatlı hizmet":$("washType").selectedOptions[0].text.split("—")[0].trim();
-  
-  const apptData = {
-    id: "apt_" + Date.now(),
-    name: $("name").value.trim(),
-    phone: $("phone").value.trim(),
-    plate: $("plate").value.trim().toUpperCase(),
-    vehicle: v.name,
-    wash: wash,
-    date: $("date").value,
-    time: $("selectedTime").value,
-    isFixed: !!v.fixed
-  };
-
-  saveAppointment(apptData);
-
-  const msg=[
-    "Merhaba, BY MORFİ üzerinden randevu oluşturmak istiyorum.",
-    "",
-    `👤 Müşteri: ${apptData.name}`,
-    `📱 Telefon: ${apptData.phone}`,
-    `🚗 Plaka: ${apptData.plate}`,
-    `🧼 Araç: ${apptData.vehicle}`,
-    `✨ Paket: ${apptData.wash}`,
-    `➕ Ekstra: ${extras.join(", ")||"Yok"}`,
-    `💰 Toplam: ${calculate()} TL`,
-    `📅 Tarih: ${apptData.date}`,
-    `⏰ Saat: ${apptData.time}`
-  ].filter(Boolean).join("\n");
-
-  renderTimeSlots();
-  renderQueue();
-
-  const url=`https://api.whatsapp.com/send?phone=${WHATSAPP_PHONE}&text=${encodeURIComponent(msg)}`;
-  window.open(url,"_blank","noopener,noreferrer");
-}
-
-function resetForm(){
-  $("name").value="";$("phone").value="";$("plate").value="";
-  $("selectedTime").value="";
-  $("washType").value="ic_dis";
-  $("extraSponge").checked=false;
-  $("vehicleType").value="Sedan / Hatchback";
-  document.querySelectorAll(".service").forEach((x,i)=>x.classList.toggle("active",i===0));
-  $("washTypeGroup").style.display="block";
-  document.querySelectorAll("input").forEach(x=>x.classList.remove("invalid","valid"));
-  renderTimeSlots();
-  update();
-  toast("Form temizlendi","Yeni bir randevu seçebilirsiniz.");
-}
-
-function openAdminModal() {
-  const modal = $("adminModal");
-  if (modal) modal.classList.add("active");
-}
-
-function closeAdminModal() {
-  const modal = $("adminModal");
-  if (modal) modal.classList.remove("active");
-}
-
-$("adminLogoBtn").onclick = openAdminModal;
-$("closeModalBtn").onclick = closeAdminModal;
-
-$("adminModal").onclick = (e) => {
-  if (e.target === $("adminModal")) closeAdminModal();
-};
-
-$("adminLoginBtn").onclick = () => {
-  if ($("adminPassInput").value === ADMIN_PASS) {
-    isAdminLoggedIn = true;
-    $("adminLoginBox").style.display = "none";
-    $("adminControlsBox").style.display = "block";
-    $("adminPassInput").value = "";
-    
-    const currDate = $("date").value || new Date().toISOString().split('T')[0];
-    $("adminStartDate").value = currDate;
-    $("adminEndDate").value = currDate;
-
-    renderQueue();
-    toast("Başarılı Giriş", "Yönetici paneli açıldı.");
-  } else {
-    toast("Hatalı Şifre", "Lütfen şifrenizi kontrol edin.");
-  }
-};
-
-$("adminLogoutBtn").onclick = () => {
-  isAdminLoggedIn = false;
-  $("adminLoginBox").style.display = "block";
-  $("adminControlsBox").style.display = "none";
-  closeAdminModal();
-  renderQueue();
-  toast("Çıkış Yapıldı", "Yönetici oturumu kapatıldı.");
-};
-
-$("lockRangeBtn").onclick = () => {
-  const start = $("adminStartDate").value;
-  const end = $("adminEndDate").value;
-
-  if (!start || !end) {
-    toast("Eksik Tarih", "Lütfen hem başlangıç hem bitiş tarihini seçin.");
-    return;
-  }
-
-  if (setClosedDaysRange(start, end, true)) {
-    renderTimeSlots();
-    toast("Tarihler Kapatıldı", `${start} - ${end} arası randevulara kapatıldı.`);
-  } else {
-    toast("Tarih Hatası", "Başlangıç tarihi bitiş tarihinden büyük olamaz.");
-  }
-};
-
-$("unlockRangeBtn").onclick = () => {
-  const start = $("adminStartDate").value;
-  const end = $("adminEndDate").value;
-
-  if (!start || !end) {
-    toast("Eksik Tarih", "Lütfen hem başlangıç hem bitiş tarihini seçin.");
-    return;
-  }
-
-  if (setClosedDaysRange(start, end, false)) {
-    renderTimeSlots();
-    toast("Kilitleme Kaldırıldı", `${start} - ${end} arası randevulara açıldı.`);
-  } else {
-    toast("Tarih Hatası", "Başlangıç tarihi bitiş tarihinden büyük olamaz.");
-  }
-};
-
-["name","phone","plate"].forEach(id=>$(id).oninput = update);
-$("date").onchange = () => {
-  renderTimeSlots();
-  renderQueue();
-  update();
-};
-["washType","extraSponge"].forEach(id=>$(id).onchange = update);
-
-$("bookBtn").onclick = sendWhatsApp;
-$("resetBtn").onclick = resetForm;
-
-const today=new Date();
-$("date").min=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
-$("date").value=$("date").min;
-
-initTheme();
-buildVehicles();
-renderTimeSlots();
-renderQueue();
-update();
-</script>
+    <script>
+        // Tema Değiştirici
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.querySelector('.theme-toggle i');
+            if (body.getAttribute('data-theme') === 'light') {
+                body.removeAttribute('data-theme');
+                icon.className = 'fa-solid fa-moon';
+            } else {
+                body.setAttribute('data-theme', 'light');
+                icon.className = 'fa-solid fa-sun';
+            }
+        }
+
+        // SSS Aç/Kapat
+        function toggleFaq(element) {
+            const answer = element.querySelector('.faq-answer');
+            const isVisible = answer.style.display === 'block';
+            document.querySelectorAll('.faq-answer').forEach(el => el.style.display = 'none');
+            answer.style.display = isVisible ? 'none' : 'block';
+        }
+
+        // WhatsApp Randevu Oluşturma
+        function handleBooking(e) {
+            e.preventDefault();
+            const name = document.getElementById('custName').value;
+            const phone = document.getElementById('custPhone').value;
+            const plate = document.getElementById('custPlate').value;
+            const service = document.getElementById('serviceType').value;
+            const date = document.getElementById('custDate').value;
+
+            const text = `Merhaba, By Morfi Oto Yıkama için randevu talebim var:%0A%0A` +
+                         `*Ad Soyad:* ${name}%0A` +
+                         `*Telefon:* ${phone}%0A` +
+                         `*Plaka:* ${plate}%0A` +
+                         `*Hizmet:* ${service}%0A` +
+                         `*Tarih/Saat:* ${date}`;
+
+            // İşletme numarası
+            const businessNumber = "905XXXXXXXXX"; // İşletmenin telefon numarasını yazın
+            window.open(`https://wa.me/${businessNumber}?text=${text}`, '_blank');
+        }
+
+        // AI Chatbot Penceresi Aç/Kapat
+        function toggleChat() {
+            const chatBox = document.getElementById('chat-box');
+            chatBox.style.display = (chatBox.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        // Yapay Zeka Cevap Motoru (Kural & Entegrasyon Hazır Yapı)
+        async function sendAiMessage() {
+            const input = document.getElementById('chatInput');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            const chatMsgs = document.getElementById('chatMsgs');
+            
+            // Kullanıcı Mesajı Ekranı
+            chatMsgs.innerHTML += `<div class="msg user">${msg}</div>`;
+            input.value = '';
+            chatMsgs.scrollTop = chatMsgs.scrollHeight;
+
+            // Yanıt Bekleme Göstergesi
+            const loadingId = 'load-' + Date.now();
+            chatMsgs.innerHTML += `<div class="msg bot" id="${loadingId}">Yanıt hazırlanıyor...</div>`;
+            chatMsgs.scrollTop = chatMsgs.scrollHeight;
+
+            // Akıllı Kural ve Otomatik Yanıtlar
+            setTimeout(() => {
+                let botReply = "Detaylı bilgi için üstteki formdan randevu oluşturabilir veya doğrudan WhatsApp hattımızdan bize ulaşabilirsiniz.";
+                const lowerMsg = msg.toLowerCase();
+
+                if (lowerMsg.includes('fiyat') || lowerMsg.includes('ücret')) {
+                    botReply = "İç-Dış yıkama 300 TL, Cilalı yıkama 450 TL, Detaylı İç Temizlik 1200 TL, Pasta Cila 3500 TL'den başlamaktadır.";
+                } else if (lowerMsg.includes('saat') || lowerMsg.includes('açık') || lowerMsg.includes('çalışma')) {
+                    botReply = "Haftanın 7 günü 08:30 - 20:00 saatleri arasında hizmet vermekteyiz.";
+                } else if (lowerMsg.includes('nerede') || lowerMsg.includes('adres') || lowerMsg.includes('konum')) {
+                    botReply = "İşletmemiz merkezi konumda hizmet vermektedir. Detaylı konum için randevu onayından sonra yol tarifi iletilir.";
+                }
+
+                document.getElementById(loadingId).innerText = botReply;
+                chatMsgs.scrollTop = chatMsgs.scrollHeight;
+            }, 800);
+        }
+    </script>
 </body>
 </html>
