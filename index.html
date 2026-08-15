@@ -72,7 +72,7 @@ button { cursor: pointer; border: none; background: none; }
   max-width: 1140px;
   margin: 0 auto;
   position: relative;
-  z-index: 1;
+  z-index: 10;
 }
 
 .nav {
@@ -104,11 +104,14 @@ button { cursor: pointer; border: none; background: none; }
   cursor: pointer;
   user-select: none;
   transition: var(--transition);
+  position: relative;
+  z-index: 20;
+  pointer-events: auto;
 }
 
 .logo:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 20px var(--gold-primary);
+  transform: scale(1.08);
+  box-shadow: 0 0 25px var(--gold-primary);
 }
 
 .brand h1 { font-size: 16px; font-weight: 700; letter-spacing: 0.15em; line-height: 1.2; }
@@ -308,7 +311,6 @@ input:focus, select:focus {
 .service strong { display: block; font-size: 12px; font-weight: 600; }
 .service span { display: block; color: var(--text-muted); font-size: 11px; margin-top: 2px; }
 
-/* Time Slots */
 .time-slots {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
@@ -439,7 +441,6 @@ input:focus, select:focus {
 
 .note { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 14px; line-height: 1.4; }
 
-/* Waiting List Section */
 .queue-section { margin-top: 32px; }
 
 .queue-grid {
@@ -527,44 +528,47 @@ input:focus, select:focus {
   border-radius: var(--radius-md);
 }
 
-/* Modal Popup & Blur Overlay */
+/* Modal Popup & Blur Overlay Fix */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(12px);
-  z-index: 1000;
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
-  transition: var(--transition);
+  transition: all 0.3s ease;
 }
 
 .modal-overlay.active {
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
 }
 
 .modal-card {
-  width: 100%;
-  max-width: 440px;
+  width: 90%;
+  max-width: 420px;
   background: var(--panel-bg);
   border: 1px solid var(--gold-primary);
   border-radius: var(--radius-lg);
   padding: 28px;
-  box-shadow: 0 0 30px var(--gold-glow);
-  transform: translateY(20px);
-  transition: var(--transition);
+  box-shadow: 0 0 35px var(--gold-glow);
+  transform: scale(0.95);
+  transition: all 0.3s ease;
   position: relative;
 }
 
 .modal-overlay.active .modal-card {
-  transform: translateY(0);
+  transform: scale(1);
 }
 
 .modal-close {
@@ -624,7 +628,7 @@ input:focus, select:focus {
   position: fixed;
   bottom: 24px;
   right: 24px;
-  z-index: 2000;
+  z-index: 10000;
   background: var(--panel-bg);
   border: 1px solid var(--panel-border);
   padding: 14px 20px;
@@ -771,7 +775,6 @@ input:focus, select:focus {
     </aside>
   </main>
 
-  <!-- Live Waiting List Section -->
   <section class="card queue-section">
     <div class="card-head">
       <div>
@@ -786,7 +789,7 @@ input:focus, select:focus {
   </section>
 </div>
 
-<!-- Hidden Admin Modal Overlay -->
+<!-- Admin Modal Overlay -->
 <div class="modal-overlay" id="adminModal">
   <div class="modal-card">
     <button class="modal-close" id="closeModalBtn">✕</button>
@@ -820,7 +823,7 @@ input:focus, select:focus {
 <div class="toast" id="toast"></div>
 
 <script>
-const WHATSAPP_PHONE = "905385475603"; // International format for flawless API routing
+const WHATSAPP_PHONE = "905385475603";
 const ADMIN_PASS = "muho6060.";
 
 const VEHICLES = [
@@ -841,8 +844,8 @@ function escapeHTML(str) {
 
 function generate40MinSlots() {
   const slots = [];
-  let currentMinutes = 8 * 60; // 08:00
-  const endMinutes = 20 * 60;  // 20:00
+  let currentMinutes = 8 * 60;
+  const endMinutes = 20 * 60;
 
   while (currentMinutes <= endMinutes) {
     const h = Math.floor(currentMinutes / 60).toString().padStart(2, '0');
@@ -965,12 +968,12 @@ function initTheme(){
     $("themeBtn").innerHTML = "☀️ Açık Tema";
   }
 }
-$("themeBtn").addEventListener("click", () => {
+$("themeBtn").onclick = () => {
   document.body.classList.toggle("light-theme");
   const isLight = document.body.classList.contains("light-theme");
   localStorage.setItem("theme", isLight ? "light" : "dark");
   $("themeBtn").innerHTML = isLight ? "☀️ Açık Tema" : "🌙 Koyu Tema";
-});
+};
 
 function toast(title, text=""){
   const el=$("toast"); el.innerHTML=`<b>${escapeHTML(title)}</b>${escapeHTML(text)}`; el.classList.add("show");
@@ -1200,7 +1203,6 @@ function sendWhatsApp(){
   renderTimeSlots();
   renderQueue();
 
-  // Universal WhatsApp API link without phone rejection issues
   const url=`https://api.whatsapp.com/send?phone=${WHATSAPP_PHONE}&text=${encodeURIComponent(msg)}`;
   window.open(url,"_blank","noopener,noreferrer");
 }
@@ -1219,20 +1221,25 @@ function resetForm(){
   toast("Form temizlendi","Yeni bir randevu seçebilirsiniz.");
 }
 
-/* Modal Admin Logic */
-$("adminLogoBtn").addEventListener("click", () => {
-  $("adminModal").classList.add("active");
-});
+/* Explicit Modal Handler */
+function openAdminModal() {
+  const modal = $("adminModal");
+  if (modal) modal.classList.add("active");
+}
 
-$("closeModalBtn").addEventListener("click", () => {
-  $("adminModal").classList.remove("active");
-});
+function closeAdminModal() {
+  const modal = $("adminModal");
+  if (modal) modal.classList.remove("active");
+}
 
-$("adminModal").addEventListener("click", (e) => {
-  if (e.target === $("adminModal")) $("adminModal").classList.remove("active");
-});
+$("adminLogoBtn").onclick = openAdminModal;
+$("closeModalBtn").onclick = closeAdminModal;
 
-$("adminLoginBtn").addEventListener("click", () => {
+$("adminModal").onclick = (e) => {
+  if (e.target === $("adminModal")) closeAdminModal();
+};
+
+$("adminLoginBtn").onclick = () => {
   if ($("adminPassInput").value === ADMIN_PASS) {
     isAdminLoggedIn = true;
     $("adminLoginBox").style.display = "none";
@@ -1243,18 +1250,18 @@ $("adminLoginBtn").addEventListener("click", () => {
   } else {
     toast("Hatalı Şifre", "Lütfen şifrenizi kontrol edin.");
   }
-});
+};
 
-$("adminLogoutBtn").addEventListener("click", () => {
+$("adminLogoutBtn").onclick = () => {
   isAdminLoggedIn = false;
   $("adminLoginBox").style.display = "block";
   $("adminControlsBox").style.display = "none";
-  $("adminModal").classList.remove("active");
+  closeAdminModal();
   renderQueue();
   toast("Çıkış Yapıldı", "Yönetici oturumu kapatıldı.");
-});
+};
 
-$("toggleDayLockBtn").addEventListener("click", () => {
+$("toggleDayLockBtn").onclick = () => {
   const selectedDate = $("date").value;
   if (!selectedDate) {
     toast("Tarih Seçilmedi", "Lütfen önce bir tarih seçin.");
@@ -1264,18 +1271,18 @@ $("toggleDayLockBtn").addEventListener("click", () => {
   renderTimeSlots();
   update();
   toast("Güncellendi", "Seçili günün durumu değiştirildi.");
-});
+};
 
-["name","phone","plate"].forEach(id=>$(id).addEventListener("input",update));
-$("date").addEventListener("change", () => {
+["name","phone","plate"].forEach(id=>$(id).oninput = update);
+$("date").onchange = () => {
   renderTimeSlots();
   renderQueue();
   update();
-});
-["washType","extraSponge"].forEach(id=>$(id).addEventListener("change",update));
+};
+["washType","extraSponge"].forEach(id=>$(id).onchange = update);
 
-$("bookBtn").addEventListener("click",sendWhatsApp);
-$("resetBtn").addEventListener("click",resetForm);
+$("bookBtn").onclick = sendWhatsApp;
+$("resetBtn").onclick = resetForm;
 
 const today=new Date();
 $("date").min=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
