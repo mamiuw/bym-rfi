@@ -845,95 +845,6 @@ input:focus, select:focus {
   box-shadow: 0 0 15px var(--gold-glow);
   transform: translateY(-1px);
 }
-
-.admin-settings-grid {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-  margin-top:18px;
-}
-.admin-setting-wide { grid-column:1 / -1; }
-.admin-switch-row {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:15px;
-  padding:13px;
-  border:1px solid var(--panel-border);
-  border-radius:var(--radius-md);
-  background:var(--input-bg);
-}
-.admin-switch-row strong { font-size:12px; }
-.admin-switch {
-  width:48px;
-  height:26px;
-  border-radius:99px;
-  background:rgba(255,255,255,.12);
-  position:relative;
-  cursor:pointer;
-  border:1px solid var(--panel-border);
-}
-.admin-switch::after {
-  content:"";
-  position:absolute;
-  width:20px;height:20px;
-  left:3px;top:2px;
-  border-radius:50%;
-  background:var(--text-muted);
-  transition:.2s;
-}
-.admin-switch.active { background:rgba(16,185,129,.25); border-color:var(--success); }
-.admin-switch.active::after { left:24px; background:var(--success); }
-.admin-stat-grid {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:9px;
-  margin-top:16px;
-}
-.admin-stat {
-  padding:13px 8px;
-  text-align:center;
-  border:1px solid var(--panel-border);
-  border-radius:var(--radius-md);
-  background:var(--input-bg);
-}
-.admin-stat b { display:block; font-size:19px; color:var(--gold-light); }
-.admin-stat span { display:block; margin-top:3px; font-size:10px; color:var(--text-muted); }
-.admin-appointment-list {
-  display:flex;
-  flex-direction:column;
-  gap:9px;
-  margin-top:16px;
-}
-.admin-appt-row {
-  padding:12px;
-  border:1px solid var(--panel-border);
-  border-radius:var(--radius-md);
-  background:var(--input-bg);
-}
-.admin-appt-top {
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  font-size:12px;
-  font-weight:800;
-}
-.admin-appt-meta { margin-top:5px; color:var(--text-muted); font-size:11px; line-height:1.5; }
-.admin-appt-delete {
-  margin-top:9px;
-  padding:7px 10px;
-  border:1px solid rgba(239,68,68,.5);
-  color:#fca5a5;
-  border-radius:8px;
-  font-size:10px;
-  font-weight:800;
-}
-.admin-appt-delete:hover { background:var(--danger); color:#fff; }
-@media(max-width:560px) {
-  .admin-settings-grid { grid-template-columns:1fr; }
-  .admin-setting-wide { grid-column:auto; }
-  .admin-stat-grid { grid-template-columns:1fr 1fr 1fr; }
-}
 .manage-modal-card {
   width: 92%;
   max-width: 560px;
@@ -1268,8 +1179,6 @@ input:focus, select:focus {
         <div class="admin-management-buttons">
           <button class="admin-manage-btn" id="editPricesBtn">💰 FİYATLARI DÜZENLE</button>
           <button class="admin-manage-btn" id="addServiceBtn">➕ HİZMET EKLE</button>
-          <button class="admin-manage-btn" id="siteSettingsBtn">⚙️ SİSTEM AYARLARI</button>
-          <button class="admin-manage-btn" id="appointmentManagerBtn">📋 RANDEVULARI YÖNET</button>
         </div>
         <button class="secondary" id="adminLogoutBtn">Çıkış Yap</button>
       </div>
@@ -1308,65 +1217,6 @@ input:focus, select:focus {
       </div>
       <button class="cta" id="saveNewServiceBtn">➕ Hizmeti Kaydet</button>
     </div>
-  </div>
-</div>
-
-<!-- Gelişmiş Sistem Ayarları -->
-<div class="modal-overlay" id="siteSettingsModal">
-  <div class="manage-modal-card">
-    <button class="modal-close" id="closeSiteSettingsBtn">✕</button>
-    <h3 style="font-size:18px;">⚙️ Sistem Ayarları</h3>
-    <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">Randevu sisteminin çalışma kurallarını buradan yönet.</p>
-
-    <div class="admin-settings-grid">
-      <div class="admin-switch-row admin-setting-wide">
-        <div><strong>Randevu Kabulü</strong><div style="font-size:10px;color:var(--text-muted);margin-top:3px;">Kapatırsan müşteriler yeni randevu oluşturamaz.</div></div>
-        <button type="button" class="admin-switch" id="bookingEnabledSwitch" aria-label="Randevu kabulü"></button>
-      </div>
-
-      <div class="field">
-        <label>Günlük Maksimum Randevu</label>
-        <input type="number" min="0" id="maxDailyAppointments" placeholder="0 = sınırsız">
-      </div>
-      <div class="field">
-        <label>En Az Kaç Saat Önceden</label>
-        <input type="number" min="0" id="minAdvanceHours" placeholder="0 = hemen">
-      </div>
-      <div class="field">
-        <label>Süngerli Yıkama Ek Ücreti</label>
-        <input type="number" min="0" step="50" id="spongePriceSetting">
-      </div>
-      <div class="field">
-        <label>WhatsApp Numarası</label>
-        <input type="text" id="whatsappNumberSetting" placeholder="90538...">
-      </div>
-
-      <div class="admin-switch-row admin-setting-wide">
-        <div><strong>Hafta Sonu Randevuları</strong><div style="font-size:10px;color:var(--text-muted);margin-top:3px;">Cumartesi ve Pazar günlerini tek tuşla kapat.</div></div>
-        <button type="button" class="admin-switch" id="weekendBookingSwitch"></button>
-      </div>
-    </div>
-
-    <div class="manage-modal-actions">
-      <button class="cta" id="saveSiteSettingsBtn">💾 Ayarları Kaydet</button>
-      <button class="secondary" id="cancelSiteSettingsBtn" style="margin-top:0;">İptal</button>
-    </div>
-
-    <div class="admin-stat-grid">
-      <div class="admin-stat"><b id="statToday">0</b><span>BUGÜN</span></div>
-      <div class="admin-stat"><b id="statTotal">0</b><span>TOPLAM</span></div>
-      <div class="admin-stat"><b id="statNext">—</b><span>SONRAKİ</span></div>
-    </div>
-  </div>
-</div>
-
-<!-- Randevu Yönetimi -->
-<div class="modal-overlay" id="appointmentManagerModal">
-  <div class="manage-modal-card">
-    <button class="modal-close" id="closeAppointmentManagerBtn">✕</button>
-    <h3 style="font-size:18px;">📋 Randevuları Yönet</h3>
-    <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">Tüm randevuları görüntüle ve gerektiğinde yönet.</p>
-    <div class="admin-appointment-list" id="adminAppointmentList"></div>
   </div>
 </div>
 
@@ -1434,23 +1284,6 @@ input:focus, select:focus {
     }
   });
 
-  // Gelişmiş sistem ayarları tüm cihazlarda anlık senkronize edilir.
-  onValue(ref(db, 'site_settings'), (snapshot) => {
-    const data = snapshot.val();
-    if (data) {
-      window.applyRemoteSettings(data);
-    } else {
-      set(ref(db, 'site_settings'), JSON.parse(localStorage.getItem("bymorfi_site_settings") || JSON.stringify({
-        bookingEnabled: true,
-        maxDailyAppointments: 0,
-        minAdvanceHours: 0,
-        spongePrice: 150,
-        whatsappPhone: "905385475603",
-        weekendBooking: true
-      })));
-    }
-  });
-
   // İlk kurulumda Firebase boşsa mevcut varsayılan listeyi sunucuya aktar.
   onValue(ref(db, 'vehicles'), (snapshot) => {
     if (snapshot.exists()) return;
@@ -1481,40 +1314,6 @@ function loadVehicles() {
   } catch (e) {}
   return DEFAULT_VEHICLES.map(v => ({...v}));
 }
-
-const DEFAULT_SITE_SETTINGS = {
-  bookingEnabled: true,
-  maxDailyAppointments: 0,
-  minAdvanceHours: 0,
-  spongePrice: 150,
-  whatsappPhone: "905385475603",
-  weekendBooking: true
-};
-let SITE_SETTINGS = loadSiteSettings();
-
-function loadSiteSettings() {
-  try {
-    const saved = JSON.parse(localStorage.getItem("bymorfi_site_settings") || "null");
-    return {...DEFAULT_SITE_SETTINGS, ...(saved || {})};
-  } catch(e) { return {...DEFAULT_SITE_SETTINGS}; }
-}
-function saveSiteSettingsLocal() {
-  localStorage.setItem("bymorfi_site_settings", JSON.stringify(SITE_SETTINGS));
-  if (window.firebaseDb && window.dbRef && window.dbSet) {
-    window.dbSet(window.dbRef(window.firebaseDb, "site_settings"), SITE_SETTINGS);
-  }
-}
-function applyRemoteSettings(data) {
-  if (!data || typeof data !== "object") return;
-  SITE_SETTINGS = {...DEFAULT_SITE_SETTINGS, ...data};
-  saveSiteSettingsLocalNoFirebase();
-  update();
-  renderTimeSlots();
-}
-function saveSiteSettingsLocalNoFirebase() {
-  localStorage.setItem("bymorfi_site_settings", JSON.stringify(SITE_SETTINGS));
-}
-window.applyRemoteSettings = applyRemoteSettings;
 
 function saveVehicles() {
   localStorage.setItem("bymorfi_vehicles", JSON.stringify(VEHICLES));
@@ -2018,13 +1817,12 @@ function calculate(){
   const v=selectedVehicle();
   let total=v.price;
   if(!v.fixed && $("washType").value!=="ic_dis") total=v.price/2;
-  if(!v.fixed && $("extraSponge").checked) total+=Number(SITE_SETTINGS.spongePrice)||0;
+  if(!v.fixed && $("extraSponge").checked) total+=150;
   return total;
 }
 
 function update(){
   const v=selectedVehicle(), fixed=v.fixed;
-  $("bookBtn").disabled = !SITE_SETTINGS.bookingEnabled;
   $("totalPrice").textContent=calculate().toLocaleString("tr-TR");
   $("summaryVehicle").textContent=v.name;
   $("summaryPackage").textContent=fixed?"Sabit fiyatlı hizmet":$("washType").selectedOptions[0].text.split("—")[0].trim();
@@ -2039,42 +1837,6 @@ function update(){
 }
 
 function validate(){
-  let ok=true;
-
-  if (!SITE_SETTINGS.bookingEnabled) {
-    toast("Randevu Alımı Kapalı", "Şu anda yeni randevu kabul edilmiyor.");
-    return false;
-  }
-
-  const chosenDate = $("date").value;
-  if (chosenDate) {
-    const d = new Date(chosenDate + "T12:00:00");
-    const day = d.getDay();
-    if (!SITE_SETTINGS.weekendBooking && (day === 0 || day === 6)) {
-      toast("Hafta Sonu Kapalı", "Hafta sonu için randevu kabul edilmiyor.");
-      return false;
-    }
-
-    const minHours = Number(SITE_SETTINGS.minAdvanceHours) || 0;
-    if (minHours > 0) {
-      const minTime = Date.now() + minHours * 60 * 60 * 1000;
-      const selectedDateTime = new Date(chosenDate + "T" + ($("selectedTime").value || "00:00") + ":00").getTime();
-      if (selectedDateTime < minTime) {
-        toast("Daha Erken Randevu Seçin", `Randevu en az ${minHours} saat önceden alınmalı.`);
-        return false;
-      }
-    }
-
-    const dailyMax = Number(SITE_SETTINGS.maxDailyAppointments) || 0;
-    if (dailyMax > 0) {
-      const dailyCount = getStoredAppointments().filter(a => a.date === chosenDate).length;
-      if (dailyCount >= dailyMax) {
-        toast("Günlük Limit Doldu", "Seçtiğiniz gün için randevu kapasitesi dolmuştur.");
-        return false;
-      }
-    }
-  }
-
   let ok=true;
   ["name","phone","plate","date"].forEach(id=>{
     const el=$(id); el.classList.remove("invalid","valid");
@@ -2147,7 +1909,7 @@ function sendSuccessWhatsApp() {
   if (!data) return;
 
   const url =
-    `https://api.whatsapp.com/send?phone=${SITE_SETTINGS.whatsappPhone || WHATSAPP_PHONE}` +
+    `https://api.whatsapp.com/send?phone=${WHATSAPP_PHONE}` +
     `&text=${encodeURIComponent(data.message)}`;
 
   window.open(url, "_blank", "noopener,noreferrer");
@@ -2158,7 +1920,7 @@ function sendWhatsApp(){
 
   const v=selectedVehicle();
   const extras=[];
-  if($("extraSponge").checked) extras.push(`Süngerli yıkama (+${Number(SITE_SETTINGS.spongePrice)||0} TL)`) ;
+  if($("extraSponge").checked) extras.push("Süngerli yıkama (+150 TL)");
   const wash=v.fixed?"Sabit fiyatlı hizmet":$("washType").selectedOptions[0].text.split("—")[0].trim();
 
   const apptData = {
@@ -2196,83 +1958,6 @@ function resetForm(){
   update();
   toast("Form temizlendi","Yeni bir randevu seçebilirsiniz.");
 }
-
-function openSiteSettings() {
-  $("bookingEnabledSwitch").classList.toggle("active", !!SITE_SETTINGS.bookingEnabled);
-  $("weekendBookingSwitch").classList.toggle("active", !!SITE_SETTINGS.weekendBooking);
-  $("maxDailyAppointments").value = SITE_SETTINGS.maxDailyAppointments;
-  $("minAdvanceHours").value = SITE_SETTINGS.minAdvanceHours;
-  $("spongePriceSetting").value = SITE_SETTINGS.spongePrice;
-  $("whatsappNumberSetting").value = SITE_SETTINGS.whatsappPhone;
-  refreshAdminStats();
-  $("siteSettingsModal").classList.add("active");
-}
-function closeSiteSettings() { $("siteSettingsModal").classList.remove("active"); }
-
-function refreshAdminStats() {
-  const list = getStoredAppointments();
-  const today = new Date().toISOString().split("T")[0];
-  $("statToday").textContent = list.filter(a => a.date === today).length;
-  $("statTotal").textContent = list.length;
-  const upcoming = list
-    .filter(a => `${a.date}T${a.time}` >= new Date().toISOString().slice(0,16))
-    .sort((a,b) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`))[0];
-  $("statNext").textContent = upcoming ? upcoming.time : "—";
-}
-
-function saveAdvancedSettings() {
-  SITE_SETTINGS.bookingEnabled = $("bookingEnabledSwitch").classList.contains("active");
-  SITE_SETTINGS.weekendBooking = $("weekendBookingSwitch").classList.contains("active");
-  SITE_SETTINGS.maxDailyAppointments = Math.max(0, Number($("maxDailyAppointments").value) || 0);
-  SITE_SETTINGS.minAdvanceHours = Math.max(0, Number($("minAdvanceHours").value) || 0);
-  SITE_SETTINGS.spongePrice = Math.max(0, Number($("spongePriceSetting").value) || 0);
-  SITE_SETTINGS.whatsappPhone = $("whatsappNumberSetting").value.replace(/\D/g, "");
-
-  if (SITE_SETTINGS.whatsappPhone.length < 10) {
-    toast("WhatsApp Numarası Hatalı", "Geçerli bir WhatsApp numarası girin.");
-    return;
-  }
-
-  saveSiteSettingsLocal();
-  closeSiteSettings();
-  update();
-  renderTimeSlots();
-  toast("Ayarlar Kaydedildi", "Sistem ayarları tüm cihazlara gönderildi.");
-}
-
-function openAppointmentManager() {
-  const list = getStoredAppointments().sort((a,b) =>
-    `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`)
-  );
-  const box = $("adminAppointmentList");
-
-  if (!list.length) {
-    box.innerHTML = `<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:12px;">Henüz randevu yok.</div>`;
-  } else {
-    box.innerHTML = list.map(a => `
-      <div class="admin-appt-row">
-        <div class="admin-appt-top">
-          <span>${escapeHTML(a.name)} · ${escapeHTML(a.plate)}</span>
-          <span>${escapeHTML(a.date)} ${escapeHTML(a.time)}</span>
-        </div>
-        <div class="admin-appt-meta">${escapeHTML(a.vehicle)} · ${escapeHTML(a.wash)} · ${escapeHTML(a.phone)}</div>
-        <button class="admin-appt-delete" onclick="adminDeleteAppointment('${escapeHTML(a.id)}')">🗑️ Randevuyu Sil</button>
-      </div>
-    `).join("");
-  }
-  refreshAdminStats();
-  $("appointmentManagerModal").classList.add("active");
-}
-function closeAppointmentManager() { $("appointmentManagerModal").classList.remove("active"); }
-function adminDeleteAppointment(id) {
-  if (!confirm("Bu randevuyu kalıcı olarak silmek istediğinize emin misiniz?")) return;
-  removeAppointment(id);
-  openAppointmentManager();
-  renderTimeSlots();
-  renderQueue();
-  toast("Randevu Silindi", "Randevu tüm cihazlardan kaldırıldı.");
-}
-window.adminDeleteAppointment = adminDeleteAppointment;
 
 function openAdminModal() {
   const modal = $("adminModal");
@@ -2312,19 +1997,6 @@ $("priceManagementModal").onclick = (e) => {
 $("serviceManagementModal").onclick = (e) => {
   if (e.target === $("serviceManagementModal")) closeServiceManagement();
 };
-
-$("siteSettingsBtn").onclick = openSiteSettings;
-$("appointmentManagerBtn").onclick = openAppointmentManager;
-$("closeSiteSettingsBtn").onclick = closeSiteSettings;
-$("cancelSiteSettingsBtn").onclick = closeSiteSettings;
-$("saveSiteSettingsBtn").onclick = saveAdvancedSettings;
-$("closeAppointmentManagerBtn").onclick = closeAppointmentManager;
-
-$("bookingEnabledSwitch").onclick = () => $("bookingEnabledSwitch").classList.toggle("active");
-$("weekendBookingSwitch").onclick = () => $("weekendBookingSwitch").classList.toggle("active");
-
-$("siteSettingsModal").onclick = e => { if(e.target === $("siteSettingsModal")) closeSiteSettings(); };
-$("appointmentManagerModal").onclick = e => { if(e.target === $("appointmentManagerModal")) closeAppointmentManager(); };
 
 $("adminLoginBtn").onclick = () => {
   if ($("adminPassInput").value === ADMIN_PASS) {
