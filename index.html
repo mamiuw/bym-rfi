@@ -950,6 +950,9 @@ input:focus, select:focus {
   .admin-range-grid { grid-template-columns: 1fr; }
   .queue-grid { grid-template-columns: 1fr; }
 }
+
+/* ===== GELİŞMİŞ ADMİN PANELİ EKLENTİLERİ ===== */
+.admin-extra-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}.admin-stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}.admin-stat{padding:12px;border:1px solid var(--panel-border);background:var(--input-bg);border-radius:var(--radius-md);text-align:center}.admin-stat b{display:block;font-size:20px;color:var(--gold-light)}.admin-stat span{display:block;font-size:10px;color:var(--text-muted);margin-top:2px}.admin-section{margin-top:14px;padding-top:14px;border-top:1px solid var(--panel-border)}.admin-section h4{font-size:12px;color:var(--gold-light);margin-bottom:8px}.admin-mini{height:40px;padding:0 10px;border:1px solid var(--panel-border);border-radius:var(--radius-md);background:var(--input-bg);font-size:11px}.admin-manage-btn.danger{border-color:var(--danger);color:#fca5a5;background:rgba(239,68,68,.08)}.admin-manage-btn.success{border-color:var(--success);color:#6ee7b7;background:rgba(16,185,129,.08)}.admin-appointments{max-height:250px;overflow:auto;display:flex;flex-direction:column;gap:7px}.admin-appt{display:grid;grid-template-columns:58px 1fr auto;gap:8px;align-items:center;padding:9px;border:1px solid var(--panel-border);background:var(--input-bg);border-radius:10px}.admin-appt small{display:block;color:var(--text-muted);font-size:9px}.admin-appt strong{font-size:11px}.admin-appt button{padding:6px 8px;border:1px solid var(--danger);color:#fca5a5;border-radius:7px;font-size:10px;background:rgba(239,68,68,.08)}.admin-check{display:flex;align-items:center;gap:8px;padding:8px 0;font-size:11px;color:var(--text-muted)}.admin-check input{width:16px;height:16px}@media(max-width:560px){.admin-stat-grid{grid-template-columns:repeat(2,1fr)}.admin-extra-grid{grid-template-columns:1fr}.admin-appt{grid-template-columns:55px 1fr}}
 </style>
 </head>
 <body>
@@ -1180,6 +1183,13 @@ input:focus, select:focus {
           <button class="admin-manage-btn" id="editPricesBtn">💰 FİYATLARI DÜZENLE</button>
           <button class="admin-manage-btn" id="addServiceBtn">➕ HİZMET EKLE</button>
         </div>
+
+        <div class="admin-section"><h4>📊 Hızlı İstatistikler</h4><div class="admin-stat-grid"><div class="admin-stat"><b id="adminStatToday">0</b><span>BUGÜN</span></div><div class="admin-stat"><b id="adminStatTotal">0</b><span>TOPLAM</span></div><div class="admin-stat"><b id="adminStatClosed">0</b><span>KAPALI GÜN</span></div><div class="admin-stat"><b id="adminStatRevenue">0</b><span>TAHMİNİ CİRO</span></div></div></div>
+        <div class="admin-section"><h4>🧰 Hızlı Yönetim</h4><div class="admin-extra-grid"><button class="admin-manage-btn" id="adminRefreshStatsBtn">🔄 VERİLERİ YENİLE</button><button class="admin-manage-btn" id="adminExportBtn">📥 RANDEVULARI DIŞA AKTAR</button><button class="admin-manage-btn success" id="adminBackupBtn">💾 AYARLARI YEDEKLE</button><button class="admin-manage-btn" id="adminRestoreBtn">📂 YEDEKTEN GERİ YÜKLE</button></div><input type="file" id="adminRestoreFile" accept="application/json" style="display:none"></div>
+        <div class="admin-section"><h4>🔎 Randevu Arama & Yönetim</h4><input class="admin-mini" id="adminApptSearch" type="search" placeholder="İsim, plaka, telefon veya tarih ara..."><div class="admin-appointments" id="adminAppointmentsList"></div></div>
+        <div class="admin-section"><h4>⏱️ İşletme Saatleri</h4><div class="admin-range-grid"><div class="field"><label>Açılış</label><input type="time" id="adminOpenTime" value="08:00"></div><div class="field"><label>Kapanış</label><input type="time" id="adminCloseTime" value="20:00"></div></div><label class="admin-check"><input type="checkbox" id="adminUseCustomHours"> Özel saatleri müşteri ekranında kullan</label><button class="admin-manage-btn" id="adminSaveHoursBtn">💾 SAATLERİ KAYDET</button></div>
+        <div class="admin-section"><h4>✨ Ek Hizmet Ayarı</h4><div class="admin-range-grid"><div class="field"><label>Süngerli yıkama ücreti (TL)</label><input type="number" id="adminSpongePrice" min="0" step="50"></div><div class="field"><label>Randevu periyodu (dk)</label><input type="number" id="adminSlotMinutes" min="10" step="10" value="40"></div></div><button class="admin-manage-btn" id="adminSaveOptionsBtn">💾 EK AYARLARI KAYDET</button></div>
+        <div class="admin-section"><h4>🛡️ Bakım Araçları</h4><div class="admin-extra-grid"><button class="admin-manage-btn danger" id="adminClearPastBtn">🧹 GEÇMİŞ RANDEVULARI TEMİZLE</button><button class="admin-manage-btn danger" id="adminClearClosedBtn">🗓️ KAPALI GÜNLERİ TEMİZLE</button></div></div>
         <button class="secondary" id="adminLogoutBtn">Çıkış Yap</button>
       </div>
     </div>
@@ -1264,6 +1274,14 @@ input:focus, select:focus {
   });
 
   // Fiyatlar ve hizmetler tüm telefon/bilgisayarlarda anlık senkronize edilir.
+  onValue(ref(db, 'admin_settings'), (snapshot) => {
+    const settings = snapshot.val();
+    if (settings && typeof settings === "object") {
+      localStorage.setItem("bymorfi_admin_settings", JSON.stringify(settings));
+      if (typeof window.loadAdminOptions === "function") window.loadAdminOptions();
+    }
+  });
+
   onValue(ref(db, 'vehicles'), (snapshot) => {
     const data = snapshot.val();
 
@@ -1347,11 +1365,24 @@ function applyRemoteVehicles(remoteVehicles) {
   if (typeof update === "function") update();
 }
 window.applyRemoteVehicles = applyRemoteVehicles;
+window.loadAdminOptions = loadAdminOptions;
 
 function escapeHTML(str) {
   return String(str).replace(/[&<>"']/g, match => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   })[match]);
+}
+
+function getActiveTimeSlots(){
+  const s=getAdminSettings();
+  const start=s.useCustomHours&&s.openTime?s.openTime:"08:00";
+  const end=s.useCustomHours&&s.closeTime?s.closeTime:"20:00";
+  const step=Number(s.useCustomHours&&s.slotMinutes?s.slotMinutes:40);
+  const [sh,sm]=start.split(":").map(Number),[eh,em]=end.split(":").map(Number);
+  let current=(sh*60)+(sm||0),endMinutes=(eh*60)+(em||0),slots=[];
+  if(!Number.isFinite(current)||!Number.isFinite(endMinutes)||endMinutes<current)return [];
+  while(current<=endMinutes){const h=Math.floor(current/60).toString().padStart(2,"0"),m=(current%60).toString().padStart(2,"0");slots.push(`${h}:${m}`);current+=Math.max(10,step);}
+  return slots;
 }
 
 function generate40MinSlots() {
@@ -1741,7 +1772,7 @@ function renderTimeSlots() {
   const appointments = getStoredAppointments().filter(a => a.date === selectedDate && !a.isFixed);
   const bookedTimes = appointments.map(a => a.time);
 
-  TIME_SLOTS.forEach(time => {
+  getActiveTimeSlots().forEach(time => {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "slot-btn";
@@ -1817,7 +1848,7 @@ function calculate(){
   const v=selectedVehicle();
   let total=v.price;
   if(!v.fixed && $("washType").value!=="ic_dis") total=v.price/2;
-  if(!v.fixed && $("extraSponge").checked) total+=150;
+  if(!v.fixed && $("extraSponge").checked) total+=Number(getAdminSettings().spongePrice??150);
   return total;
 }
 
@@ -1932,7 +1963,8 @@ function sendWhatsApp(){
     wash: wash,
     date: $("date").value,
     time: $("selectedTime").value,
-    isFixed: !!v.fixed
+    isFixed: !!v.fixed,
+    extras: extras.join(", ")
   };
 
   saveAppointment(apptData);
@@ -1959,6 +1991,20 @@ function resetForm(){
   toast("Form temizlendi","Yeni bir randevu seçebilirsiniz.");
 }
 
+
+// ===== GELİŞMİŞ ADMİN PANELİ =====
+function getAdminSettings(){try{return JSON.parse(localStorage.getItem("bymorfi_admin_settings")||"{}")}catch(e){return {}}}
+function saveAdminSettings(settings){localStorage.setItem("bymorfi_admin_settings",JSON.stringify(settings));if(window.firebaseDb&&window.dbRef&&window.dbSet)window.dbSet(window.dbRef(window.firebaseDb,"admin_settings"),settings).catch(()=>{});}
+function getApptPrice(a){const v=VEHICLES.find(x=>x.name===a.vehicle);if(!v)return 0;let p=Number(v.price)||0;if(!v.fixed&&a.wash&&a.wash.toLowerCase().includes("sadece"))p/=2;if(a.extras&&String(a.extras).toLowerCase().includes("sünger"))p+=Number(getAdminSettings().spongePrice||150);return p;}
+function refreshAdminStats(){const appts=getStoredAppointments(),today=new Date().toISOString().slice(0,10);$("adminStatToday").textContent=appts.filter(a=>a.date===today).length;$("adminStatTotal").textContent=appts.length;$("adminStatClosed").textContent=getClosedDays().length;$("adminStatRevenue").textContent=appts.reduce((sum,a)=>sum+getApptPrice(a),0).toLocaleString("tr-TR")+" TL";renderAdminAppointments();}
+function renderAdminAppointments(){const box=$("adminAppointmentsList"),q=($("adminApptSearch")?.value||"").trim().toLocaleLowerCase("tr-TR");if(!box)return;let list=getStoredAppointments().slice().sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));if(q)list=list.filter(a=>[a.name,a.plate,a.phone,a.date,a.time,a.vehicle].some(v=>String(v||"").toLocaleLowerCase("tr-TR").includes(q)));if(!list.length){box.innerHTML='<div class="empty-queue">Arama kriterine uygun randevu bulunamadı.</div>';return;}box.innerHTML=list.slice(0,80).map(a=>`<div class="admin-appt"><div><strong>${escapeHTML(a.time||"—")}</strong><small>${escapeHTML(a.date||"—")}</small></div><div><strong>${escapeHTML(a.plate||"—")} · ${escapeHTML(a.name||"—")}</strong><small>${escapeHTML(a.phone||"")} · ${escapeHTML(a.vehicle||"")}</small></div><button onclick="adminCancelAppointment('${escapeHTML(a.id)}')">İptal</button></div>`).join("");}
+window.adminCancelAppointment=function(id){if(!isAdminLoggedIn)return;if(confirm("Bu randevuyu admin olarak iptal etmek istediğinize emin misiniz?")){removeAppointment(id);renderTimeSlots();renderQueue();refreshAdminStats();toast("Randevu İptal Edildi","Yönetici tarafından iptal edildi.");}};
+function exportAppointmentsCSV(){const rows=[["ID","Tarih","Saat","Müşteri","Telefon","Plaka","Araç","Paket","Tahmini Tutar"]];getStoredAppointments().forEach(a=>rows.push([a.id,a.date,a.time,a.name,a.phone,a.plate,a.vehicle,a.wash,getApptPrice(a)]));const csv="\uFEFF"+rows.map(r=>r.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\n");const blob=new Blob([csv],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="bymorfi-randevular.csv";a.click();URL.revokeObjectURL(url);toast("Dışa Aktarıldı","Randevular CSV olarak hazırlandı.");}
+function backupAdminSettings(){const payload={vehicles:VEHICLES,closedDays:getClosedDays(),adminSettings:getAdminSettings(),exportedAt:new Date().toISOString()};const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="bymorfi-admin-yedek.json";a.click();URL.revokeObjectURL(url);toast("Yedek Alındı","Fiyat, hizmet ve admin ayarları dışa aktarıldı.");}
+function restoreAdminSettings(file){const reader=new FileReader();reader.onload=()=>{try{const d=JSON.parse(reader.result);if(Array.isArray(d.vehicles)&&d.vehicles.length){VEHICLES=d.vehicles;saveVehicles();buildVehicles();}if(Array.isArray(d.closedDays)){localStorage.setItem("bymorfi_closed_days",JSON.stringify(d.closedDays));if(window.firebaseDb&&window.dbRef&&window.dbSet)window.dbSet(window.dbRef(window.firebaseDb,"closed_days"),d.closedDays);}if(d.adminSettings&&typeof d.adminSettings==="object")saveAdminSettings(d.adminSettings);loadAdminOptions();renderTimeSlots();update();refreshAdminStats();toast("Yedek Geri Yüklendi","Admin ayarları başarıyla geri yüklendi.");}catch(e){toast("Yedek Hatalı","Dosya okunamadı veya geçersiz.");}};reader.readAsText(file);}
+function loadAdminOptions(){const s=getAdminSettings();if($("adminSpongePrice"))$("adminSpongePrice").value=s.spongePrice??150;if($("adminOpenTime"))$("adminOpenTime").value=s.openTime||"08:00";if($("adminCloseTime"))$("adminCloseTime").value=s.closeTime||"20:00";if($("adminUseCustomHours"))$("adminUseCustomHours").checked=!!s.useCustomHours;if($("adminSlotMinutes"))$("adminSlotMinutes").value=s.slotMinutes||40;}
+function clearPastAppointments(){const today=new Date().toISOString().slice(0,10),list=getStoredAppointments(),past=list.filter(a=>a.date<today);if(!past.length){toast("Temizlenecek Kayıt Yok","Geçmiş randevu bulunamadı.");return;}if(!confirm(`${past.length} geçmiş randevu silinecek. Devam edilsin mi?`))return;past.forEach(a=>removeAppointment(a.id));refreshAdminStats();renderQueue();renderTimeSlots();toast("Geçmiş Temizlendi",`${past.length} kayıt silindi.`);}
+function clearClosedDays(){if(!confirm("Tüm kapalı gün kayıtları temizlensin mi?"))return;localStorage.setItem("bymorfi_closed_days","[]");if(window.firebaseDb&&window.dbRef&&window.dbSet)window.dbSet(window.dbRef(window.firebaseDb,"closed_days"),[]);renderTimeSlots();refreshAdminStats();toast("Kapalı Günler Temizlendi","Tüm günler yeniden randevuya açıldı.");}
 function openAdminModal() {
   const modal = $("adminModal");
   if (modal) modal.classList.add("active");
@@ -2010,11 +2056,25 @@ $("adminLoginBtn").onclick = () => {
     $("adminEndDate").value = currDate;
 
     renderQueue();
+    loadAdminOptions();
+    refreshAdminStats();
     toast("Başarılı Giriş", "Yönetici paneli açıldı.");
   } else {
     toast("Hatalı Şifre", "Lütfen şifrenizi kontrol edin.");
   }
 };
+
+
+$("adminRefreshStatsBtn").onclick=refreshAdminStats;
+$("adminExportBtn").onclick=exportAppointmentsCSV;
+$("adminBackupBtn").onclick=backupAdminSettings;
+$("adminRestoreBtn").onclick=()=>$("adminRestoreFile").click();
+$("adminRestoreFile").onchange=e=>{if(e.target.files[0])restoreAdminSettings(e.target.files[0]);e.target.value="";};
+$("adminApptSearch").oninput=renderAdminAppointments;
+$("adminSaveHoursBtn").onclick=()=>{const s=getAdminSettings();s.openTime=$("adminOpenTime").value||"08:00";s.closeTime=$("adminCloseTime").value||"20:00";s.useCustomHours=$("adminUseCustomHours").checked;saveAdminSettings(s);toast("Saatler Kaydedildi","İşletme saat ayarları kaydedildi.");};
+$("adminSaveOptionsBtn").onclick=()=>{const s=getAdminSettings();s.spongePrice=Math.max(0,Number($("adminSpongePrice").value)||0);s.slotMinutes=Math.max(10,Number($("adminSlotMinutes").value)||40);saveAdminSettings(s);toast("Ek Ayarlar Kaydedildi","Yeni ek hizmet ve periyot ayarları kaydedildi.");};
+$("adminClearPastBtn").onclick=clearPastAppointments;
+$("adminClearClosedBtn").onclick=clearClosedDays;
 
 $("adminLogoutBtn").onclick = () => {
   isAdminLoggedIn = false;
