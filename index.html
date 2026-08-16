@@ -874,7 +874,7 @@ input:focus, select:focus {
 
         <div class="field">
           <label>Telefon <em>zorunlu</em></label>
-          <input id="phone" type="tel" placeholder="(5XX) XXX XX XX" autocomplete="tel" inputmode="numeric" maxlength="14">
+          <input id="phone" type="tel" placeholder="(5XX) XXX XX XX" autocomplete="tel" inputmode="numeric">
         </div>
 
         <div class="field full">
@@ -1480,9 +1480,10 @@ function normalizePhone(phone){
 
 function formatPhone(phone){
   const digits = normalizePhone(phone);
-  let out = "";
 
-  if (digits.length > 0) out += "(" + digits.slice(0, 3);
+  if (!digits) return "";
+
+  let out = "(" + digits.slice(0, 3);
   if (digits.length >= 3) out += ")";
   if (digits.length > 3) out += " " + digits.slice(3, 6);
   if (digits.length > 6) out += " " + digits.slice(6, 8);
@@ -1750,8 +1751,10 @@ $("unlockRangeBtn").onclick = () => {
 };
 
 $("phone").addEventListener("input", (e) => {
-  const formatted = formatPhone(e.target.value);
-  e.target.value = formatted;
+  // maxlength on a formatted input can count spaces/parentheses differently
+  // on mobile keyboards. Limit only the actual numeric digits.
+  const digits = String(e.target.value).replace(/\\D/g, "").replace(/^0/, "").slice(0, 10);
+  e.target.value = formatPhone(digits);
   update();
 });
 
