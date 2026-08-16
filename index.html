@@ -823,6 +823,61 @@ input:focus, select:focus {
 
 .admin-btn:hover { background: var(--danger); color: #fff; }
 
+
+.admin-management-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 16px;
+}
+.admin-manage-btn {
+  padding: 13px 10px;
+  border: 1px solid var(--gold-primary);
+  background: rgba(215, 180, 106, 0.10);
+  color: var(--gold-light);
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  font-weight: 800;
+  transition: var(--transition);
+}
+.admin-manage-btn:hover {
+  background: rgba(215, 180, 106, 0.20);
+  box-shadow: 0 0 15px var(--gold-glow);
+  transform: translateY(-1px);
+}
+.manage-modal-card {
+  width: 92%;
+  max-width: 560px;
+  max-height: 88vh;
+  overflow-y: auto;
+  background: var(--panel-bg);
+  border: 1px solid var(--gold-primary);
+  border-radius: var(--radius-lg);
+  padding: 26px;
+  box-shadow: 0 0 35px var(--gold-glow);
+  position: relative;
+}
+.manage-list { display:flex; flex-direction:column; gap:10px; margin-top:18px; }
+.manage-item {
+  display:grid;
+  grid-template-columns:1fr 130px;
+  gap:10px;
+  align-items:center;
+  padding:10px;
+  border:1px solid var(--panel-border);
+  background:var(--input-bg);
+  border-radius:var(--radius-md);
+}
+.manage-item-name { font-size:12px; font-weight:700; }
+.manage-item-price { height:42px; }
+.manage-modal-actions { display:flex; gap:10px; margin-top:18px; }
+.manage-modal-actions button { flex:1; }
+.service-add-form { display:flex; flex-direction:column; gap:14px; margin-top:18px; }
+.service-add-note { color:var(--text-muted); font-size:11px; line-height:1.4; }
+@media (max-width:560px) {
+  .admin-management-buttons { grid-template-columns:1fr; }
+  .manage-item { grid-template-columns:1fr; }
+}
 .admin-btn.unlock {
   background: rgba(16, 185, 129, 0.2);
   border-color: var(--success);
@@ -1103,8 +1158,46 @@ input:focus, select:focus {
       <div class="admin-controls">
         <button class="admin-btn" id="lockRangeBtn">🚫 Seçili Aralığı Randevulara KAPAT</button>
         <button class="admin-btn unlock" id="unlockRangeBtn">🔓 Seçili Aralığın Kilidini AÇ</button>
+        <div class="admin-management-buttons">
+          <button class="admin-manage-btn" id="editPricesBtn">💰 FİYATLARI DÜZENLE</button>
+          <button class="admin-manage-btn" id="addServiceBtn">➕ HİZMET EKLE</button>
+        </div>
         <button class="secondary" id="adminLogoutBtn">Çıkış Yap</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Fiyat Düzenleme Modalı -->
+<div class="modal-overlay" id="priceManagementModal">
+  <div class="manage-modal-card">
+    <button class="modal-close" id="closePriceManagementBtn">✕</button>
+    <h3 style="font-size:18px;">💰 Fiyatları Düzenle</h3>
+    <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">Mevcut hizmetlerin fiyatlarını değiştirip kaydedebilirsiniz.</p>
+    <div class="manage-list" id="priceManagementList"></div>
+    <div class="manage-modal-actions">
+      <button class="cta" id="savePricesBtn">💾 Kaydet</button>
+      <button class="secondary" id="cancelPricesBtn" style="margin-top:0;">İptal</button>
+    </div>
+  </div>
+</div>
+
+<!-- Hizmet Ekle Modalı -->
+<div class="modal-overlay" id="serviceManagementModal">
+  <div class="manage-modal-card">
+    <button class="modal-close" id="closeServiceManagementBtn">✕</button>
+    <h3 style="font-size:18px;">➕ Yeni Hizmet Ekle</h3>
+    <p class="service-add-note">Hizmet adını ve fiyatını girin. Kaydettiğinizde yeni hizmet randevu ekranındaki hizmetler listesine eklenir.</p>
+    <div class="service-add-form">
+      <div class="field">
+        <label>Hizmet Adı</label>
+        <input id="newServiceName" type="text" placeholder="Örn: Detaylı İç Temizlik" maxlength="60">
+      </div>
+      <div class="field">
+        <label>Hizmet Fiyatı (TL)</label>
+        <input id="newServicePrice" type="number" min="0" step="50" placeholder="Örn: 900">
+      </div>
+      <button class="cta" id="saveNewServiceBtn">➕ Hizmeti Kaydet</button>
     </div>
   </div>
 </div>
@@ -1157,7 +1250,7 @@ input:focus, select:focus {
 const WHATSAPP_PHONE = "905385475603";
 const ADMIN_PASS = "muho6060.";
 
-const VEHICLES = [
+const DEFAULT_VEHICLES = [
   {name:"Sedan / Hatchback", price:600, icon:"◈"},
   {name:"SUV", price:800, icon:"◆"},
   {name:"Ticari", price:700, icon:"▣"},
@@ -1166,6 +1259,20 @@ const VEHICLES = [
   {name:"Lastik Otel", price:750, fixed:true, icon:"◉"},
   {name:"Lastik Tamiri", price:350, fixed:true, icon:"◎"}
 ];
+
+let VEHICLES = loadVehicles();
+
+function loadVehicles() {
+  try {
+    const saved = JSON.parse(localStorage.getItem("bymorfi_vehicles") || "null");
+    if (Array.isArray(saved) && saved.length) return saved;
+  } catch (e) {}
+  return DEFAULT_VEHICLES.map(v => ({...v}));
+}
+
+function saveVehicles() {
+  localStorage.setItem("bymorfi_vehicles", JSON.stringify(VEHICLES));
+}
 
 function escapeHTML(str) {
   return String(str).replace(/[&<>"']/g, match => ({
@@ -1431,6 +1538,62 @@ $("themeBtn").onclick = () => {
 function toast(title, text=""){
   const el=$("toast"); el.innerHTML=`<b>${escapeHTML(title)}</b>${escapeHTML(text)}`; el.classList.add("show");
   clearTimeout(window.__toast); window.__toast=setTimeout(()=>el.classList.remove("show"),3200);
+}
+
+/* Admin Fiyat ve Hizmet Yönetimi */
+function openPriceManagement() {
+  const list = $("priceManagementList");
+  list.innerHTML = "";
+  VEHICLES.forEach((v, index) => {
+    const row = document.createElement("div");
+    row.className = "manage-item";
+    row.innerHTML = `<div class="manage-item-name">${escapeHTML(v.name)}</div>
+      <input class="manage-item-price" type="number" min="0" step="50"
+             value="${Number(v.price) || 0}" data-price-index="${index}">`;
+    list.appendChild(row);
+  });
+  $("priceManagementModal").classList.add("active");
+}
+function closePriceManagement() { $("priceManagementModal").classList.remove("active"); }
+
+function saveEditedPrices() {
+  document.querySelectorAll("[data-price-index]").forEach(input => {
+    const index = Number(input.dataset.priceIndex);
+    const price = Number(input.value);
+    if (Number.isFinite(price) && price >= 0) VEHICLES[index].price = price;
+  });
+  saveVehicles();
+  buildVehicles();
+  renderTimeSlots();
+  update();
+  closePriceManagement();
+  toast("Fiyatlar Güncellendi", "Yeni fiyatlar başarıyla kaydedildi.");
+}
+
+function openServiceManagement() {
+  $("newServiceName").value = "";
+  $("newServicePrice").value = "";
+  $("serviceManagementModal").classList.add("active");
+  setTimeout(() => $("newServiceName").focus(), 100);
+}
+function closeServiceManagement() { $("serviceManagementModal").classList.remove("active"); }
+
+function saveNewService() {
+  const name = $("newServiceName").value.trim();
+  const price = Number($("newServicePrice").value);
+
+  if (!name) { toast("Hizmet Adı Eksik", "Lütfen yeni hizmetin adını girin."); return; }
+  if (!Number.isFinite(price) || price < 0) { toast("Fiyat Hatalı", "Lütfen geçerli bir fiyat girin."); return; }
+
+  const exists = VEHICLES.some(v => v.name.toLocaleLowerCase("tr-TR") === name.toLocaleLowerCase("tr-TR"));
+  if (exists) { toast("Hizmet Zaten Var", "Aynı isimde bir hizmet zaten mevcut."); return; }
+
+  VEHICLES.push({ name, price, icon:"✦", fixed:false });
+  saveVehicles();
+  buildVehicles();
+  update();
+  closeServiceManagement();
+  toast("Hizmet Eklendi", `${name} hizmeti ${price.toLocaleString("tr-TR")} TL fiyatla eklendi.`);
 }
 
 function buildVehicles(){
@@ -1722,6 +1885,21 @@ $("closeModalBtn").onclick = closeAdminModal;
 
 $("adminModal").onclick = (e) => {
   if (e.target === $("adminModal")) closeAdminModal();
+};
+
+$("editPricesBtn").onclick = openPriceManagement;
+$("addServiceBtn").onclick = openServiceManagement;
+$("closePriceManagementBtn").onclick = closePriceManagement;
+$("cancelPricesBtn").onclick = closePriceManagement;
+$("savePricesBtn").onclick = saveEditedPrices;
+$("closeServiceManagementBtn").onclick = closeServiceManagement;
+$("saveNewServiceBtn").onclick = saveNewService;
+
+$("priceManagementModal").onclick = (e) => {
+  if (e.target === $("priceManagementModal")) closePriceManagement();
+};
+$("serviceManagementModal").onclick = (e) => {
+  if (e.target === $("serviceManagementModal")) closeServiceManagement();
 };
 
 $("adminLoginBtn").onclick = () => {
