@@ -682,592 +682,560 @@ input:focus, select:focus {
   <section class="hero">
     <div class="eyebrow">BY MORFİ OTO YIKAMA</div>
     <h2>Aracınız için premium bakım deneyimini şimdi rezerve edin.</h2>
-    <p>Yıkama randevuları 40 dakikalık periyotlarla oluşturulur. Seçtiğiniz saatte aracınız hemen işleme alınır ve bekleme süreniz minimuma indirilir.</p>
+    <p>Yıkama randevuları 40 dakikalık periyotlarla oluşturulur. Seçtiğiniz saatte aracınız hemen işleme alınır ve bekleme süreniz minimuma iner.</p>
   </section>
 
-  <main class="layout">
-    <section class="card">
+  <div class="layout">
+    <!-- Form Area -->
+    <main class="card">
       <div class="card-head">
         <div>
-          <h3>Randevu detayları</h3>
-          <p>Tarih seçin, müsait 40 dakikalık slotlardan saatinizi belirleyin.</p>
+          <h3>Müşteri & Araç Bilgileri</h3>
+          <p>Lütfen bilgilerinizi eksiksiz doldurun.</p>
         </div>
-        <div class="badge">CANLI TAKVİM</div>
+        <span class="badge" id="stepBadge">ADIM 1/2</span>
       </div>
 
       <div class="grid">
         <div class="field">
-          <label>Ad Soyad <em>zorunlu</em></label>
-          <input id="name" type="text" placeholder="İsminizi giriniz..." autocomplete="name" maxlength="50">
+          <label>Ad Soyad <em>*</em></label>
+          <input type="text" id="name" placeholder="Örn. Ahmet Yılmaz" maxlength="40">
         </div>
-
         <div class="field">
-          <label>Telefon <em>zorunlu</em></label>
-          <input id="phone" type="tel" placeholder="Numaranızı giriniz..." autocomplete="tel" maxlength="15">
+          <label>Telefon <em>*</em></label>
+          <input type="tel" id="phone" placeholder="05XX XXX XX XX" maxlength="11">
         </div>
-
         <div class="field full">
-          <label>Araç plakası <em>TR formatı</em></label>
-          <input id="plate" type="text" placeholder="Plaka giriniz..." maxlength="10" autocomplete="off">
+          <label>Plaka <em>*</em></label>
+          <input type="text" id="plate" placeholder="Örn. 34 ABC 123" maxlength="15" style="text-transform: uppercase;">
         </div>
 
-        <div class="field full">
-          <label>Araç tipi</label>
-          <div class="service-grid" id="vehicleCards"></div>
-          <input type="hidden" id="vehicleType" value="Sedan / Hatchback">
+        <div class="field full" style="margin-top: 10px;">
+          <label>Araç Tipi <em>*</em></label>
+          <div class="service-grid" id="vehicleGrid"></div>
         </div>
 
-        <div class="field" id="washTypeGroup">
-          <label>Yıkama paketi</label>
+        <div class="field full" style="margin-top: 10px;">
+          <label>Yıkama Paketi <em>*</em></label>
           <div class="select-wrap">
-            <select id="washType">
-              <option value="ic_dis">İç + Dış — tam paket</option>
-              <option value="sadece_dis">Sadece Dış — %50</option>
-              <option value="sadece_ic">Sadece İç — %50</option>
-            </select>
+            <select id="washType" onchange="calc()"></select>
           </div>
         </div>
 
-        <div class="field">
-          <label>Ek hizmetler</label>
+        <div class="field full" style="margin-top: 10px;" id="extrasSection">
+          <label>Ekstralar</label>
           <div class="extras">
             <div class="extra">
-              <input type="checkbox" id="extraSponge">
-              <label for="extraSponge">Süngerli yıkama <span>Premium köpük +150 TL</span></label>
+              <input type="checkbox" id="extraSponge" onchange="calc()">
+              <label for="extraSponge">
+                Süngerli Yıkama
+                <span>Daha hassas temizlik (+150 TL)</span>
+              </label>
             </div>
           </div>
         </div>
 
-        <div class="field full">
-          <label>Randevu Tarihi <em>zorunlu</em></label>
-          <input id="date" type="date">
-        </div>
-
-        <div class="field full" id="timeSlotContainer">
-          <label>Randevu Saati (40 Dakika Periyotlar) <em id="slotStatusNote">Lütfen önce tarih seçin</em></label>
-          <div class="time-slots" id="timeSlotsGrid"></div>
+        <div class="field full" style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--panel-border);">
+          <label>Tarih & Saat <em>*</em></label>
+          <input type="date" id="date" style="margin-bottom: 12px;">
           
-          <!-- Randevu Saati İptal Uyarısı -->
-          <div class="slot-warning-note">
-            <span>⚠️ <b>Önemli Bilgilendirme:</b> Lütfen randevu saatinizde tesisimizde olunuz. Randevu saatinde gelinmediği takdirde randevunuz otomatik olarak iptal edilecektir.</span>
+          <div id="timeSlots" class="time-slots">
+            <!-- Saat butonları JS ile dolacak -->
           </div>
-
           <input type="hidden" id="selectedTime" value="">
         </div>
       </div>
 
-      <div class="price-row">
-        <div>
-          <div class="total-label">Ödenecek Toplam</div>
-          <div style="color:var(--text-muted);font-size:11px;margin-top:2px">Vergiler dahil tahmini fiyat</div>
+    </main>
+
+    <!-- Sidebar Area -->
+    <aside>
+      <div class="card summary">
+        <div class="summary-top">
+          <small>Sipariş Özeti</small>
+          <h4>BY MORFİ VIP</h4>
+          <p>Tüm randevularımız tek araç kapasiteli VIP işlemlerdir.</p>
         </div>
-        <div class="total"><span id="totalPrice">600</span> <small>TL</small></div>
-      </div>
-    </section>
 
-    <aside class="card summary">
-      <div class="summary-top">
-        <small>RANDEVU ÖZETİ</small>
-        <h4 id="summaryVehicle">Sedan / Hatchback</h4>
-        <p id="summaryPackage">İç + Dış Yıkama</p>
-      </div>
+        <div class="receipt">
+          <div class="line"><span>Araç Tipi:</span> <strong id="sumVeh">-</strong></div>
+          <div class="line"><span>Paket:</span> <strong id="sumWash">-</strong></div>
+          <div class="line" id="sumExtraRow" style="display:none;"><span>Ekstra:</span> <strong>Süngerli Yıkama (+150 TL)</strong></div>
+        </div>
 
-      <div class="receipt">
-        <div class="line"><span>Müşteri</span><strong id="sumName">—</strong></div>
-        <div class="line"><span>Plaka</span><strong id="sumPlate">—</strong></div>
-        <div class="line"><span>Tarih</span><strong id="sumDate">—</strong></div>
-        <div class="line"><span>Saat</span><strong id="sumTime">—</strong></div>
-        <div class="line"><span>Ek hizmetler</span><strong id="sumExtras">Yok</strong></div>
-      </div>
+        <div class="price-row">
+          <div class="total-label">Tahmini Tutar</div>
+          <div class="total"><span id="sumTotal">0</span><small> TL</small></div>
+        </div>
 
-      <button class="cta" id="bookBtn">Randevuyu Gönder →</button>
-      <button class="secondary" id="resetBtn">Formu temizle</button>
-      <div class="note">BY MORFİ OTO YIKAMA randevunuz gönderildiğinde saatiniz otomatik rezerve edilir.</div>
+        <button class="cta" id="submitBtn" onclick="sendWhatsApp()">Randevuyu Tamamla</button>
+        <button class="secondary" onclick="resetForm()">Formu Temizle</button>
+        <p class="note">İşlem sonunda onayın alınması için WhatsApp uygulamasına yönlendirileceksiniz.</p>
+      </div>
     </aside>
-  </main>
+  </div>
 
-  <section class="card queue-section">
-    <div class="card-head">
+  <!-- Randevu Sırası (Canlı Takip) -->
+  <div class="card queue-section">
+    <div class="card-head" style="margin-bottom: 0;">
       <div>
-        <h3>Sırada Bekleyen Araçlar</h3>
-        <p>Seçilen tarihe ait dolu zaman dilimleri ve araç plakaları.</p>
+        <h3>Bugünkü Randevu Programı</h3>
+        <p>Aşağıdaki saatler doludur, güncel durumu buradan takip edebilirsiniz.</p>
       </div>
-      <div class="badge" id="queueCountBadge">0 ARAÇ SIRADA</div>
     </div>
-    <div class="queue-grid" id="queueGrid">
-      <div class="empty-queue">Bu tarih için henüz bir randevu oluşturulmadı.</div>
+    <div id="queueList" class="queue-grid">
+      <!-- Dolu saatler buraya gelecek -->
     </div>
-  </section>
+  </div>
+
 </div>
 
-<!-- Admin Modal Overlay -->
+<!-- Admin Paneli Modalı -->
 <div class="modal-overlay" id="adminModal">
   <div class="modal-card">
     <button class="modal-close" id="closeModalBtn">✕</button>
+    <h3 style="margin-bottom: 20px; font-size: 18px; color: var(--gold-light);">Gelişmiş Yönetici Paneli</h3>
+    
+    <label>Tarih Seçimi</label>
+    <input type="date" id="adminDate" style="margin-bottom: 20px;">
 
-    <div id="adminLoginBox">
-      <h3 style="font-size: 18px; margin-bottom: 6px;">Yönetici Girişi</h3>
-      <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 18px;">Sistem yönetimine erişmek için şifrenizi girin.</p>
-      <div class="field" style="margin-bottom: 16px;">
-        <label>Admin Şifresi</label>
-        <input type="password" id="adminPassInput" placeholder="••••••••">
-      </div>
-      <button class="cta" id="adminLoginBtn">Giriş Yap</button>
-    </div>
-
-    <div id="adminControlsBox" style="display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-        <h3 style="font-size: 16px; color: var(--gold-light);">Yönetim Paneli</h3>
-        <span class="badge" style="border-color: var(--success); color: var(--success);">ONLINE</span>
-      </div>
-      <p style="font-size: 12px; color: var(--text-muted);">
-        Kapatılacak veya açılacak tarih aralığını belirleyin.
-      </p>
-
+    <div style="padding: 16px; background: rgba(0,0,0,0.2); border: 1px solid var(--panel-border); border-radius: var(--radius-md);">
+      <h4 style="font-size: 13px; color: var(--gold-primary); margin-bottom: 12px;">Toplu Saat Kilitleme / İptal</h4>
+      
       <div class="admin-range-grid">
         <div class="field">
-          <label>Başlangıç Tarihi</label>
-          <input type="date" id="adminStartDate">
+          <label>Başlangıç Saati</label>
+          <select id="adminStartTime">
+            <!-- JS ile doldurulacak -->
+          </select>
         </div>
         <div class="field">
-          <label>Bitiş Tarihi</label>
-          <input type="date" id="adminEndDate">
+          <label>Bitiş Saati</label>
+          <select id="adminEndTime">
+            <!-- JS ile doldurulacak -->
+          </select>
         </div>
       </div>
 
       <div class="admin-controls">
-        <button class="admin-btn" id="lockRangeBtn">🚫 Seçili Aralığı Randevulara KAPAT</button>
-        <button class="admin-btn unlock" id="unlockRangeBtn">🔓 Seçili Aralığın Kilidini AÇ</button>
-        <button class="secondary" id="adminLogoutBtn">Çıkış Yap</button>
+        <button class="admin-btn" onclick="blockRange()">Seçili Aralığı Müşteriye Kapat</button>
+        <button class="admin-btn unlock" onclick="unblockRange()">Seçili Aralığı Tekrar Aç</button>
+        <button class="admin-btn" style="background: rgba(239, 68, 68, 0.4); border-width: 2px;" onclick="closeWholeDay()">TÜM GÜNÜ KAPAT</button>
       </div>
     </div>
+
+    <p style="font-size: 11px; color: var(--text-muted); margin-top: 16px; text-align: center;">
+      Kapatılan saatler müşteriler tarafından tıklanamaz ve dolu görünür.
+    </p>
+  </div>
+</div>
+
+<!-- Başarılı Randevu Modalı (YENİ EKLENEN) -->
+<div class="modal-overlay" id="successModal">
+  <div class="modal-card" style="text-align: center; max-width: 320px;">
+    <button class="modal-close" id="closeSuccessModalBtn">✕</button>
+    
+    <div style="font-size: 54px; color: var(--success); margin-bottom: 10px; text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);">✓</div>
+    <h3 style="font-size: 20px; color: var(--gold-light); margin-bottom: 24px;">Randevunuz oluşturuldu</h3>
+    
+    <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid var(--panel-border); border-radius: var(--radius-md); padding: 20px; text-align: left; display: flex; flex-direction: column; gap: 12px;">
+      <div style="font-size: 16px; color: var(--text-main);">
+        <span style="display: inline-block; width: 24px;">📅</span> <strong id="successDate">--</strong>
+      </div>
+      <div style="font-size: 16px; color: var(--text-main);">
+        <span style="display: inline-block; width: 24px;">⏰</span> <strong id="successTime">--</strong>
+      </div>
+      <div style="font-size: 16px; color: var(--text-main);">
+        <span style="display: inline-block; width: 24px;">🚗</span> <strong id="successPlate" style="color: var(--gold-primary);">--</strong>
+      </div>
+    </div>
+    
+    <p style="font-size: 12px; color: var(--text-muted); margin-top: 20px;">
+      WhatsApp sekmesi açıldı. Randevu detaylarınızı bize iletmeyi unutmayın.
+    </p>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<!-- Firebase SDK Module -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getDatabase, ref, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBy1ICxlUyynBdu2_UjZvwURHFfSelF_5A",
-    authDomain: "bym-oto-yikama.firebaseapp.com",
-    databaseURL: "https://bym-oto-yikama-default-rtdb.firebaseio.com",
-    projectId: "bym-oto-yikama",
-    storageBucket: "bym-oto-yikama.firebasestorage.app",
-    messagingSenderId: "409475419804",
-    appId: "1:409475419804:web:b00588b14ba94990eda759",
-    measurementId: "G-GJVZCC0J74"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-
-  window.firebaseDb = db;
-  window.dbRef = ref;
-  window.dbSet = set;
-  window.dbRemove = remove;
-  window.dbOnValue = onValue;
-
-  // Realtime Listeners for Syncing Firebase Data
-  onValue(ref(db, 'appointments'), (snapshot) => {
-    const data = snapshot.val();
-    const list = data ? Object.values(data) : [];
-    localStorage.setItem("bymorfi_appointments", JSON.stringify(list));
-    if (typeof window.renderTimeSlots === "function") window.renderTimeSlots();
-    if (typeof window.renderQueue === "function") window.renderQueue();
-  });
-
-  onValue(ref(db, 'closed_days'), (snapshot) => {
-    const data = snapshot.val();
-    const days = data ? Object.values(data) : [];
-    localStorage.setItem("bymorfi_closed_days", JSON.stringify(days));
-    if (typeof window.renderTimeSlots === "function") window.renderTimeSlots();
-  });
-</script>
-
 <script>
-const WHATSAPP_PHONE = "905385475603";
-const ADMIN_PASS = "muho6060.";
+/* =======================================================
+   YAPILANDIRMA & VERİ SETLERİ
+======================================================= */
+const WHATSAPP_PHONE = "905436666838";
 
-const VEHICLES = [
-  {name:"Sedan / Hatchback", price:600, icon:"◈"},
-  {name:"SUV", price:800, icon:"◆"},
-  {name:"Ticari", price:700, icon:"▣"},
-  {name:"Jip", price:800, icon:"◇"},
-  {name:"Minibüs / Panelvan", price:1000, icon:"▤"},
-  {name:"Lastik Otel", price:750, fixed:true, icon:"◉"},
-  {name:"Lastik Tamiri", price:350, fixed:true, icon:"◎"}
+const CAR_TYPES = [
+  { id: "hatchback", name: "Hatchback", desc: "Clio, i20, Golf vb." },
+  { id: "sedan", name: "Sedan", desc: "Passat, Civic, Corolla vb." },
+  { id: "suv", name: "Jeep / SUV", desc: "Tucson, Tiguan, 3008 vb." },
+  { id: "ticari", name: "Hafif Ticari", desc: "Doblo, Courier vb." },
+  { id: "minibus", name: "Minibüs", desc: "Transporter, Vito vb.", fixed: 1300 },
+  { id: "motosiklet", name: "Motosiklet", desc: "Tüm motorlar", fixed: 300 }
 ];
 
-function escapeHTML(str) {
-  return String(str).replace(/[&<>"']/g, match => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-  })[match]);
+const PACKAGES = [
+  { id: "ic_dis", name: "İç Dış Yıkama", prices: { hatchback:450, sedan:500, suv:600, ticari:600 } },
+  { id: "dis", name: "Sadece Dış Yıkama", prices: { hatchback:300, sedan:350, suv:400, ticari:400 } },
+  { id: "ic", name: "Sadece İç Yıkama", prices: { hatchback:250, sedan:250, suv:300, ticari:300 } },
+  { id: "vip", name: "VIP Yıkama (Cila+Motor)", prices: { hatchback:800, sedan:900, suv:1100, ticari:1100 } }
+];
+
+const timeConfig = {
+  startHour: 9, startMin: 0,
+  endHour: 19, endMin: 40,
+  interval: 40 
+};
+
+// Veritabanı simülasyonu
+let appointments = JSON.parse(localStorage.getItem('byMorfiAppointments')) || [];
+let blockedSlots = JSON.parse(localStorage.getItem('byMorfiBlockedSlots')) || {};
+
+const $ = id => document.getElementById(id);
+let selVehId = CAR_TYPES[0].id; 
+
+/* =======================================================
+   TEMA & PARTİKÜL ANİMASYONU
+======================================================= */
+let isDark = localStorage.getItem('theme') !== 'light';
+if(!isDark) document.body.classList.add('light-theme');
+updateThemeBtn();
+
+$('themeBtn').onclick = () => {
+  isDark = !isDark;
+  document.body.classList.toggle('light-theme');
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  updateThemeBtn();
+  initParticles();
+};
+
+function updateThemeBtn(){
+  $('themeBtn').innerHTML = isDark ? "☀️ Açık Tema" : "🌙 Koyu Tema";
 }
 
-function generate40MinSlots() {
-  const slots = [];
-  let currentMinutes = 8 * 60;
-  const endMinutes = 20 * 60;
+const canvas = $('particleCanvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
 
-  while (currentMinutes <= endMinutes) {
-    const h = Math.floor(currentMinutes / 60).toString().padStart(2, '0');
-    const m = (currentMinutes % 60).toString().padStart(2, '0');
-    slots.push(`${h}:${m}`);
-    currentMinutes += 40;
+function resize(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+
+function initParticles(){
+  resize();
+  particles = [];
+  const count = window.innerWidth < 768 ? 20 : 40;
+  const color = isDark ? 'rgba(215, 180, 106, 0.15)' : 'rgba(180, 136, 53, 0.15)';
+  for(let i=0; i<count; i++){
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 2 + 1,
+      dx: (Math.random() - 0.5) * 0.5,
+      dy: (Math.random() - 0.5) * 0.5,
+      c: color
+    });
+  }
+}
+
+function animateParticles(){
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => {
+    p.x += p.dx;
+    p.y += p.dy;
+    if(p.x < 0 || p.x > canvas.width) p.dx *= -1;
+    if(p.y < 0 || p.y > canvas.height) p.dy *= -1;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = p.c;
+    ctx.fill();
+  });
+  requestAnimationFrame(animateParticles);
+}
+initParticles();
+animateParticles();
+
+/* =======================================================
+   UI RENDER FONKSİYONLARI
+======================================================= */
+function renderVehicles(){
+  const html = CAR_TYPES.map(v => `
+    <button class="service ${v.id === selVehId ? 'active' : ''}" onclick="selectVehicle('${v.id}')">
+      <strong>${v.name}</strong>
+      <span>${v.desc}</span>
+    </button>
+  `).join("");
+  $("vehicleGrid").innerHTML = html;
+  calc();
+}
+
+function selectVehicle(id){
+  selVehId = id;
+  renderVehicles();
+}
+
+function selectedVehicle() { return CAR_TYPES.find(v => v.id === selVehId); }
+
+function renderPackages(){
+  const v = selectedVehicle();
+  const select = $("washType");
+  const ext = $("extrasSection");
+  
+  select.innerHTML = "";
+  
+  if(v.fixed){
+    const opt = document.createElement("option");
+    opt.value = v.fixed;
+    opt.text = `Standart Yıkama — ${v.fixed} TL`;
+    select.appendChild(opt);
+    select.disabled = true;
+    ext.style.display = "none";
+    $("extraSponge").checked = false;
+  } else {
+    select.disabled = false;
+    ext.style.display = "block";
+    PACKAGES.forEach(p => {
+      const price = p.prices[v.id];
+      const opt = document.createElement("option");
+      opt.value = price;
+      opt.text = `${p.name} — ${price} TL`;
+      select.appendChild(opt);
+    });
+  }
+}
+
+function generateTimeSlots(){
+  const slots = [];
+  let h = timeConfig.startHour;
+  let m = timeConfig.startMin;
+  
+  while(h < timeConfig.endHour || (h === timeConfig.endHour && m <= timeConfig.endMin)){
+    const sh = h.toString().padStart(2, '0');
+    const sm = m.toString().padStart(2, '0');
+    slots.push(`${sh}:${sm}`);
+    
+    m += timeConfig.interval;
+    if(m >= 60){ h += Math.floor(m/60); m = m%60; }
   }
   return slots;
 }
 
-const TIME_SLOTS = generate40MinSlots();
+const allSlots = generateTimeSlots();
 
-/* Müşteri Cihaz İptal Yetkisi Yönetimi */
-function getMyBookedIDs() {
-  try {
-    return JSON.parse(localStorage.getItem("bymorfi_my_appointments") || "[]");
-  } catch (e) { return []; }
+function getDayData(dateStr){
+  const dayAppts = appointments.filter(a => a.date === dateStr);
+  const dayBlocks = blockedSlots[dateStr] || [];
+  return {
+    isFullDayClosed: dayBlocks.includes("ALL"),
+    blocks: dayBlocks,
+    appts: dayAppts
+  };
 }
 
-function addMyBookedID(id) {
-  const ids = getMyBookedIDs();
-  if (!ids.includes(id)) {
-    ids.push(id);
-    localStorage.setItem("bymorfi_my_appointments", JSON.stringify(ids));
-  }
-}
+function renderTimeSlots(){
+  const dateVal = $("date").value;
+  const container = $("timeSlots");
+  container.innerHTML = "";
+  $("selectedTime").value = "";
 
-function removeMyBookedID(id) {
-  let ids = getMyBookedIDs();
-  ids = ids.filter(x => x !== id);
-  localStorage.setItem("bymorfi_my_appointments", JSON.stringify(ids));
-}
-
-function getStoredAppointments() {
-  try {
-    return JSON.parse(localStorage.getItem("bymorfi_appointments") || "[]");
-  } catch (e) { return []; }
-}
-
-function saveAppointment(appt) {
-  const list = getStoredAppointments();
-  list.push(appt);
-  localStorage.setItem("bymorfi_appointments", JSON.stringify(list));
-  
-  // Bu cihazda oluşturulduğunu kaydet
-  addMyBookedID(appt.id);
-
-  if (window.firebaseDb && window.dbRef && window.dbSet) {
-    window.dbSet(window.dbRef(window.firebaseDb, 'appointments/' + appt.id), appt);
-  }
-}
-
-function removeAppointment(id) {
-  let list = getStoredAppointments();
-  list = list.filter(a => a.id !== id);
-  localStorage.setItem("bymorfi_appointments", JSON.stringify(list));
-  removeMyBookedID(id);
-
-  if (window.firebaseDb && window.dbRef && window.dbRemove) {
-    window.dbRemove(window.dbRef(window.firebaseDb, 'appointments/' + id));
-  }
-}
-
-function getClosedDays() {
-  try {
-    return JSON.parse(localStorage.getItem("bymorfi_closed_days") || "[]");
-  } catch (e) { return []; }
-}
-
-function setClosedDaysRange(startStr, endStr, lock = true) {
-  let days = getClosedDays();
-  const start = new Date(startStr);
-  const end = new Date(endStr);
-  
-  if (start > end) return false;
-
-  let curr = new Date(start);
-  while (curr <= end) {
-    const isoDate = curr.toISOString().split('T')[0];
-    if (lock) {
-      if (!days.includes(isoDate)) days.push(isoDate);
-    } else {
-      days = days.filter(d => d !== isoDate);
-    }
-    curr.setDate(curr.getDate() + 1);
+  if(!dateVal){
+    container.innerHTML = `<div class="slot-warning-note" style="grid-column: 1/-1;">Lütfen önce bir tarih seçiniz.</div>`;
+    return;
   }
 
-  localStorage.setItem("bymorfi_closed_days", JSON.stringify(days));
+  const { isFullDayClosed, blocks, appts } = getDayData(dateVal);
 
-  if (window.firebaseDb && window.dbRef && window.dbSet) {
-    window.dbSet(window.dbRef(window.firebaseDb, 'closed_days'), days);
+  if(isFullDayClosed){
+    container.innerHTML = `<div class="day-closed-msg">Bu tarih hizmete kapatılmıştır.</div>`;
+    return;
   }
-  return true;
-}
 
-let isAdminLoggedIn = false;
+  const now = new Date();
+  const selectedDate = new Date(dateVal + "T00:00:00");
+  const isToday = now.toDateString() === selectedDate.toDateString();
 
-const $ = id => document.getElementById(id);
-const vehicleCards = $("vehicleCards");
+  let availableCount = 0;
 
-/* Particle Background */
-const canvas = $("particleCanvas");
-const ctx = canvas.getContext("2d");
-let particles = [];
-let mouse = { x: null, y: null, radius: 150 };
+  allSlots.forEach(time => {
+    const isBlocked = blocks.includes(time);
+    const isBooked = appts.some(a => a.time === time);
+    let isPassed = false;
 
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-window.addEventListener("resize", resizeCanvas);
-resizeCanvas();
-
-window.addEventListener("mousemove", (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
-window.addEventListener("mouseleave", () => { mouse.x = null; mouse.y = null; });
-
-class Particle {
-  constructor() { this.reset(); }
-  reset() {
-    this.x = Math.random() * canvas.width;
-    this.y = Math.random() * canvas.height;
-    this.size = Math.random() * 2.5 + 0.5;
-    this.speedX = (Math.random() - 0.5) * 0.4;
-    this.speedY = (Math.random() - 0.5) * 0.4;
-    this.opacity = Math.random() * 0.5 + 0.2;
-  }
-  update() {
-    this.x += this.speedX; this.y += this.speedY;
-    if (this.x < 0) this.x = canvas.width;
-    if (this.x > canvas.width) this.x = 0;
-    if (this.y < 0) this.y = canvas.height;
-    if (this.y > canvas.height) this.y = 0;
-
-    if (mouse.x !== null && mouse.y !== null) {
-      let dx = mouse.x - this.x, dy = mouse.y - this.y;
-      let dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < mouse.radius) {
-        let force = (mouse.radius - dist) / mouse.radius;
-        this.x -= (dx / dist) * force * 1.5;
-        this.y -= (dy / dist) * force * 1.5;
+    if(isToday){
+      const [th, tm] = time.split(':').map(Number);
+      if(now.getHours() > th || (now.getHours() === th && now.getMinutes() >= tm)){
+        isPassed = true;
       }
     }
-  }
-  draw() {
-    const isLight = document.body.classList.contains("light-theme");
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fillStyle = isLight ? `rgba(180, 136, 53, ${this.opacity})` : `rgba(215, 180, 106, ${this.opacity})`;
-    ctx.fill();
-  }
-}
 
-function initParticles() {
-  particles = [];
-  const count = Math.floor((window.innerWidth * window.innerHeight) / 12000);
-  for (let i = 0; i < count; i++) particles.push(new Particle());
-}
-function animateParticles() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  particles.forEach(p => { p.update(); p.draw(); });
-  requestAnimationFrame(animateParticles);
-}
-initParticles(); animateParticles();
+    const disabled = isBlocked || isBooked || isPassed;
+    if(!disabled) availableCount++;
 
-/* Theme Management */
-function initTheme(){
-  if(localStorage.getItem("theme") === "light"){
-    document.body.classList.add("light-theme");
-    $("themeBtn").innerHTML = "☀️ Açık Tema";
-  }
-}
-$("themeBtn").onclick = () => {
-  document.body.classList.toggle("light-theme");
-  const isLight = document.body.classList.contains("light-theme");
-  localStorage.setItem("theme", isLight ? "light" : "dark");
-  $("themeBtn").innerHTML = isLight ? "☀️ Açık Tema" : "🌙 Koyu Tema";
-};
-
-function toast(title, text=""){
-  const el=$("toast"); el.innerHTML=`<b>${escapeHTML(title)}</b>${escapeHTML(text)}`; el.classList.add("show");
-  clearTimeout(window.__toast); window.__toast=setTimeout(()=>el.classList.remove("show"),3200);
-}
-
-function buildVehicles(){
-  vehicleCards.innerHTML="";
-  VEHICLES.forEach((v,i)=>{
-    const b=document.createElement("button");
-    b.type="button"; b.className="service"+(i===0?" active":"");
-    b.dataset.name=v.name;
-    b.innerHTML=`<strong>${v.icon} ${escapeHTML(v.name)}</strong><span>${v.fixed?"Sabit fiyat":"İç + dış"} · ${v.price} TL</span>`;
-    b.onclick=()=>{
-      document.querySelectorAll(".service").forEach(x=>x.classList.remove("active"));
-      b.classList.add("active");
-      $("vehicleType").value=v.name;
-      $("washTypeGroup").style.display=v.fixed?"none":"block";
-      if(v.fixed) $("extraSponge").checked=false;
-      renderTimeSlots();
-      update();
-    };
-    vehicleCards.appendChild(b);
-  });
-}
-
-function selectedVehicle(){return VEHICLES.find(v=>v.name===$("vehicleType").value)||VEHICLES[0]}
-
-function renderTimeSlots() {
-  const grid = $("timeSlotsGrid");
-  const selectedDate = $("date").value;
-  const isFixedVehicle = selectedVehicle().fixed;
-  const closedDays = getClosedDays();
-  grid.innerHTML = "";
-
-  if (!selectedDate) {
-    $("slotStatusNote").textContent = "Lütfen önce tarih seçin";
-    return;
-  }
-
-  if (closedDays.includes(selectedDate)) {
-    $("slotStatusNote").textContent = "Bu tarih randevulara kapalıdır!";
-    grid.innerHTML = `<div class="day-closed-msg">🚫 İşletmemiz seçilen tarihte randevulu hizmete kapalıdır. Lütfen başka bir gün seçin.</div>`;
-    return;
-  }
-
-  if (isFixedVehicle) {
-    $("slotStatusNote").textContent = "Lastik hizmetleri için uygun bir saat seçin";
-  } else {
-    $("slotStatusNote").textContent = "Yeşil: Müsait | Kırmızı: Dolu";
-  }
-
-  const appointments = getStoredAppointments().filter(a => a.date === selectedDate && !a.isFixed);
-  const bookedTimes = appointments.map(a => a.time);
-
-  TIME_SLOTS.forEach(time => {
     const btn = document.createElement("button");
-    btn.type = "button";
     btn.className = "slot-btn";
-    const isBooked = !isFixedVehicle && bookedTimes.includes(time);
-
-    if (isBooked) {
+    btn.textContent = time;
+    if(disabled){
       btn.disabled = true;
-      btn.innerHTML = `${time}<br><small>Dolu ⛔</small>`;
+      if(isBooked) btn.title = "Dolu";
+      if(isBlocked) btn.title = "Kapatıldı";
+      if(isPassed) btn.title = "Süresi Geçti";
     } else {
-      btn.textContent = time;
-      if ($("selectedTime").value === time) btn.classList.add("selected");
-      btn.onclick = () => {
-        document.querySelectorAll(".slot-btn").forEach(s => s.classList.remove("selected"));
-        btn.classList.add("selected");
-        $("selectedTime").value = time;
-        update();
-      };
+      btn.onclick = () => selectTime(time, btn);
     }
-    grid.appendChild(btn);
+    container.appendChild(btn);
   });
+
+  if(availableCount === 0){
+    container.innerHTML += `<div class="slot-warning-note" style="grid-column: 1/-1;">Seçilen tarihte uygun saat kalmamıştır. Başka bir gün deneyin.</div>`;
+  }
 }
-window.renderTimeSlots = renderTimeSlots;
 
-function renderQueue() {
-  const queueGrid = $("queueGrid");
-  const selectedDate = $("date").value;
-  const allAppts = getStoredAppointments();
-  const myBookedIDs = getMyBookedIDs();
-  
-  const filtered = selectedDate ? allAppts.filter(a => a.date === selectedDate) : allAppts;
-  filtered.sort((a,b) => a.time.localeCompare(b.time));
+function selectTime(time, btnBtn){
+  document.querySelectorAll(".slot-btn").forEach(b => b.classList.remove("selected"));
+  btnBtn.classList.add("selected");
+  $("selectedTime").value = time;
+  checkFormComplete();
+}
 
-  $("queueCountBadge").textContent = `${filtered.length} ARAÇ SIRADA`;
+function renderQueue(){
+  const dateVal = $("date").value || new Date().toISOString().split('T')[0];
+  const { appts } = getDayData(dateVal);
+  const qList = $("queueList");
+  qList.innerHTML = "";
 
-  if (filtered.length === 0) {
-    queueGrid.innerHTML = `<div class="empty-queue">${selectedDate ? 'Bu tarihte henüz sıra yok.' : 'Henüz randevu bulunmuyor.'}</div>`;
+  appts.sort((a,b) => a.time.localeCompare(b.time));
+
+  if(appts.length === 0){
+    qList.innerHTML = `<div class="empty-queue">Bu tarihte henüz randevu bulunmuyor.</div>`;
     return;
   }
 
-  queueGrid.innerHTML = filtered.map(a => {
-    const canCancel = isAdminLoggedIn || myBookedIDs.includes(a.id);
-    return `
+  appts.forEach(a => {
+    const isAdmin = localStorage.getItem("byMorfiAdminMode") === "true";
+    const cancelHtml = isAdmin ? `<button class="cancel-btn" onclick="cancelAppt('${a.id}')">İptal</button>` : "";
+    
+    qList.innerHTML += `
       <div class="queue-item">
-        <span class="queue-time">${escapeHTML(a.time)}</span>
-        <span class="queue-plate">${escapeHTML(a.plate)}</span>
-        ${canCancel ? `<button class="cancel-btn" onclick="cancelAppt('${escapeHTML(a.id)}')">İptal Et ✕</button>` : ''}
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="queue-time">${a.time}</div>
+          <div class="queue-plate">${maskPlate(a.plate)}</div>
+        </div>
+        ${cancelHtml}
       </div>
     `;
-  }).join("");
+  });
 }
-window.renderQueue = renderQueue;
 
-function cancelAppt(id) {
-  if (confirm("Bu randevuyu iptal etmek istediğinize emin misiniz?")) {
-    removeAppointment(id);
-    renderTimeSlots();
-    renderQueue();
-    toast("Randevu İptal Edildi", "Seçilen saat yeniden kullanılabilir hale geldi.");
+function maskPlate(p){
+  if(!p) return "";
+  const parts = p.trim().split(" ");
+  if(parts.length >= 3){
+    parts[1] = "***";
+    return parts.join(" ");
   }
+  return p.substring(0,2) + " *** " + p.substring(p.length-2);
 }
 
-function isTRPlateValid(plate){
-  const clean=plate.replace(/\s+/g,"").toUpperCase();
-  return /^(0[1-9]|[1-7][0-9]|8[0-1])([A-PR-VY-Z]{1,3})([0-9]{2,4})$/.test(clean);
-}
-
-function isPhoneValid(phone){
-  const clean = phone.replace(/\D/g, "");
-  return clean.length >= 10 && clean.length <= 11;
-}
-
+/* =======================================================
+   HESAPLAMA & VALİDASYON
+======================================================= */
 function calculate(){
-  const v=selectedVehicle();
-  let total=v.price;
-  if(!v.fixed && $("washType").value!=="ic_dis") total=v.price/2;
-  if(!v.fixed && $("extraSponge").checked) total+=150;
+  const v = selectedVehicle();
+  let total = 0;
+  
+  if(v.fixed){
+    total = v.fixed;
+    $("sumExtraRow").style.display = "none";
+  } else {
+    total = parseInt($("washType").value || 0);
+    if($("extraSponge").checked){
+      total += 150;
+      $("sumExtraRow").style.display = "flex";
+    } else {
+      $("sumExtraRow").style.display = "none";
+    }
+  }
+  
+  $("sumVeh").textContent = v.name;
+  $("sumWash").textContent = v.fixed ? "Standart" : $("washType").selectedOptions[0].text.split("—")[0].trim();
+  $("sumTotal").textContent = total;
   return total;
 }
 
-function update(){
-  const v=selectedVehicle(), fixed=v.fixed;
-  $("totalPrice").textContent=calculate().toLocaleString("tr-TR");
-  $("summaryVehicle").textContent=v.name;
-  $("summaryPackage").textContent=fixed?"Sabit fiyatlı hizmet":$("washType").selectedOptions[0].text.split("—")[0].trim();
-  $("sumName").textContent=$("name").value.trim()||"—";
-  $("sumPlate").textContent=$("plate").value.trim().toUpperCase()||"—";
-  $("sumDate").textContent=$("date").value?new Date($("date").value+"T00:00:00").toLocaleDateString("tr-TR",{day:"2-digit",month:"2-digit",year:"numeric"}):"—";
-  $("sumTime").textContent=$("selectedTime").value||"—";
+function calc(){
+  renderPackages();
+  calculate();
+  checkFormComplete();
+}
+
+function checkFormComplete(){
+  const n = $("name").value.trim();
+  const p = $("phone").value.trim();
+  const pl = $("plate").value.trim();
+  const d = $("date").value;
+  const t = $("selectedTime").value;
   
-  const extras=[];
-  if($("extraSponge").checked) extras.push("Süngerli");
-  $("sumExtras").textContent=extras.join(", ")||"Yok";
+  if(n && p.length>=10 && pl.length>=5 && d && t){
+    $("stepBadge").textContent = "TAMAMLANDI ✓";
+    $("stepBadge").style.background = "rgba(16, 185, 129, 0.1)";
+    $("stepBadge").style.color = "var(--success)";
+    $("stepBadge").style.borderColor = "var(--success)";
+  } else {
+    $("stepBadge").textContent = "ADIM 1/2";
+    $("stepBadge").style.background = "";
+    $("stepBadge").style.color = "";
+    $("stepBadge").style.borderColor = "";
+  }
 }
 
 function validate(){
-  let ok=true;
-  ["name","phone","plate","date"].forEach(id=>{
-    const el=$(id); el.classList.remove("invalid","valid");
-    if(!el.value.trim()){el.classList.add("invalid");ok=false}
+  let valid = true;
+  const els = ["name", "phone", "plate", "date"];
+  
+  els.forEach(id => {
+    const el = $(id);
+    if(!el.value.trim()){
+      el.classList.add("invalid");
+      valid = false;
+    } else {
+      el.classList.remove("invalid");
+      el.classList.add("valid");
+    }
   });
 
-  const closedDays = getClosedDays();
-  if (closedDays.includes($("date").value)) {
-    toast("Gün Kapalı", "Seçilen tarihe randevu alınamaz.");
-    return false;
-  }
-
   if(!$("selectedTime").value){
-    ok=false;
-    toast("Saat seçilmedi","Lütfen listeden 40 dakikalık bir randevu saati seçin.");
+    showToast("Lütfen bir saat seçin.");
+    valid = false;
   }
 
-  if($("phone").value && !isPhoneValid($("phone").value)){
-    $("phone").classList.add("invalid"); ok=false;
-    toast("Telefon geçersiz","Lütfen 10-11 haneli geçerli cep telefonu girin.");
-  }
+  if(valid) showToast("Bilgiler onaylandı, yönlendiriliyorsunuz...");
+  return valid;
+}
 
-  if($("plate").value && !isTRPlateValid($("plate").value)){
-    $("plate").classList.add("invalid"); ok=false;
-    toast("Plaka kontrolü","Örnek format: 06 MAM 34");
-  }
+function showToast(msg){
+  const t = $("toast");
+  t.innerHTML = `<b>Sistem Mesajı</b> ${msg}`;
+  t.classList.add("show");
+  setTimeout(()=> t.classList.remove("show"), 3000);
+}
 
-  return ok;
+/* =======================================================
+   KAYIT İŞLEMLERİ & WHATSAPP
+======================================================= */
+function saveAppointment(data){
+  appointments.push(data);
+  localStorage.setItem('byMorfiAppointments', JSON.stringify(appointments));
+}
+
+function cancelAppt(id){
+  if(confirm("Bu randevuyu iptal etmek istiyor musunuz?")){
+    appointments = appointments.filter(a => a.id !== id);
+    localStorage.setItem('byMorfiAppointments', JSON.stringify(appointments));
+    renderTimeSlots();
+    renderQueue();
+    showToast("Randevu silindi.");
+  }
 }
 
 function sendWhatsApp(){
@@ -1309,34 +1277,142 @@ function sendWhatsApp(){
   renderTimeSlots();
   renderQueue();
 
+  // Tarihi daha okunaklı formata çevirme (Örn: 18 Ağustos 2026)
+  const dateObj = new Date(apptData.date + "T00:00:00");
+  const options = { day: 'numeric', month: 'long', year: 'numeric' };
+  const formattedDate = dateObj.toLocaleDateString('tr-TR', options);
+
+  // Modal içerisindeki bilgileri güncelleme
+  $("successDate").textContent = formattedDate;
+  $("successTime").textContent = apptData.time;
+  $("successPlate").textContent = apptData.plate;
+
+  // Modalı ekranda gösterme
+  $("successModal").classList.add("active");
+
   const url=`https://api.whatsapp.com/send?phone=${WHATSAPP_PHONE}&text=${encodeURIComponent(msg)}`;
   window.open(url,"_blank","noopener,noreferrer");
 }
 
 function resetForm(){
-  $("name").value="";$("phone").value="";$("plate").value="";
-  $("selectedTime").value="";
-  $("washType").value="ic_dis";
-  $("extraSponge").checked=false;
-  $("vehicleType").value="Sedan / Hatchback";
-  document.querySelectorAll(".service").forEach((x,i)=>x.classList.toggle("active",i===0));
-  $("washTypeGroup").style.display="block";
-  document.querySelectorAll("input").forEach(x=>x.classList.remove("invalid","valid"));
+  $("name").value = "";
+  $("phone").value = "";
+  $("plate").value = "";
+  $("selectedTime").value = "";
+  $("extraSponge").checked = false;
+  
+  document.querySelectorAll(".valid, .invalid").forEach(el => {
+    el.classList.remove("valid", "invalid");
+  });
+  
+  selectVehicle(CAR_TYPES[0].id);
+  
+  if($("date").value){
+    renderTimeSlots();
+  }
+}
+
+/* =======================================================
+   ADMİN PANELİ İŞLEMLERİ
+======================================================= */
+function fillAdminTimeSelects(){
+  const s1 = $("adminStartTime");
+  const s2 = $("adminEndTime");
+  s1.innerHTML = ""; s2.innerHTML = "";
+  
+  allSlots.forEach(t => {
+    s1.innerHTML += `<option value="${t}">${t}</option>`;
+    s2.innerHTML += `<option value="${t}">${t}</option>`;
+  });
+}
+
+function openAdminModal(){
+  const pwd = prompt("Yönetici Şifresi (Varsayılan: 1234):");
+  if(pwd === "1234"){
+    localStorage.setItem("byMorfiAdminMode", "true");
+    fillAdminTimeSelects();
+    $("adminDate").value = $("date").value || new Date().toISOString().split('T')[0];
+    $("adminModal").classList.add("active");
+    renderQueue();
+  } else {
+    showToast("Hatalı şifre!");
+  }
+}
+
+function closeAdminModal(){
+  $("adminModal").classList.remove("active");
+  localStorage.removeItem("byMorfiAdminMode");
   renderTimeSlots();
-  update();
-  toast("Form temizlendi","Yeni bir randevu seçebilirsiniz.");
+  renderQueue();
 }
 
-function openAdminModal() {
-  const modal = $("adminModal");
-  if (modal) modal.classList.add("active");
+function blockRange(){
+  const d = $("adminDate").value;
+  const t1 = $("adminStartTime").value;
+  const t2 = $("adminEndTime").value;
+
+  if(!d) return showToast("Tarih seçin!");
+  if(t1 > t2) return showToast("Başlangıç saati bitişten büyük olamaz!");
+
+  if(!blockedSlots[d]) blockedSlots[d] = [];
+
+  const range = allSlots.filter(t => t >= t1 && t <= t2);
+  range.forEach(t => {
+    if(!blockedSlots[d].includes(t)) blockedSlots[d].push(t);
+  });
+
+  saveBlocks();
+  showToast(`${t1} - ${t2} aralığı kapatıldı.`);
 }
 
-function closeAdminModal() {
-  const modal = $("adminModal");
-  if (modal) modal.classList.remove("active");
+function unblockRange(){
+  const d = $("adminDate").value;
+  const t1 = $("adminStartTime").value;
+  const t2 = $("adminEndTime").value;
+
+  if(!d || !blockedSlots[d]) return;
+
+  if(blockedSlots[d].includes("ALL")){
+    blockedSlots[d] = [];
+  } else {
+    const range = allSlots.filter(t => t >= t1 && t <= t2);
+    blockedSlots[d] = blockedSlots[d].filter(t => !range.includes(t));
+  }
+
+  saveBlocks();
+  showToast(`${t1} - ${t2} aralığı tekrar açıldı.`);
 }
 
+function closeWholeDay(){
+  const d = $("adminDate").value;
+  if(!d) return;
+
+  if(confirm(`${d} tarihini tamamen kapatmak istediğinize emin misiniz?`)){
+    blockedSlots[d] = ["ALL"];
+    saveBlocks();
+    showToast("Tüm gün kapatıldı.");
+  }
+}
+
+function saveBlocks(){
+  localStorage.setItem('byMorfiBlockedSlots', JSON.stringify(blockedSlots));
+}
+
+/* =======================================================
+   EVENT LISTENERS & INIT
+======================================================= */
+$("date").min = new Date().toISOString().split('T')[0];
+$("date").addEventListener('change', () => {
+  renderTimeSlots();
+  renderQueue();
+  checkFormComplete();
+});
+
+["name","phone","plate"].forEach(id => {
+  $(id).addEventListener('input', checkFormComplete);
+});
+
+// Admin modal kapatma
 $("adminLogoBtn").onclick = openAdminModal;
 $("closeModalBtn").onclick = closeAdminModal;
 
@@ -1344,87 +1420,26 @@ $("adminModal").onclick = (e) => {
   if (e.target === $("adminModal")) closeAdminModal();
 };
 
-$("adminLoginBtn").onclick = () => {
-  if ($("adminPassInput").value === ADMIN_PASS) {
-    isAdminLoggedIn = true;
-    $("adminLoginBox").style.display = "none";
-    $("adminControlsBox").style.display = "block";
-    $("adminPassInput").value = "";
-    
-    const currDate = $("date").value || new Date().toISOString().split('T')[0];
-    $("adminStartDate").value = currDate;
-    $("adminEndDate").value = currDate;
+// Başarılı Modal Kapatma Event'leri
+$("closeSuccessModalBtn").onclick = () => {
+  $("successModal").classList.remove("active");
+  resetForm();
+};
 
-    renderQueue();
-    toast("Başarılı Giriş", "Yönetici paneli açıldı.");
-  } else {
-    toast("Hatalı Şifre", "Lütfen şifrenizi kontrol edin.");
+$("successModal").onclick = (e) => {
+  if (e.target === $("successModal")) {
+    $("successModal").classList.remove("active");
+    resetForm();
   }
 };
 
-$("adminLogoutBtn").onclick = () => {
-  isAdminLoggedIn = false;
-  $("adminLoginBox").style.display = "block";
-  $("adminControlsBox").style.display = "none";
-  closeAdminModal();
-  renderQueue();
-  toast("Çıkış Yapıldı", "Yönetici oturumu kapatıldı.");
-};
-
-$("lockRangeBtn").onclick = () => {
-  const start = $("adminStartDate").value;
-  const end = $("adminEndDate").value;
-
-  if (!start || !end) {
-    toast("Eksik Tarih", "Lütfen hem başlangıç hem bitiş tarihini seçin.");
-    return;
-  }
-
-  if (setClosedDaysRange(start, end, true)) {
-    renderTimeSlots();
-    toast("Tarihler Kapatıldı", `${start} - ${end} arası randevulara kapatıldı.`);
-  } else {
-    toast("Tarih Hatası", "Başlangıç tarihi bitiş tarihinden büyük olamaz.");
-  }
-};
-
-$("unlockRangeBtn").onclick = () => {
-  const start = $("adminStartDate").value;
-  const end = $("adminEndDate").value;
-
-  if (!start || !end) {
-    toast("Eksik Tarih", "Lütfen hem başlangıç hem bitiş tarihini seçin.");
-    return;
-  }
-
-  if (setClosedDaysRange(start, end, false)) {
-    renderTimeSlots();
-    toast("Kilitleme Kaldırıldı", `${start} - ${end} arası randevulara açıldı.`);
-  } else {
-    toast("Tarih Hatası", "Başlangıç tarihi bitiş tarihinden büyük olamaz.");
-  }
-};
-
-["name","phone","plate"].forEach(id=>$(id).oninput = update);
-$("date").onchange = () => {
+window.onload = () => {
+  const today = new Date().toISOString().split('T')[0];
+  $("date").value = today;
+  renderVehicles();
   renderTimeSlots();
   renderQueue();
-  update();
 };
-["washType","extraSponge"].forEach(id=>$(id).onchange = update);
-
-$("bookBtn").onclick = sendWhatsApp;
-$("resetBtn").onclick = resetForm;
-
-const today=new Date();
-$("date").min=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
-$("date").value=$("date").min;
-
-initTheme();
-buildVehicles();
-renderTimeSlots();
-renderQueue();
-update();
 </script>
 </body>
 </html>
