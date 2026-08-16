@@ -139,6 +139,79 @@ button { cursor: pointer; border: none; background: none; }
   box-shadow: 0 0 15px var(--gold-glow);
 }
 
+.weather-widget,
+.location-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 36px;
+  padding: 8px 14px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--panel-border);
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.weather-widget {
+  min-width: 185px;
+}
+
+.location-btn {
+  text-decoration: none;
+  min-width: 92px;
+}
+
+.weather-widget:hover,
+.location-btn:hover {
+  background: rgba(215, 180, 106, 0.15);
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 15px var(--gold-glow);
+}
+
+.weather-icon {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.weather-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.weather-temp {
+  color: var(--gold-light);
+  font-weight: 800;
+}
+
+.weather-condition {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+@media (max-width: 850px) {
+  .nav-actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 560px) {
+  .weather-widget {
+    min-width: 0;
+    flex: 1 1 170px;
+  }
+
+  .location-btn {
+    flex: 0 0 auto;
+  }
+}
+
 .status {
   display: flex;
   align-items: center;
@@ -524,6 +597,152 @@ input:focus, select:focus {
   border-radius: var(--radius-md);
 }
 
+/* Randevu Oluşturuldu Popup */
+.appointment-success-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 10001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.appointment-success-overlay.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.appointment-success-card {
+  width: min(94%, 460px);
+  background: var(--panel-bg);
+  border: 1px solid var(--gold-primary);
+  border-radius: var(--radius-lg);
+  padding: 30px;
+  box-shadow: 0 0 45px var(--gold-glow);
+  transform: translateY(15px) scale(0.96);
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.appointment-success-overlay.active .appointment-success-card {
+  transform: translateY(0) scale(1);
+}
+
+.success-icon {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(16, 185, 129, 0.14);
+  border: 1px solid var(--success);
+  color: #6ee7b7;
+  font-size: 28px;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.18);
+}
+
+.appointment-success-card h3 {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.appointment-success-card .success-subtitle {
+  margin-top: 5px;
+  color: var(--gold-primary);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.appointment-details {
+  margin: 22px 0 18px;
+  padding: 4px 16px;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.025);
+  text-align: left;
+}
+
+.appointment-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px dashed var(--panel-border);
+  font-size: 12px;
+}
+
+.appointment-detail-row:last-child {
+  border-bottom: none;
+}
+
+.appointment-detail-row span {
+  color: var(--text-muted);
+}
+
+.appointment-detail-row strong {
+  color: var(--text-main);
+  text-align: right;
+  font-weight: 700;
+}
+
+.whatsapp-success-btn {
+  width: 100%;
+  height: 52px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, #25d366, #128c7e);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  box-shadow: 0 10px 22px rgba(18, 140, 126, 0.25);
+  transition: var(--transition);
+}
+
+.whatsapp-success-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.07);
+}
+
+.success-close-btn {
+  width: 100%;
+  height: 42px;
+  margin-top: 10px;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.success-close-btn:hover {
+  background: rgba(215, 180, 106, 0.1);
+  border-color: var(--gold-primary);
+  color: var(--text-main);
+}
+
+@media (max-width: 560px) {
+  .appointment-success-card {
+    padding: 24px 18px;
+  }
+}
+
 /* Modal Popup & Blur Overlay */
 .modal-overlay {
   position: fixed;
@@ -675,6 +894,19 @@ input:focus, select:focus {
     </div>
     <div class="nav-actions">
       <button class="theme-toggle" id="themeBtn">🌙 Koyu Tema</button>
+      <div class="weather-widget" id="weatherWidget" title="Ankara / Çankaya anlık hava durumu">
+        <span class="weather-icon" id="weatherIcon">🌤️</span>
+        <span class="weather-info">
+          <span>Çankaya</span>
+          <span class="weather-temp" id="weatherTemp">--°C</span>
+          <span class="weather-condition" id="weatherCondition">Yükleniyor</span>
+        </span>
+      </div>
+      <a class="location-btn" id="locationBtn"
+         href="https://www.google.com/maps/place/BY+MORF%C4%B0+OTO+YIKAMA+VE+OTO+LAST%C4%B0K/@39.8870655,32.8364473,17z/data=!3m1!4b1!4m6!3m5!1s0x14d3458904e2988b:0x1fb0c953b1afe69c!8m2!3d39.8870655!4d32.8390276!16s%2Fg%2F11bycrspgp?entry=ttu&g_ep=EgoyMDI2MDgxMi4wIKXMDSoASAFQAw%3D%3D"
+         target="_blank" rel="noopener noreferrer" title="Google Haritalar'da konumu aç">
+        📍 Konum
+      </a>
       <div class="status"><i class="dot"></i> Randevu sistemi aktif</div>
     </div>
   </nav>
@@ -798,6 +1030,39 @@ input:focus, select:focus {
       <div class="empty-queue">Bu tarih için henüz bir randevu oluşturulmadı.</div>
     </div>
   </section>
+</div>
+
+<!-- Randevu Oluşturuldu Popup -->
+<div class="appointment-success-overlay" id="appointmentSuccessModal">
+  <div class="appointment-success-card">
+    <div class="success-icon">✓</div>
+    <h3>Randevunuz Oluşturuldu</h3>
+    <div class="success-subtitle">Şimdi iletişime geçin</div>
+
+    <div class="appointment-details">
+      <div class="appointment-detail-row">
+        <span>Plaka</span>
+        <strong id="successPlate">—</strong>
+      </div>
+      <div class="appointment-detail-row">
+        <span>Tarih</span>
+        <strong id="successDate">—</strong>
+      </div>
+      <div class="appointment-detail-row">
+        <span>Saat</span>
+        <strong id="successTime">—</strong>
+      </div>
+      <div class="appointment-detail-row">
+        <span>Ad Soyad</span>
+        <strong id="successName">—</strong>
+      </div>
+    </div>
+
+    <button class="whatsapp-success-btn" id="successWhatsappBtn">
+      💬 WhatsApp ile iletişime geç
+    </button>
+    <button class="success-close-btn" id="successCloseBtn">Kapat</button>
+  </div>
 </div>
 
 <!-- Admin Modal Overlay -->
@@ -1076,6 +1341,79 @@ function animateParticles() {
 }
 initParticles(); animateParticles();
 
+/* Ankara / Çankaya Anlık Hava Durumu */
+const WEATHER_LAT = 39.8870655;
+const WEATHER_LON = 32.8390276;
+
+function getWeatherDescription(code) {
+  const map = {
+    0: ["☀️", "Açık"],
+    1: ["🌤️", "Çoğunlukla açık"],
+    2: ["⛅", "Parçalı bulutlu"],
+    3: ["☁️", "Kapalı"],
+    45: ["🌫️", "Sisli"],
+    48: ["🌫️", "Sisli"],
+    51: ["🌦️", "Hafif çiseleme"],
+    53: ["🌦️", "Çiseleme"],
+    55: ["🌧️", "Yoğun çiseleme"],
+    56: ["🌧️", "Donan çiseleme"],
+    57: ["🌧️", "Yoğun donan çiseleme"],
+    61: ["🌦️", "Hafif yağmur"],
+    63: ["🌧️", "Yağmur"],
+    65: ["🌧️", "Kuvvetli yağmur"],
+    66: ["🌧️", "Donan yağmur"],
+    67: ["🌧️", "Kuvvetli donan yağmur"],
+    71: ["🌨️", "Hafif kar"],
+    73: ["🌨️", "Kar"],
+    75: ["❄️", "Yoğun kar"],
+    77: ["🌨️", "Kar taneleri"],
+    80: ["🌦️", "Hafif sağanak"],
+    81: ["🌧️", "Sağanak"],
+    82: ["⛈️", "Kuvvetli sağanak"],
+    85: ["🌨️", "Kar sağanağı"],
+    86: ["🌨️", "Kuvvetli kar sağanağı"],
+    95: ["⛈️", "Gök gürültülü"],
+    96: ["⛈️", "Dolu ihtimali"],
+    99: ["⛈️", "Kuvvetli dolu ihtimali"]
+  };
+  return map[code] || ["🌡️", "Bilinmiyor"];
+}
+
+async function loadWeather() {
+  const tempEl = $("weatherTemp");
+  const conditionEl = $("weatherCondition");
+  const iconEl = $("weatherIcon");
+
+  try {
+    const url =
+      `https://api.open-meteo.com/v1/forecast?latitude=${WEATHER_LAT}&longitude=${WEATHER_LON}` +
+      `&current=temperature_2m,weather_code&timezone=Europe%2FIstanbul`;
+
+    const response = await fetch(url, { cache: "no-store" });
+    if (!response.ok) throw new Error("Weather request failed");
+
+    const data = await response.json();
+    const current = data.current;
+    const [icon, description] = getWeatherDescription(current.weather_code);
+
+    iconEl.textContent = icon;
+    tempEl.textContent = `${Math.round(current.temperature_2m)}°C`;
+    conditionEl.textContent = description;
+    $("weatherWidget").title =
+      `Çankaya anlık hava durumu • Güncellendi: ${new Date().toLocaleTimeString("tr-TR", {
+        hour: "2-digit",
+        minute: "2-digit"
+      })}`;
+  } catch (error) {
+    tempEl.textContent = "--°C";
+    conditionEl.textContent = "Alınamadı";
+    iconEl.textContent = "🌡️";
+  }
+}
+
+loadWeather();
+setInterval(loadWeather, 10 * 60 * 1000);
+
 /* Theme Management */
 function initTheme(){
   if(localStorage.getItem("theme") === "light"){
@@ -1270,6 +1608,54 @@ function validate(){
   return ok;
 }
 
+function buildWhatsAppMessage(apptData, extras) {
+  return [
+    "Merhaba, BY MORFİ üzerinden randevu oluşturdum.",
+    "",
+    `👤 Müşteri: ${apptData.name}`,
+    `📱 Telefon: ${apptData.phone}`,
+    `🚗 Plaka: ${apptData.plate}`,
+    `🧼 Araç: ${apptData.vehicle}`,
+    `✨ Paket: ${apptData.wash}`,
+    `➕ Ekstra: ${extras.join(", ")||"Yok"}`,
+    `💰 Toplam: ${calculate()} TL`,
+    `📅 Tarih: ${apptData.date}`,
+    `⏰ Saat: ${apptData.time}`
+  ].filter(Boolean).join("\n");
+}
+
+function openAppointmentSuccess(apptData, extras) {
+  $("successPlate").textContent = apptData.plate;
+  $("successDate").textContent = new Date(apptData.date + "T00:00:00").toLocaleDateString("tr-TR", {
+    day: "2-digit", month: "2-digit", year: "numeric"
+  });
+  $("successTime").textContent = apptData.time;
+  $("successName").textContent = apptData.name;
+
+  window.__lastAppointmentData = {
+    apptData,
+    extras,
+    message: buildWhatsAppMessage(apptData, extras)
+  };
+
+  $("appointmentSuccessModal").classList.add("active");
+}
+
+function closeAppointmentSuccess() {
+  $("appointmentSuccessModal").classList.remove("active");
+}
+
+function sendSuccessWhatsApp() {
+  const data = window.__lastAppointmentData;
+  if (!data) return;
+
+  const url =
+    `https://api.whatsapp.com/send?phone=${WHATSAPP_PHONE}` +
+    `&text=${encodeURIComponent(data.message)}`;
+
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
 function sendWhatsApp(){
   if(!validate()) return;
 
@@ -1277,7 +1663,7 @@ function sendWhatsApp(){
   const extras=[];
   if($("extraSponge").checked) extras.push("Süngerli yıkama (+150 TL)");
   const wash=v.fixed?"Sabit fiyatlı hizmet":$("washType").selectedOptions[0].text.split("—")[0].trim();
-  
+
   const apptData = {
     id: "apt_" + Date.now(),
     name: $("name").value.trim(),
@@ -1291,27 +1677,14 @@ function sendWhatsApp(){
   };
 
   saveAppointment(apptData);
-
-  const msg=[
-    "Merhaba, BY MORFİ üzerinden randevu oluşturmak istiyorum.",
-    "",
-    `👤 Müşteri: ${apptData.name}`,
-    `📱 Telefon: ${apptData.phone}`,
-    `🚗 Plaka: ${apptData.plate}`,
-    `🧼 Araç: ${apptData.vehicle}`,
-    `✨ Paket: ${apptData.wash}`,
-    `➕ Ekstra: ${extras.join(", ")||"Yok"}`,
-    `💰 Toplam: ${calculate()} TL`,
-    `📅 Tarih: ${apptData.date}`,
-    `⏰ Saat: ${apptData.time}`
-  ].filter(Boolean).join("\n");
-
   renderTimeSlots();
   renderQueue();
 
-  const url=`https://api.whatsapp.com/send?phone=${WHATSAPP_PHONE}&text=${encodeURIComponent(msg)}`;
-  window.open(url,"_blank","noopener,noreferrer");
+  // Randevu oluşturuldu ekranını aç.
+  // WhatsApp, kullanıcı bu ekrandaki butona bastığında açılır.
+  openAppointmentSuccess(apptData, extras);
 }
+
 
 function resetForm(){
   $("name").value="";$("phone").value="";$("plate").value="";
@@ -1336,6 +1709,13 @@ function closeAdminModal() {
   const modal = $("adminModal");
   if (modal) modal.classList.remove("active");
 }
+
+$("successWhatsappBtn").onclick = sendSuccessWhatsApp;
+$("successCloseBtn").onclick = closeAppointmentSuccess;
+
+$("appointmentSuccessModal").onclick = (e) => {
+  if (e.target === $("appointmentSuccessModal")) closeAppointmentSuccess();
+};
 
 $("adminLogoBtn").onclick = openAdminModal;
 $("closeModalBtn").onclick = closeAdminModal;
