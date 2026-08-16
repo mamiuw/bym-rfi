@@ -953,6 +953,88 @@ input:focus, select:focus {
 
 /* ===== GELİŞMİŞ ADMİN PANELİ EKLENTİLERİ ===== */
 .admin-extra-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}.admin-stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}.admin-stat{padding:12px;border:1px solid var(--panel-border);background:var(--input-bg);border-radius:var(--radius-md);text-align:center}.admin-stat b{display:block;font-size:20px;color:var(--gold-light)}.admin-stat span{display:block;font-size:10px;color:var(--text-muted);margin-top:2px}.admin-section{margin-top:14px;padding-top:14px;border-top:1px solid var(--panel-border)}.admin-section h4{font-size:12px;color:var(--gold-light);margin-bottom:8px}.admin-mini{height:40px;padding:0 10px;border:1px solid var(--panel-border);border-radius:var(--radius-md);background:var(--input-bg);font-size:11px}.admin-manage-btn.danger{border-color:var(--danger);color:#fca5a5;background:rgba(239,68,68,.08)}.admin-manage-btn.success{border-color:var(--success);color:#6ee7b7;background:rgba(16,185,129,.08)}.admin-appointments{max-height:250px;overflow:auto;display:flex;flex-direction:column;gap:7px}.admin-appt{display:grid;grid-template-columns:58px 1fr auto;gap:8px;align-items:center;padding:9px;border:1px solid var(--panel-border);background:var(--input-bg);border-radius:10px}.admin-appt small{display:block;color:var(--text-muted);font-size:9px}.admin-appt strong{font-size:11px}.admin-appt button{padding:6px 8px;border:1px solid var(--danger);color:#fca5a5;border-radius:7px;font-size:10px;background:rgba(239,68,68,.08)}.admin-check{display:flex;align-items:center;gap:8px;padding:8px 0;font-size:11px;color:var(--text-muted)}.admin-check input{width:16px;height:16px}@media(max-width:560px){.admin-stat-grid{grid-template-columns:repeat(2,1fr)}.admin-extra-grid{grid-template-columns:1fr}.admin-appt{grid-template-columns:55px 1fr}}
+
+/* ===== ADMIN PANEL YATAY / KATEGORİLİ DÜZEN ===== */
+#adminModal .modal-card{
+  width:min(960px,96vw);
+  max-width:960px;
+  max-height:90vh;
+  overflow:auto;
+}
+#adminControlsBox{
+  padding-bottom:4px;
+}
+#adminControlsBox > p{
+  margin-bottom:14px;
+}
+#adminControlsBox .admin-controls{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  align-items:start;
+}
+#adminControlsBox .admin-controls > #lockRangeBtn,
+#adminControlsBox .admin-controls > #unlockRangeBtn{
+  margin:0;
+}
+#adminControlsBox .admin-controls > .admin-management-buttons{
+  grid-column:1/-1;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+#adminControlsBox .admin-section{
+  margin:0;
+  padding:14px;
+  border:1px solid var(--panel-border);
+  border-radius:var(--radius-md);
+  background:rgba(255,255,255,.018);
+  min-width:0;
+}
+#adminControlsBox .admin-section h4{
+  font-size:13px;
+  margin:0 0 11px;
+  padding-bottom:8px;
+  border-bottom:1px solid var(--panel-border);
+}
+#adminControlsBox .admin-stat-grid{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  margin-top:0;
+}
+#adminControlsBox .admin-extra-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  margin-top:0;
+}
+#adminControlsBox .admin-range-grid{
+  margin-top:0;
+}
+#adminControlsBox .admin-section:nth-of-type(1){
+  grid-column:1/-1;
+}
+#adminControlsBox .admin-section:nth-of-type(3){
+  grid-column:1/-1;
+}
+#adminControlsBox .admin-section:last-of-type{
+  grid-column:1/-1;
+}
+#adminControlsBox #adminLogoutBtn{
+  grid-column:1/-1;
+  margin-top:0;
+}
+@media(max-width:700px){
+  #adminModal .modal-card{width:96vw}
+  #adminControlsBox .admin-controls{grid-template-columns:1fr}
+  #adminControlsBox .admin-controls > .admin-management-buttons{grid-column:auto}
+  #adminControlsBox .admin-section:nth-of-type(1),
+  #adminControlsBox .admin-section:nth-of-type(3),
+  #adminControlsBox .admin-section:last-of-type{grid-column:auto}
+  #adminControlsBox .admin-stat-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:480px){
+  #adminControlsBox .admin-controls > .admin-management-buttons,
+  #adminControlsBox .admin-extra-grid,
+  #adminControlsBox .admin-range-grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
