@@ -874,7 +874,7 @@ input:focus, select:focus {
 
         <div class="field">
           <label>Telefon <em>zorunlu</em></label>
-          <input id="phone" type="tel" placeholder="(5XX) XXX XX XX" autocomplete="tel" inputmode="numeric">
+          <input id="phone" type="tel" placeholder="Telefon numaranızı giriniz..." autocomplete="tel" inputmode="numeric">
         </div>
 
         <div class="field full">
@@ -1472,61 +1472,19 @@ function isTRPlateValid(plate){
 
 function normalizePhone(phone){
   let digits = String(phone || "").replace(/\D/g, "");
-  // Turkish mobile input is 10 digits without the leading zero.
   if (digits.startsWith("0")) digits = digits.slice(1);
   return digits.slice(0, 10);
-}
-
-function formatPhone(phone){
-  const digits = normalizePhone(phone);
-  if (!digits) return "";
-  if (digits.length <= 3) return "(" + digits;
-  if (digits.length <= 6) return "(" + digits.slice(0,3) + ") " + digits.slice(3);
-  if (digits.length <= 8) return "(" + digits.slice(0,3) + ") " + digits.slice(3,6) + " " + digits.slice(6);
-  return "(" + digits.slice(0,3) + ") " + digits.slice(3,6) + " " + digits.slice(6,8) + " " + digits.slice(8,10);
 }
 
 function isPhoneValid(phone){
   return /^5\d{9}$/.test(normalizePhone(phone));
 }
 
-const phoneInput = $("phone");
-
-phoneInput.addEventListener("input", (e) => {
-  const input = e.target;
-  const oldValue = input.value;
-  const oldCaret = input.selectionStart ?? oldValue.length;
-
-  // Count only digits before the cursor. This keeps typing natural on mobile.
-  const digitsBeforeCaret = oldValue.slice(0, oldCaret).replace(/\D/g, "");
-  const digits = normalizePhone(oldValue);
-  const formatted = formatPhone(digits);
-
-  input.value = formatted;
-
-  // Put the cursor after the same number of actual digits.
-  let digitCount = Math.min(digitsBeforeCaret.length, digits.length);
-  let newCaret = 0;
-  let seen = 0;
-
-  while (newCaret < formatted.length && seen < digitCount) {
-    if (/\d/.test(formatted[newCaret])) seen++;
-    newCaret++;
-  }
-
-  // If the cursor was at the end, keep it at the end.
-  if (oldCaret >= oldValue.length) newCaret = formatted.length;
-
-  try {
-    input.setSelectionRange(newCaret, newCaret);
-  } catch (_) {}
-
+$("phone").addEventListener("input", (e) => {
+  // No automatic spaces or parentheses. Customer controls the formatting.
+  const digits = normalizePhone(e.target.value);
+  e.target.value = digits;
   update();
-});
-
-phoneInput.addEventListener("keydown", (e) => {
-  // Backspace/delete naturally works with the masked value.
-  if (e.key === "Enter") e.preventDefault();
 });
 
 ["name","plate"].forEach(id=>$(id).oninput = update);
