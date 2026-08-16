@@ -874,7 +874,7 @@ input:focus, select:focus {
 
         <div class="field">
           <label>Telefon <em>zorunlu</em></label>
-          <input id="phone" type="tel" placeholder="Telefon numaranızı giriniz..." autocomplete="tel" inputmode="numeric">
+          <input id="phone" type="tel" placeholder="(5XX) XXX XX XX" autocomplete="tel" inputmode="numeric" maxlength="14">
         </div>
 
         <div class="field full">
@@ -1471,17 +1471,287 @@ function isTRPlateValid(plate){
 }
 
 function normalizePhone(phone){
-  let digits = String(phone || "").replace(/\D/g, "");
+  let digits = String(phone).replace(/\D/g, "");
+
+  // Türkiye cep telefonu: 10 hane, başta 0 olmadan (5XX XXX XX XX)
   if (digits.startsWith("0")) digits = digits.slice(1);
   return digits.slice(0, 10);
 }
 
-function isPhoneValid(phone){
-  return /^5\d{9}$/.test(normalizePhone(phone));
+function formatPhone(phone){
+  const digits = normalizePhone(phone);
+  let out = "";
+
+  if (digits.length > 0) out += "(" + digits.slice(0, 3);
+  if (digits.length >= 3) out += ")";
+  if (digits.length > 3) out += " " + digits.slice(3, 6);
+  if (digits.length > 6) out += " " + digits.slice(6, 8);
+  if (digits.length > 8) out += " " + digits.slice(8, 10);
+
+  return out;
 }
 
+function isPhoneValid(phone){
+  const clean = normalizePhone(phone);
+  return /^5\d{9}$/.test(clean);
+}
+
+function calculate(){
+  const v=selectedVehicle();
+  let total=v.price;
+  if(!v.fixed && $("washType").value!=="ic_dis") total=v.price/2;
+  if(!v.fixed && $("extraSponge").checked) total+=150;
+  return total;
+}
+
+function update(){
+  const v=selectedVehicle(), fixed=v.fixed;
+  $("totalPrice").textContent=calculate().toLocaleString("tr-TR");
+  $("summaryVehicle").textContent=v.name;
+  $("summaryPackage").textContent=fixed?"Sabit fiyatlı hizmet":$("washType").selectedOptions[0].text.split("—")[0].trim();
+  $("sumName").textContent=$("name").value.trim()||"—";
+  $("sumPlate").textContent=$("plate").value.trim().toUpperCase()||"—";
+  $("sumDate").textContent=$("date").value?new Date($("date").value+"T00:00:00").toLocaleDateString("tr-TR",{day:"2-digit",month:"2-digit",year:"numeric"}):"—";
+  $("sumTime").textContent=$("selectedTime").value||"—";
+  
+  const extras=[];
+  if($("extraSponge").checked) extras.push("Süngerli");
+  $("sumExtras").textContent=extras.join(", ")||"Yok";
+}
+
+function validate(){
+  let ok=true;
+  ["name","phone","plate","date"].forEach(id=>{
+    const el=$(id); el.classList.remove("invalid","valid");
+    if(!el.value.trim()){
+      el.classList.add("invalid");
+      ok=false;
+      if(id === "date") toast("Tarih seçilmedi","Lütfen randevu için bir tarih seçin.");
+    }
+  });
+
+  const closedDays = getClosedDays();
+  if (closedDays.includes($("date").value)) {
+    toast("Gün Kapalı", "Seçilen tarihe randevu alınamaz.");
+    return false;
+  }
+
+  if(!$("selectedTime").value){
+    ok=false;
+    toast("Saat seçilmedi","Lütfen listeden 40 dakikalık bir randevu saati seçin.");
+  }
+
+  if($("phone").value && !isPhoneValid($("phone").value)){
+    $("phone").classList.add("invalid"); ok=false;
+    toast("Telefon geçersiz","Lütfen 10-11 haneli geçerli cep telefonu girin.");
+  }
+
+  if($("plate").value && !isTRPlateValid($("plate").value)){
+    $("plate").classList.add("invalid"); ok=false;
+    toast("Plaka kontrolü","Örnek format: 06 MAM 34");
+  }
+
+  return ok;
+}
+
+
+let lastAppointment = null;
+
+function formatSuccessDate(dateValue){
+  if(!dateValue) return "—";
+  const [y,m,d] = dateValue.split("-").map(Number);
+  if(!y || !m || !d) return dateValue;
+  return new Date(y,m-1,d).toLocaleDateString("tr-TR",{day:"2-digit",month:"long",year:"numeric"});
+}
+
+function openAppointmentModal(){
+  $("successDate").textContent = formatSuccessDate(lastAppointment?.date || $("date").value);
+  $("successTime").textContent = lastAppointment?.time || $("selectedTime").value || "—";
+  $("successPlate").textContent = lastAppointment?.plate || $("plate").value.trim().toUpperCase() || "—";
+  $("appointmentModal").classList.add("show");
+  $("appointmentModal").setAttribute("aria-hidden","false");
+  document.body.style.overflow="hidden";
+}
+
+function closeAppointmentModal(){
+  $("appointmentModal").classList.remove("show");
+  $("appointmentModal").setAttribute("aria-hidden","true");
+  document.body.style.overflow="";
+}
+
+$("appointmentModalClose").onclick = closeAppointmentModal;
+$("appointmentModal").onclick = e => { if(e.target === $("appointmentModal")) closeAppointmentModal(); };
+document.addEventListener("keydown", e => {
+  if(e.key === "Escape" && $("appointmentModal").classList.contains("show")) closeAppointmentModal();
+});
+
+$("successWhatsapp").onclick = () => {
+  if(!lastAppointment) return;
+  const msg = [
+    "Merhaba, BY MORFİ üzerinden randevu oluşturdum.",
+    "",
+    `👤 Müşteri: ${lastAppointment.name}`,
+    `📱 Telefon: ${lastAppointment.phone}`,
+    `🚗 Plaka: ${lastAppointment.plate}`,
+    `📅 Tarih: ${formatSuccessDate(lastAppointment.date)}`,
+    `⏰ Saat: ${lastAppointment.time}`,
+    `🧼 Hizmet: ${lastAppointment.service}`,
+    `💰 Toplam: ${lastAppointment.price} TL`
+  ].join("\n");
+  closeAppointmentModal();
+  window.open(`https://api.whatsapp.com/send?phone=${WHATSAPP_PHONE}&text=${encodeURIComponent(msg)}`,"_blank","noopener,noreferrer");
+};
+
+function sendWhatsApp(){
+  if(!validate()) return;
+
+  const v=selectedVehicle();
+  const extras=[];
+  if($("extraSponge").checked) extras.push("Süngerli yıkama (+150 TL)");
+  const wash=v.fixed?"Sabit fiyatlı hizmet":$("washType").selectedOptions[0].text.split("—")[0].trim();
+  
+  const apptData = {
+    id: "apt_" + Date.now(),
+    name: $("name").value.trim(),
+    phone: $("phone").value.trim(),
+    plate: $("plate").value.trim().toUpperCase(),
+    vehicle: v.name,
+    wash: wash,
+    date: $("date").value,
+    time: $("selectedTime").value,
+    isFixed: !!v.fixed
+  };
+
+  saveAppointment(apptData);
+
+  lastAppointment = {
+    name: apptData.name,
+    phone: apptData.phone,
+    plate: apptData.plate,
+    date: apptData.date,
+    time: apptData.time,
+    service: `${apptData.vehicle} — ${apptData.wash}`,
+    price: calculate()
+  };
+
+  openAppointmentModal();
+
+  const msg=[
+    "Merhaba, BY MORFİ üzerinden randevu oluşturmak istiyorum.",
+    "",
+    `👤 Müşteri: ${apptData.name}`,
+    `📱 Telefon: ${apptData.phone}`,
+    `🚗 Plaka: ${apptData.plate}`,
+    `🧼 Araç: ${apptData.vehicle}`,
+    `✨ Paket: ${apptData.wash}`,
+    `➕ Ekstra: ${extras.join(", ")||"Yok"}`,
+    `💰 Toplam: ${calculate()} TL`,
+    `📅 Tarih: ${apptData.date}`,
+    `⏰ Saat: ${apptData.time}`
+  ].filter(Boolean).join("\n");
+
+  renderTimeSlots();
+  renderQueue();
+
+  // WhatsApp artık doğrudan açılmaz; müşteri onay ekranındaki butondan açabilir.
+}
+
+function resetForm(){
+  $("name").value="";$("phone").value="";$("plate").value="";
+  $("date").value="";
+  $("selectedTime").value="";
+  $("washType").value="ic_dis";
+  $("extraSponge").checked=false;
+  $("vehicleType").value="Sedan / Hatchback";
+  document.querySelectorAll(".service").forEach((x,i)=>x.classList.toggle("active",i===0));
+  $("washTypeGroup").style.display="block";
+  document.querySelectorAll("input").forEach(x=>x.classList.remove("invalid","valid"));
+  renderTimeSlots();
+  update();
+  toast("Form temizlendi","Yeni bir randevu seçebilirsiniz.");
+}
+
+function openAdminModal() {
+  const modal = $("adminModal");
+  if (modal) modal.classList.add("active");
+}
+
+function closeAdminModal() {
+  const modal = $("adminModal");
+  if (modal) modal.classList.remove("active");
+}
+
+$("adminLogoBtn").onclick = openAdminModal;
+$("closeModalBtn").onclick = closeAdminModal;
+
+$("adminModal").onclick = (e) => {
+  if (e.target === $("adminModal")) closeAdminModal();
+};
+
+$("adminLoginBtn").onclick = () => {
+  if ($("adminPassInput").value === ADMIN_PASS) {
+    isAdminLoggedIn = true;
+    $("adminLoginBox").style.display = "none";
+    $("adminControlsBox").style.display = "block";
+    $("adminPassInput").value = "";
+    
+    const currDate = $("date").value || new Date().toISOString().split('T')[0];
+    $("adminStartDate").value = currDate;
+    $("adminEndDate").value = currDate;
+
+    renderQueue();
+    toast("Başarılı Giriş", "Yönetici paneli açıldı.");
+  } else {
+    toast("Hatalı Şifre", "Lütfen şifrenizi kontrol edin.");
+  }
+};
+
+$("adminLogoutBtn").onclick = () => {
+  isAdminLoggedIn = false;
+  $("adminLoginBox").style.display = "block";
+  $("adminControlsBox").style.display = "none";
+  closeAdminModal();
+  renderQueue();
+  toast("Çıkış Yapıldı", "Yönetici oturumu kapatıldı.");
+};
+
+$("lockRangeBtn").onclick = () => {
+  const start = $("adminStartDate").value;
+  const end = $("adminEndDate").value;
+
+  if (!start || !end) {
+    toast("Eksik Tarih", "Lütfen hem başlangıç hem bitiş tarihini seçin.");
+    return;
+  }
+
+  if (setClosedDaysRange(start, end, true)) {
+    renderTimeSlots();
+    toast("Tarihler Kapatıldı", `${start} - ${end} arası randevulara kapatıldı.`);
+  } else {
+    toast("Tarih Hatası", "Başlangıç tarihi bitiş tarihinden büyük olamaz.");
+  }
+};
+
+$("unlockRangeBtn").onclick = () => {
+  const start = $("adminStartDate").value;
+  const end = $("adminEndDate").value;
+
+  if (!start || !end) {
+    toast("Eksik Tarih", "Lütfen hem başlangıç hem bitiş tarihini seçin.");
+    return;
+  }
+
+  if (setClosedDaysRange(start, end, false)) {
+    renderTimeSlots();
+    toast("Kilitleme Kaldırıldı", `${start} - ${end} arası randevulara açıldı.`);
+  } else {
+    toast("Tarih Hatası", "Başlangıç tarihi bitiş tarihinden büyük olamaz.");
+  }
+};
+
 $("phone").addEventListener("input", (e) => {
-  e.target.value = normalizePhone(e.target.value);
+  const formatted = formatPhone(e.target.value);
+  e.target.value = formatted;
   update();
 });
 
