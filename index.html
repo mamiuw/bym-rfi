@@ -860,7 +860,7 @@ input:focus, select:focus {
 .manage-list { display:flex; flex-direction:column; gap:10px; margin-top:18px; }
 .manage-item {
   display:grid;
-  grid-template-columns:1fr 130px;
+  grid-template-columns:1fr 130px 72px;
   gap:10px;
   align-items:center;
   padding:10px;
@@ -869,7 +869,25 @@ input:focus, select:focus {
   border-radius:var(--radius-md);
 }
 .manage-item-name { font-size:12px; font-weight:700; }
+
 .manage-item-price { height:42px; }
+.manage-item-delete {
+  height: 42px;
+  padding: 0 10px;
+  border: 1px solid rgba(239, 68, 68, 0.55);
+  background: rgba(239, 68, 68, 0.08);
+  color: #fca5a5;
+  border-radius: var(--radius-md);
+  font-size: 11px;
+  font-weight: 800;
+  transition: var(--transition);
+}
+.manage-item-delete:hover {
+  background: rgba(239, 68, 68, 0.18);
+  border-color: #ef4444;
+  transform: translateY(-1px);
+}
+
 .manage-modal-actions { display:flex; gap:10px; margin-top:18px; }
 .manage-modal-actions button { flex:1; }
 .service-add-form { display:flex; flex-direction:column; gap:14px; margin-top:18px; }
@@ -1549,12 +1567,34 @@ function openPriceManagement() {
     row.className = "manage-item";
     row.innerHTML = `<div class="manage-item-name">${escapeHTML(v.name)}</div>
       <input class="manage-item-price" type="number" min="0" step="50"
-             value="${Number(v.price) || 0}" data-price-index="${index}">`;
+             value="${Number(v.price) || 0}" data-price-index="${index}">
+      <button type="button" class="manage-item-delete" data-delete-index="${index}">🗑️ Sil</button>`;
     list.appendChild(row);
   });
+
+  list.querySelectorAll("[data-delete-index]").forEach(btn => {
+    btn.onclick = () => deleteService(Number(btn.dataset.deleteIndex));
+  });
+
   $("priceManagementModal").classList.add("active");
 }
 function closePriceManagement() { $("priceManagementModal").classList.remove("active"); }
+
+function deleteService(index) {
+  const service = VEHICLES[index];
+  if (!service) return;
+
+  const confirmed = confirm(`"${service.name}" hizmetini silmek istediğinize emin misiniz?`);
+  if (!confirmed) return;
+
+  VEHICLES.splice(index, 1);
+  saveVehicles();
+  buildVehicles();
+  renderTimeSlots();
+  update();
+  openPriceManagement();
+  toast("Hizmet Silindi", `${service.name} hizmeti listeden kaldırıldı.`);
+}
 
 function saveEditedPrices() {
   document.querySelectorAll("[data-price-index]").forEach(input => {
