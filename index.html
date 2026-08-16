@@ -140,6 +140,26 @@ button { cursor: pointer; border: none; background: none; }
 }
 
 
+
+/* Appointment Success Modal */
+.appointment-modal-backdrop{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(4,6,9,.58);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.appointment-modal-backdrop.show{display:flex;animation:appointmentBackdropIn .2s ease both}
+.appointment-modal{position:relative;width:min(430px,100%);padding:30px 26px 24px;border:1px solid var(--gold-primary);border-radius:22px;background:radial-gradient(circle at 50% 0%,rgba(215,180,106,.12),transparent 45%),var(--panel-bg);box-shadow:0 28px 80px rgba(0,0,0,.42),0 0 34px var(--gold-glow);text-align:center;animation:appointmentModalIn .25s cubic-bezier(.2,.8,.2,1) both}
+.appointment-modal-close{position:absolute;top:10px;right:12px;width:34px;height:34px;border:0;border-radius:50%;background:rgba(255,255,255,.06);color:var(--text-muted);font-size:25px;line-height:1;cursor:pointer;transition:var(--transition)}
+.appointment-modal-close:hover{background:rgba(215,180,106,.14);color:var(--text-main);transform:rotate(90deg)}
+.appointment-success-icon{width:62px;height:62px;margin:0 auto 14px;display:grid;place-items:center;border-radius:50%;border:2px solid var(--gold-primary);color:var(--gold-light);background:rgba(215,180,106,.12);box-shadow:0 0 26px var(--gold-glow);font-size:31px;font-weight:900}
+.appointment-modal-eyebrow{margin-bottom:7px;color:var(--gold-primary);font-size:9px;font-weight:900;letter-spacing:.16em}
+.appointment-modal h2{margin:0;color:var(--text-main);font-size:22px;line-height:1.2}
+.appointment-modal-subtitle{margin:8px 0 20px;color:var(--text-muted);font-size:11px}
+.appointment-summary{padding:4px 14px;border:1px solid var(--panel-border);border-radius:15px;background:rgba(255,255,255,.025);text-align:left}
+.appointment-summary-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:11px 2px;border-bottom:1px solid var(--panel-border);color:var(--text-muted);font-size:11px}
+.appointment-summary-row:last-child{border-bottom:0}
+.appointment-summary-row strong{color:var(--text-main);font-size:12px}
+.appointment-modal-whatsapp{width:100%;margin-top:15px;padding:12px 15px;border:1px solid var(--gold-primary);border-radius:12px;background:linear-gradient(135deg,rgba(215,180,106,.18),rgba(215,180,106,.07));color:var(--gold-light);font-weight:900;cursor:pointer;transition:var(--transition)}
+.appointment-modal-whatsapp:hover{transform:translateY(-1px);box-shadow:0 0 18px var(--gold-glow)}
+@keyframes appointmentBackdropIn{from{opacity:0}to{opacity:1}}
+@keyframes appointmentModalIn{from{opacity:0;transform:translateY(12px) scale(.94)}to{opacity:1;transform:translateY(0) scale(1)}}
+
 /* Google Maps Location Button */
 .location-btn {
   display: inline-flex;
@@ -998,6 +1018,24 @@ input:focus, select:focus {
 <div class="toast" id="toast"></div>
 
 <!-- Firebase SDK Module -->
+
+<!-- Appointment Success Modal -->
+<div class="appointment-modal-backdrop" id="appointmentModal" aria-hidden="true">
+  <div class="appointment-modal" role="dialog" aria-modal="true" aria-labelledby="appointmentModalTitle">
+    <button class="appointment-modal-close" id="appointmentModalClose" type="button" aria-label="Kapat">×</button>
+    <div class="appointment-success-icon">✓</div>
+    <div class="appointment-modal-eyebrow">BY MORFİ OTO YIKAMA</div>
+    <h2 id="appointmentModalTitle">Randevunuz oluşturuldu</h2>
+    <p class="appointment-modal-subtitle">Randevu bilgileriniz başarıyla kaydedildi.</p>
+    <div class="appointment-summary">
+      <div class="appointment-summary-row"><span>📅 Tarih</span><strong id="successDate">—</strong></div>
+      <div class="appointment-summary-row"><span>⏰ Saat</span><strong id="successTime">—</strong></div>
+      <div class="appointment-summary-row"><span>🚗 Plaka</span><strong id="successPlate">—</strong></div>
+    </div>
+    <button class="appointment-modal-whatsapp" id="successWhatsapp" type="button">💬 WhatsApp'tan Gönder</button>
+  </div>
+</div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getDatabase, ref, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -1516,6 +1554,54 @@ function validate(){
   return ok;
 }
 
+
+let lastAppointment = null;
+
+function formatSuccessDate(dateValue){
+  if(!dateValue) return "—";
+  const [y,m,d] = dateValue.split("-").map(Number);
+  if(!y || !m || !d) return dateValue;
+  return new Date(y,m-1,d).toLocaleDateString("tr-TR",{day:"2-digit",month:"long",year:"numeric"});
+}
+
+function openAppointmentModal(){
+  $("successDate").textContent = formatSuccessDate(lastAppointment?.date || $("date").value);
+  $("successTime").textContent = lastAppointment?.time || $("selectedTime").value || "—";
+  $("successPlate").textContent = lastAppointment?.plate || $("plate").value.trim().toUpperCase() || "—";
+  $("appointmentModal").classList.add("show");
+  $("appointmentModal").setAttribute("aria-hidden","false");
+  document.body.style.overflow="hidden";
+}
+
+function closeAppointmentModal(){
+  $("appointmentModal").classList.remove("show");
+  $("appointmentModal").setAttribute("aria-hidden","true");
+  document.body.style.overflow="";
+}
+
+$("appointmentModalClose").onclick = closeAppointmentModal;
+$("appointmentModal").onclick = e => { if(e.target === $("appointmentModal")) closeAppointmentModal(); };
+document.addEventListener("keydown", e => {
+  if(e.key === "Escape" && $("appointmentModal").classList.contains("show")) closeAppointmentModal();
+});
+
+$("successWhatsapp").onclick = () => {
+  if(!lastAppointment) return;
+  const msg = [
+    "Merhaba, BY MORFİ üzerinden randevu oluşturdum.",
+    "",
+    `👤 Müşteri: ${lastAppointment.name}`,
+    `📱 Telefon: ${lastAppointment.phone}`,
+    `🚗 Plaka: ${lastAppointment.plate}`,
+    `📅 Tarih: ${formatSuccessDate(lastAppointment.date)}`,
+    `⏰ Saat: ${lastAppointment.time}`,
+    `🧼 Hizmet: ${lastAppointment.service}`,
+    `💰 Toplam: ${lastAppointment.price} TL`
+  ].join("\n");
+  closeAppointmentModal();
+  window.open(`https://api.whatsapp.com/send?phone=${WHATSAPP_PHONE}&text=${encodeURIComponent(msg)}`,"_blank","noopener,noreferrer");
+};
+
 function sendWhatsApp(){
   if(!validate()) return;
 
@@ -1538,6 +1624,18 @@ function sendWhatsApp(){
 
   saveAppointment(apptData);
 
+  lastAppointment = {
+    name: apptData.name,
+    phone: apptData.phone,
+    plate: apptData.plate,
+    date: apptData.date,
+    time: apptData.time,
+    service: `${apptData.vehicle} — ${apptData.wash}`,
+    price: calculate()
+  };
+
+  openAppointmentModal();
+
   const msg=[
     "Merhaba, BY MORFİ üzerinden randevu oluşturmak istiyorum.",
     "",
@@ -1555,8 +1653,7 @@ function sendWhatsApp(){
   renderTimeSlots();
   renderQueue();
 
-  const url=`https://api.whatsapp.com/send?phone=${WHATSAPP_PHONE}&text=${encodeURIComponent(msg)}`;
-  window.open(url,"_blank","noopener,noreferrer");
+  // WhatsApp artık doğrudan açılmaz; müşteri onay ekranındaki butondan açabilir.
 }
 
 function resetForm(){
