@@ -1481,9 +1481,7 @@ function isPhoneValid(phone){
 }
 
 $("phone").addEventListener("input", (e) => {
-  // No automatic spaces or parentheses. Customer controls the formatting.
-  const digits = normalizePhone(e.target.value);
-  e.target.value = digits;
+  e.target.value = normalizePhone(e.target.value);
   update();
 });
 
