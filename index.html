@@ -1262,6 +1262,33 @@ input:focus, select:focus {
     localStorage.setItem("bymorfi_closed_days", JSON.stringify(days));
     if (typeof window.renderTimeSlots === "function") window.renderTimeSlots();
   });
+
+  // Fiyatlar ve hizmetler tüm telefon/bilgisayarlarda anlık senkronize edilir.
+  onValue(ref(db, 'vehicles'), (snapshot) => {
+    const data = snapshot.val();
+
+    // Firebase'de veri varsa onu kullan.
+    if (Array.isArray(data)) {
+      localStorage.setItem("bymorfi_vehicles", JSON.stringify(data));
+      window.VEHICLES = data;
+      if (typeof window.applyRemoteVehicles === "function") {
+        window.applyRemoteVehicles(data);
+      }
+    } else if (data && typeof data === "object") {
+      const list = Object.values(data);
+      localStorage.setItem("bymorfi_vehicles", JSON.stringify(list));
+      window.VEHICLES = list;
+      if (typeof window.applyRemoteVehicles === "function") {
+        window.applyRemoteVehicles(list);
+      }
+    }
+  });
+
+  // İlk kurulumda Firebase boşsa mevcut varsayılan listeyi sunucuya aktar.
+  onValue(ref(db, 'vehicles'), (snapshot) => {
+    if (snapshot.exists()) return;
+    set(ref(db, 'vehicles'), JSON.parse(localStorage.getItem("bymorfi_vehicles") || "[]"));
+  }, { onlyOnce: true });
 </script>
 
 <script>
@@ -1290,7 +1317,36 @@ function loadVehicles() {
 
 function saveVehicles() {
   localStorage.setItem("bymorfi_vehicles", JSON.stringify(VEHICLES));
+
+  // Admin cihazındaki değişiklikleri Firebase'e gönder.
+  if (window.firebaseDb && window.dbRef && window.dbSet) {
+    window.dbSet(
+      window.dbRef(window.firebaseDb, "vehicles"),
+      VEHICLES
+    ).catch(err => {
+      console.error("Fiyat/hizmet senkronizasyonu başarısız:", err);
+      toast("Senkronizasyon Hatası", "Değişiklik kaydedildi ancak sunucuya gönderilemedi.");
+    });
+  }
 }
+
+function applyRemoteVehicles(remoteVehicles) {
+  if (!Array.isArray(remoteVehicles) || !remoteVehicles.length) return;
+
+  VEHICLES = remoteVehicles.map(v => ({
+    name: String(v.name || ""),
+    price: Number(v.price) || 0,
+    icon: v.icon || "✦",
+    ...(v.fixed ? { fixed: true } : {})
+  }));
+
+  localStorage.setItem("bymorfi_vehicles", JSON.stringify(VEHICLES));
+
+  if (typeof buildVehicles === "function") buildVehicles();
+  if (typeof renderTimeSlots === "function") renderTimeSlots();
+  if (typeof update === "function") update();
+}
+window.applyRemoteVehicles = applyRemoteVehicles;
 
 function escapeHTML(str) {
   return String(str).replace(/[&<>"']/g, match => ({
