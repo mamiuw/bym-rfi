@@ -140,6 +140,38 @@ button { cursor: pointer; border: none; background: none; }
 }
 
 
+/* Google Maps Location Button */
+.location-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 8px 13px;
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(255,255,255,.055), rgba(255,255,255,.018));
+  color: var(--text-main);
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .02em;
+  white-space: nowrap;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: var(--transition);
+}
+.location-btn:hover {
+  border-color: var(--gold-primary);
+  color: var(--gold-light);
+  background: rgba(215,180,106,.12);
+  box-shadow: 0 0 16px var(--gold-glow);
+  transform: translateY(-1px);
+}
+.location-btn:active {
+  transform: translateY(0);
+}
+
 /* Live Weather Widget */
 .weather-widget {
   display: flex;
@@ -777,6 +809,13 @@ input:focus, select:focus {
           <span id="weatherHumidity">💧 --%</span>
         </div>
       </div>
+      <a class="location-btn"
+         href="https://www.google.com/maps/place/BY+MORF%C4%B0+OTO+YIKAMA+VE+OTO+LAST%C4%B0K/@39.8870655,32.8364473,17z/data=!3m1!4b1!4m6!3m5!1s0x14d3458904e2988b:0x1fb0c953b1afe69c!8m2!3d39.8870655!4d32.8390276!16s%2Fg%2F11bycrspgp?entry=ttu&g_ep=EgoyMDI2MDgxMi4wIKXMDSoASAFQAw%3D%3D"
+         target="_blank"
+         rel="noopener noreferrer"
+         title="Google Maps'te BY MORFİ konumunu aç">
+        📍 <span>Konum</span>
+      </a>
       <div class="status"><i class="dot"></i> Randevu sistemi aktif</div>
     </div>
   </nav>
